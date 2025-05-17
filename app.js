@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
-const fs      = require('fs'); 
-const session = require('express-session'); 
+const fs = require('fs');
+const session = require('express-session');
 const app = express();
 const cron = require('node-cron');
 const { revisarAyer } = require('./cron/incidenciasCron');
@@ -39,8 +39,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 /*  habilitamos CORS SOLO para las rutas necesarias  */
-app.use('/api/profesionales/slim', cors()); 
-app.use('/api/fichajes/registrar',  cors());
+app.use('/api/profesionales/slim', cors());
+app.use('/api/fichajes/registrar', cors());
 
 // Rutas de tu app
 const homeRoutes = require('./routes/home.routes');
@@ -97,6 +97,9 @@ app.use('/api/chats', chatsRoutes);
 const assistantFilesRoutes = require('./routes/assistantFiles.routes');
 app.use('/api/assistant/files', assistantFilesRoutes);
 
+const productosRoutes = require('./routes/productos.routes');
+app.use('/api/productos', productosRoutes);
+
 const ONE_HOUR = 60 * 60 * 1000;
 
 /* cada hora: borra MP3/WEBM del tmp >30 min */
@@ -108,7 +111,7 @@ cron.schedule('0 * * * *', () => {
       if (!/\.(mp3|webm|m4a|mp4|wav|flac|ogg|oga|pdf|docx?|png|jpe?g|webp|gif)$/i.test(f)) return;
       const abs = path.join(TMP, f);
       fs.stat(abs, (e, st) => {
-        if (!e && st.mtimeMs < limit) fs.unlink(abs, () => {});
+        if (!e && st.mtimeMs < limit) fs.unlink(abs, () => { });
       });
     });
   });
@@ -118,12 +121,12 @@ cron.schedule('0 * * * *', () => {
 app.delete('/tmp/:file', (req, res) => {
   const file = path.basename(req.params.file);          // evita path-traversal
   if (!/\.(mp3|webm|m4a|mp4|wav|flac|ogg|oga|pdf|docx?|png|jpe?g|webp|gif|heic)$/i.test(f))
-    return res.status(400).json({ error:'Formato no permitido' });
+    return res.status(400).json({ error: 'Formato no permitido' });
 
   const abs = path.join(TMP, file);
   fs.unlink(abs, err => {
-    if (err) return res.status(404).json({ error:'Archivo no encontrado' });
-    res.json({ deleted:true });
+    if (err) return res.status(404).json({ error: 'Archivo no encontrado' });
+    res.json({ deleted: true });
   });
 });
 

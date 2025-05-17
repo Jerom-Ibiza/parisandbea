@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Productos – Paris & Bea</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+
+    <!-- Material Icons + hoja de estilos global -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+<body>
+    <!-- ===== HERO (slider + logo) ===== -->
+    <header class="slider-container">
+        <div class="slide">
+            <picture>
+                <source id="slide01-mobile-src" media="(max-width: 819px)" srcset="#">
+                <source id="slide01-desktop-src" media="(min-width: 820px)" srcset="#">
+                <img id="slide01-img" src="#" alt="Slide 1">
+            </picture>
+        </div>
+        <div class="slide">
+            <picture>
+                <source id="slide02-mobile-src" media="(max-width: 819px)" srcset="#">
+                <source id="slide02-desktop-src" media="(min-width: 820px)" srcset="#">
+                <img id="slide02-img" src="#" alt="Slide 2">
+            </picture>
+        </div>
+        <div class="slide">
+            <picture>
+                <source id="slide03-mobile-src" media="(max-width: 819px)" srcset="#">
+                <source id="slide03-desktop-src" media="(min-width: 820px)" srcset="#">
+                <img id="slide03-img" src="#" alt="Slide 3">
+            </picture>
+        </div>
+    </header>
+
+    <!-- logo superpuesto -->
+    <div class="logo-container2">
+        <img id="headerLogo" src="#" alt="Paris & Bea logo" class="logo">
+    </div>
+
+    <!-- ===== TÍTULO DE LA PÁGINA ===== -->
+    <section class="page-intro">
+        <h1 id="introTitle">Nuestros Suplementos</h1>
+        <p>Selección profesional de productos de salud y bienestar recomendados por el equipo de Paris & Bea.</p>
+    </section>
+
+    <!-- ===== LISTADO DE PRODUCTOS ===== -->
+    <main>
+        <section id="productosSection" class="productos-wrapper">
+            <div id="productosGrid" class="productos-grid"><!-- JS inserta tarjetas --></div>
+        </section>
+    </main>
+
+    <!-- ========== MODAL PRODUCTO ========== -->
+    <div id="modalProducto" class="modal-prod" hidden>
+        <div class="modal-backdrop" data-close></div>
+
+        <div class="modal-card">
+            <button class="modal-close" aria-label="Cerrar" data-close>&times;</button>
+
+            <!-- imagen + marca / nombre -->
+            <img id="prodImg" class="prod-img" src="#" alt="" loading="lazy">
+            <h2 id="prodNombre" class="prod-title"></h2>
+            <span id="prodMarca" class="prod-brand"></span>
+
+            <!-- chips rápidas -->
+            <div id="prodProps" class="prod-props"></div>
+
+            <!-- ---------- BLOQUES CON ICONO ---------- -->
+            <section id="blockPropo" class="prod-block" hidden>
+                <h3><span class="material-icons">local_florist</span> Propósito</h3>
+                <p id="prodProposito" class="prod-txt"></p>
+            </section>
+
+            <section id="blockCaract" class="prod-block" hidden>
+                <h3><span class="material-icons">check_circle</span> Características</h3>
+                <p id="prodCaract" class="prod-txt"></p>
+            </section>
+
+            <section id="blockInfo" class="prod-block" hidden>
+                <h3><span class="material-icons">info</span> Info fabricante</h3>
+                <p id="prodInfo" class="prod-txt"></p>
+            </section>
+
+            <section id="blockExplica" class="prod-block" hidden>
+                <h3><span class="material-icons">psychology</span> Paris & Bea</h3>
+                <p id="prodExplica" class="prod-txt"></p>
+            </section>
+
+            <section id="blockDosis" class="prod-block" hidden>
+                <h3><span class="material-icons">schedule</span> Posología</h3>
+                <p id="prodPosologia" class="prod-txt"></p>
+            </section>
+
+            <!-- precio -->
+            <span id="prodPrecio" class="prod-precio"></span>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER (idéntico al index) ===== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo-container">
+                <img id="footerLogo" src="#" alt="Paris & Bea footer logo" class="footer-logo">
+            </div>
+
+            <div class="footer-sections">
+                <!-- ---------- CONTACTO ---------- -->
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <div class="footer-links-container">
+                        <a id="footerMailLink" class="footer-link"><span class="material-icons">email</span><span
+                                id="footerMailText" class="footer-link-text"></span></a>
+                        <div class="footer-phone-wrapper">
+                            <a id="footerPhoneLink" class="footer-link phone-link"><span
+                                    class="material-icons">phone</span></a>
+                            <span id="footerPhoneLabel" class="phone-label"></span>
+                        </div>
+                        <div class="social-links">
+                            <a id="footerWhatsAppLink" href="#" target="_blank" class="footer-link social-link"><img
+                                    src="../images/recursos/whatsapp.png" alt="WhatsApp" class="footer-icon"><span
+                                    class="footer-link-text">WhatsApp</span></a>
+                            <a id="footerInstagramLink" href="#" target="_blank" class="footer-link social-link"><img
+                                    src="../images/recursos/insta.png" alt="Instagram" class="footer-icon"><span
+                                    class="footer-link-text">Instagram</span></a>
+                            <a id="footerFacebookLink" href="#" target="_blank" class="footer-link social-link"><img
+                                    src="../images/recursos/face.png" alt="Facebook" class="footer-icon"><span
+                                    class="footer-link-text">Facebook</span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ---------- DOCUMENTACIÓN ---------- -->
+                <div class="footer-section">
+                    <h3>Documentación</h3>
+                    <div class="footer-links-container">
+                        <a href="terminos-condiciones.html" class="footer-link" target="_blank"><span
+                                class="material-icons">article</span><span class="footer-link-text">Términos y
+                                Condiciones</span></a>
+                        <a href="politica-privacidad.html" class="footer-link" target="_blank"><span
+                                class="material-icons">privacy_tip</span><span class="footer-link-text">Política de
+                                Privacidad</span></a>
+                        <a href="politica-cookies.html" class="footer-link" target="_blank"><span
+                                class="material-icons">cookie</span><span class="footer-link-text">Política de
+                                Cookies</span></a>
+                        <a href="eliminacion-datos.html" class="footer-link" target="_blank"><span
+                                class="material-icons">delete_outline</span><span class="footer-link-text">Eliminación
+                                de Datos</span></a>
+                        <a href="condiciones-servicio.html" class="footer-link" target="_blank"><span
+                                class="material-icons">fact_check</span><span class="footer-link-text">Condiciones de
+                                Servicio</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="copyright-section">
+                <p class="copyright-text">© 2025 Paris & Bea. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+        /* ========= 1)  Branding ========= */
+        async function loadBranding() {
+            try {
+                const data = await (await fetch('/api/home')).json();
+
+                /* Tipografía corporativa */
+                const linkFont = document.createElement('link');
+                linkFont.rel = 'stylesheet';
+                linkFont.href =
+                    'https://fonts.googleapis.com/css2?family=' +
+                    encodeURIComponent(data.tipografia.replace(/ /g, '+')) +
+                    ':wght@300;400;600;700&display=swap';
+                document.head.appendChild(linkFont);
+                document.body.style.fontFamily = data.tipografia + ', sans-serif';
+
+                /* Logos */
+                document.getElementById('headerLogo').src = data.logo;
+                document.getElementById('footerLogo').src = data.logo;
+
+                /* ---------- HERO – slider (rutas) ---------- */
+                document.getElementById('slide01-mobile-src').srcset = data.slide01_movil;
+                document.getElementById('slide01-desktop-src').srcset = data.slide01;
+                document.getElementById('slide01-img').src = data.slide01;
+
+                document.getElementById('slide02-mobile-src').srcset = data.slide02_movil;
+                document.getElementById('slide02-desktop-src').srcset = data.slide02;
+                document.getElementById('slide02-img').src = data.slide02;
+
+                document.getElementById('slide03-mobile-src').srcset = data.slide03_movil;
+                document.getElementById('slide03-desktop-src').srcset = data.slide03;
+                document.getElementById('slide03-img').src = data.slide03;
+
+                showSlide(currentSlide);                   // recalcular altura
+
+                /* Colores del título */
+                document.getElementById('introTitle').style.color = data.titulos_color || '#333';
+                document.documentElement.style.setProperty('--titulos-color', data.titulos_color || '#357765');
+
+                /* Footer – datos de contacto */
+                document.getElementById('footerMailLink').href = 'mailto:' + data.mail;
+                document.getElementById('footerMailText').textContent = data.mail;
+
+                const phoneClean = data.telefono.replace(/\s+/g, '');
+                document.getElementById('footerPhoneLink').href = 'tel:' + phoneClean;
+                document.getElementById('footerPhoneLabel').textContent = data.telefono;
+
+                document.getElementById('footerInstagramLink').href = data.instagram;
+                document.getElementById('footerFacebookLink').href = data.facebook;
+                document.getElementById('footerWhatsAppLink').href = 'https://wa.me/' + phoneClean;
+
+                /* Fondo del footer */
+                const footer = document.querySelector('.footer');
+                footer.style.backgroundColor = data.color03;
+
+                /* Texto claro/oscuro según brillo */
+                const { r, g, b } = hexToRgb(data.color03);
+                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                if (brightness < 128) {
+                    footer.querySelectorAll('.footer-link, h3, .copyright-text')
+                        .forEach(el => el.classList.add('light-text'));
+                    footer.querySelectorAll('.footer-icon, .material-icons')
+                        .forEach(el => el.classList.add('light-icon'));
+                    document.documentElement.style.setProperty('--footer-card-bg', 'rgba(255,255,255,0.1)');
+                    document.documentElement.style.setProperty('--footer-hover-color', '#ffffff');
+                }
+            } catch (err) { console.error('branding:', err); }
+        }
+
+        /* ========= 2)  Productos ========= */
+        async function loadProducts() {
+            try {
+                const productos = await (await fetch('/api/productos/public')).json();
+                const grid = document.getElementById('productosGrid');
+
+                productos.forEach(p => {
+                    grid.insertAdjacentHTML('beforeend',
+                        '<article class="producto-card" data-slug="' + p.slug + '">' +
+                        '<img loading="lazy" src="' + p.imagen + '" alt="' + p.nombre + '">' +
+                        '<h3>' + p.nombre + '</h3>' +
+                        '<span class="prod-brand">' + p.marca + '</span>' +
+                        '</article>');
+                });
+
+                /* click → modal */
+                grid.addEventListener('click', e => {
+                    const card = e.target.closest('.producto-card');
+                    if (!card) return;
+                    openProductModal(card.dataset.slug);
+                });
+
+            } catch (err) { console.error('productos:', err); }
+        }
+
+        /* ========= 3) Helper ========= */
+        function hexToRgb(hex) {
+            hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => r + r + g + g + b + b);
+            const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return m ? { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) } : { r: 255, g: 255, b: 255 };
+        }
+
+        /* === refs modal producto === */
+        const modalProd = document.getElementById('modalProducto');
+        const prodImg = document.getElementById('prodImg');
+        const prodNombre = document.getElementById('prodNombre');
+        const prodMarca = document.getElementById('prodMarca');
+        const prodProps = document.getElementById('prodProps');
+
+        const blockPropo = document.getElementById('blockPropo');
+        const prodPropo = document.getElementById('prodProposito');
+
+        const blockCaract = document.getElementById('blockCaract');
+        const prodCaract = document.getElementById('prodCaract');
+
+        const blockInfo = document.getElementById('blockInfo');
+        const prodInfo = document.getElementById('prodInfo');
+
+        const blockExplica = document.getElementById('blockExplica');
+        const prodExplica = document.getElementById('prodExplica');
+
+        const blockDosis = document.getElementById('blockDosis');
+        const prodDosis = document.getElementById('prodPosologia');
+
+        const prodPrecio = document.getElementById('prodPrecio');
+
+        /* -------- abrir modal -------- */
+        async function openProductModal(slug) {
+            try {
+                const p = await (await fetch('/api/productos/public/' + slug)).json();
+
+                /* cabecera */
+                prodImg.src = p.imagen; prodImg.alt = p.nombre;
+                prodNombre.textContent = p.nombre;
+                prodMarca.textContent = p.marca || '';
+
+                /* chips rápidas */
+                prodProps.innerHTML = '';
+                [['dosis', p.dosis], ['forma', p.forma], ['envase', p.cantidad_envase]]
+                    .filter(([, v]) => v)
+                    .forEach(([, v]) => {
+                        prodProps.insertAdjacentHTML('beforeend', '<span class="prop-chip">' + v + '</span>');
+                    });
+
+                /* bloques con show/hide */
+                if (p.proposito) { prodPropo.textContent = p.proposito; blockPropo.hidden = false; }
+                else blockPropo.hidden = true;
+
+                if (p.caracteristicas) { prodCaract.textContent = p.caracteristicas; blockCaract.hidden = false; }
+                else blockCaract.hidden = true;
+
+                if (p.info_fabricante) { prodInfo.textContent = p.info_fabricante; blockInfo.hidden = false; }
+                else blockInfo.hidden = true;
+
+                if (p.explicacion_centro) { prodExplica.textContent = p.explicacion_centro; blockExplica.hidden = false; }
+                else blockExplica.hidden = true;
+
+                if (p.posologia) { prodDosis.textContent = p.posologia; blockDosis.hidden = false; }
+                else blockDosis.hidden = true;
+
+                prodPrecio.textContent = p.pvp ? Number(p.pvp).toFixed(2) + ' €' : '';
+
+                modalProd.hidden = false;
+                document.body.style.overflow = 'hidden';
+            } catch (err) { console.error('detalle producto:', err); }
+        }
+
+        /* -------- cerrar modal -------- */
+        function closeProductModal() {
+            modalProd.hidden = true;
+            document.body.style.overflow = '';
+        }
+        modalProd.addEventListener('click', e => {
+            if (e.target.dataset.close !== undefined) closeProductModal();
+        });
+
+        /* ========= 3-bis) Slider ========= */
+        const container = document.querySelector('.slider-container');
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function showSlide(i) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[i].classList.add('active');
+            container.style.height = slides[i].querySelector('img').clientHeight + 'px';
+        }
+        if (slides.length) {
+            showSlide(currentSlide);
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }, 4000);
+        }
+
+        /* ========= 4) Init ========= */
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBranding();
+            loadProducts();
+        });
+    </script>
+</body>
+
+</html>
