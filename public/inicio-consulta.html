@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Inicio | Paris & Bea</title>
+
+<!-- icono Material Icons para “stop” -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet"/>
+
+<link rel="stylesheet" href="css/style.css" />
+<!-- Material Icons normal -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<!-- SweetAlert2 -->
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+/* ——— layout / wrapper ——— */
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;
+     min-height:100vh;background:#efefef;margin:0;font-family:"Raleway",sans-serif}
+.wrapper{width:100%;max-width:420px;padding:40px 20px;box-sizing:border-box;
+         display:flex;flex-direction:column;align-items:center;gap:24px}
+.logo{width:200px}
+
+/* ——— fila mic-stop ——— */
+.mic-row{display:flex;align-items:center;justify-content:center;gap:20px}
+
+/* ——— botón MIC ——— */
+.mic-btn{
+  width:180px;height:180px;border:3px solid transparent;border-radius:50%;
+  background:#aed3c1;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,.15);transition:background .2s,border .2s,transform .15s}
+.mic-btn.recording{
+  background:#e04141;border-color:#e04141;animation:pulse 1s infinite}
+.mic-btn:active{transform:scale(.94)}
+.mic-btn svg{width:70px;height:70px;fill:#fff}
+
+/* ——— botón STOP (cancelar grabación) ——— */
+.stop-btn{
+  display:none;              /* solo durante grabación              */
+  width:60px;height:60px;border:none;border-radius:50%;
+  background:#a12525;cursor:pointer;color:#fff;
+  box-shadow:0 4px 10px rgba(0,0,0,.15);transition:transform .15s}
+.stop-btn:active{transform:scale(.94)}
+.stop-btn .material-icons-outlined{font-size:28px;margin:auto}
+
+/* ——— latido ——— */
+@keyframes pulse{
+  0%  {box-shadow:0 0 0   0 rgba(224,65,65,.6)}
+  70% {box-shadow:0 0 0 12px rgba(224,65,65,0)}
+  100%{box-shadow:0 0 0   0 rgba(224,65,65,0)}
+}
+
+/* ——— búsqueda manual ——— */
+.manual-box{width:100%;display:flex;gap:8px}
+.manual-box input{flex:1;padding:12px;border:2px solid #ccc;border-radius:10px;font-size:16px}
+.manual-box button{padding:0 20px;background:#aed3c1;border:none;border-radius:10px;color:#fff;
+                   font-weight:700;cursor:pointer;transition:background .2s}
+.manual-box button:active{background:#7fb29b}
+
+/* ——— enlace archivos ——— */
+.files-link{width:100%;text-align:center;background:#aed3c1;color:#fff;font-weight:700;
+            padding:14px;border-radius:18px;text-decoration:none;box-shadow:0 3px 6px rgba(0,0,0,.1)}
+
+/* ——— loader barra arriba ——— */
+#loading{position:fixed;top:0;left:0;width:100%;height:4px;display:none;z-index:9999}
+#loading .bar{width:100%;height:100%;background:#aed3c1;animation:slide 1.6s infinite linear}
+@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* ——— modal timeout ——— */
+#modalTime{position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+           background:rgba(0,0,0,.55);z-index:10000}
+#modalTime .box{background:#fff;padding:24px 26px;border-radius:14px;text-align:center;
+                max-width:300px;font-size:16px;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+#modalTime button{margin-top:18px;padding:8px 24px;background:#aed3c1;border:none;
+                  border-radius:10px;color:#fff;font-weight:700;cursor:pointer}
+/* ——— botón Logout en footer ——— */
+.logout-button{
+  background:#add1c5;
+  padding:0.75rem 1.5rem;
+  font-size:1rem;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition:background .3s,transform .2s;
+  display:flex;align-items:center;gap:6px;
+  font-family:'Raleway',sans-serif;
+}
+.logout-button:hover{
+  background:#6a9c8c;
+  transform:scale(1.05);
+}
+.footer-logout{        /* contenedor centrado */
+  margin-top:40px;
+  text-align:center;
+}
+/* --- layout principal --- */
+body{
+  display:flex;                   /* ya existía */
+  flex-direction:column;
+  min-height:100vh;
+}
+
+.wrapper{                          /* ya existía */
+  flex:1 0 auto;                /* ocupa el espacio disponible          */
+  display:flex;                 /* ya lo tenías                         */
+  flex-direction:column;
+  align-items:center;           /* centrado horizontal                  */
+  justify-content:center;       /* ← NUEVA: centrado vertical           */                  /* ocupa el centro vertical */
+}
+
+/* --- footer fijo al fondo --- */
+.page-footer{
+  flex:0 0 auto;
+  width:100%;
+  padding:32px 20px;
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  background:none;
+  margin-bottom: 40px;
+}
+
+/* --- estilo común de ambos botones --- */
+.footer-btn{
+  display:flex; align-items:center; gap:6px;
+  padding:14px 26px;
+  background:#aed3c1;
+  color:#fff; font-weight:700;
+  border:none; border-radius:18px;
+  text-decoration:none;            /* para el <a> */
+  font-family:'Raleway',sans-serif;
+  cursor:pointer;
+  transition:background .3s,transform .2s;
+}
+.footer-btn:hover{
+  background:#7fb29b;
+  transform:scale(1.05);
+}
+.footer-btn .material-icons{font-size:22px;}
+
+</style>
+</head>
+<body>
+
+<!-- loader barra -->
+<div id="loading"><div class="bar"></div></div>
+
+<!-- modal grabación larga -->
+<div id="modalTime"><div class="box">
+  <p>⏱️ La grabación se canceló.<br>Vuelve a intentarlo.</p>
+  <button onclick="hideTimeModal()">Entendido</button>
+</div></div>
+
+<div class="wrapper">
+  <img src="images/recursos/parisandbealogo.png" alt="Logo" class="logo" />
+
+  <!-- fila mic + stop -->
+  <div class="mic-row">
+    <button id="btnStopRec" class="stop-btn" title="Cancelar grabación">
+      <span class="material-icons-outlined">stop</span>
+    </button>
+    <button id="btnStartIdentification" class="mic-btn" title="Identificar paciente por voz">
+      <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2zm-5 9v-3h-2v3H7v2h10v-2h-5z"/></svg>
+    </button>
+  </div>
+
+  <!-- búsqueda manual -->
+  <div class="manual-box">
+    <input id="txtQuery" type="text" placeholder="Nombre, DNI, teléfono o email…" />
+    <button id="btnSearch">Enviar</button>
+  </div>
+</div>
+  <!-- ===== FOOTER con los dos botones ===== -->
+  <footer class="page-footer">
+    <a href="/pab-files.html"  class="footer-btn">
+      <span class="material-icons">folder</span> Archivos
+    </a>
+
+    <button id="logoutBtn"     class="footer-btn">
+      <span class="material-icons">logout</span> Logout
+    </button>
+  </footer>
+<script>
+// ——— helpers ———
+const $   = id => document.getElementById(id);
+const showLoader = () => $('loading').style.display = 'block';
+const hideLoader = () => $('loading').style.display = 'none';
+
+// ——— modal timeout ———
+function showTimeModal(){ $('modalTime').style.display='flex'; }
+function hideTimeModal(){ $('modalTime').style.display='none'; }
+
+const btnMic  = $('btnStartIdentification');
+const btnStop = $('btnStopRec');
+let recorder, chunks = [], recording = false, timer, maxMs = 20000, canceled = false;
+
+// ——— Iniciar / Detener grabación ———
+btnMic.onclick = async () => {
+  if (!recording) {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    let options = {};
+    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+      options.mimeType = 'audio/webm;codecs=opus';
+    } else {
+      options.mimeType = 'video/mp4';
+    }
+    recorder = new MediaRecorder(stream, options);
+    chunks = []; canceled = false;
+    recorder.ondataavailable = e => chunks.push(e.data);
+    recorder.onstop          = onStop;
+    recorder.start(1000);  // enviar fragmentos de 1 s para Safari
+    recording = true;
+    btnMic.classList.add('recording');
+    btnStop.style.display = 'flex';
+    timer = setTimeout(()=>{
+      if (recording) { canceled = true; recorder.stop(); }
+    }, maxMs);
+  } else {
+    clearTimeout(timer);
+    recorder.stop();
+  }
+};
+
+// ——— Cancelar grabación ———
+btnStop.onclick = () => {
+  if (!recording) return;
+  canceled = true;
+  clearTimeout(timer);
+  recorder.stop();
+};
+
+// ——— Procesar blob al parar ———
+async function onStop() {
+  recording = false;
+  btnMic.classList.remove('recording');
+  btnStop.style.display = 'none';
+  clearTimeout(timer);
+
+  if (canceled) { showTimeModal(); return; }
+
+  const mime = recorder.mimeType || 'audio/webm';
+  const ext  = mime.includes('mp4') ? '.mp4' : '.webm';
+  const blob = new Blob(chunks, { type: mime });
+  const form = new FormData();
+  form.append('audio', blob, 'grabacion' + ext);
+
+  try {
+    showLoader();
+    const r   = await fetch('/api/voice/identify', { method:'POST', body:form });
+    const res = await r.json();
+    hideLoader();
+    if (!res.found) { alert('🧐 Paciente no encontrado'); return; }
+    location.href = res.redirect;
+  } catch (e) {
+    console.error(e);
+    hideLoader();
+    alert('Error identificando paciente');
+  }
+}
+
+// ——— Búsqueda manual por texto ———
+$('btnSearch').onclick = sendManual;
+$('txtQuery').onkeydown = e => { if (e.key==='Enter') sendManual(); };
+
+async function sendManual(){
+  const q = $('txtQuery').value.trim();
+  if (!q) { alert('Escribe un dato del paciente'); return; }
+  try {
+    showLoader();
+    const r = await fetch('/api/voice/identify-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: q })
+    });
+    const res = await r.json();
+    hideLoader();
+    if (!res.found) { alert('Paciente no encontrado'); return; }
+    location.href = res.redirect;
+  } catch (e) {
+    console.error(e);
+    hideLoader();
+    alert('Error buscando paciente');
+  }
+}
+
+// ——— Cerrar modal tocando fondo ———
+$('modalTime').addEventListener('click', e => {
+  if (e.target.id==='modalTime') hideTimeModal();
+});
+	
+document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+  const ok = await Swal.fire({
+    title:'¿Quieres cerrar la sesión?',
+    icon:'question',
+    showCancelButton:true,
+    confirmButtonText:'Sí, cerrar sesión',
+    cancelButtonText:'Cancelar'
+  });
+  if (!ok.isConfirmed) return;
+
+  try{
+    const r   = await fetch('/api/login/logout',{method:'GET'});
+    const res = await r.json();
+    if (r.ok){
+      Swal.fire({icon:'success',title:'Sesión cerrada',text:res.message})
+        .then(()=>location.href='/pab-login.html');
+    }else{
+      Swal.fire({icon:'error',title:'Error',text:res.error||'No se pudo cerrar la sesión'});
+    }
+  }catch(e){
+    console.error(e);
+    Swal.fire({icon:'error',title:'Error',text:'Error en la solicitud'});
+  }
+});
+</script>
+
+</body>
+</html>

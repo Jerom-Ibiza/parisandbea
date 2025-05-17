@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Paris & Bea - Centro de Osteopatía y Fisioterapia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Paris & Bea - Centro de Fisioterapia y Osteopatía en ...">
+  <meta name="keywords" content="fisioterapia, osteopatía, rehabilitación, etc.">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="icon" href="../favicon.ico" type="image/x-icon">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="slider-container">
+  <div class="slide">
+    <picture>
+      <source id="slide01-mobile-src" media="(max-width: 819px)" srcset="#">
+      <source id="slide01-desktop-src" media="(min-width: 820px)" srcset="#">
+      <img id="slide01-img" src="#" alt="Slide 1">
+    </picture>
+  </div>
+  <div class="slide">
+    <picture>
+      <source id="slide02-mobile-src" media="(max-width: 819px)" srcset="#">
+      <source id="slide02-desktop-src" media="(min-width: 820px)" srcset="#">
+      <img id="slide02-img" src="#" alt="Slide 2">
+    </picture>
+  </div>
+  <div class="slide">
+    <picture>
+      <source id="slide03-mobile-src" media="(max-width: 819px)" srcset="#">
+      <source id="slide03-desktop-src" media="(min-width: 820px)" srcset="#">
+      <img id="slide03-img" src="#" alt="Slide 3">
+    </picture>
+  </div>
+</header>
+<section class="wallpaper-banner">
+  <picture>
+    <!-- móvil -->
+    <source media="(max-width: 819px)"
+            srcset="images/wallpaper.webp">
+    <!-- sobremesa -->
+    <source media="(min-width: 820px)"
+            srcset="images/wallpaper-ancho.webp">
+    <!-- fallback -->
+    <img src="images/wallpaper-ancho.webp"
+         alt="Centro Paris & Bea – banner"
+         class="wallpaper-img">
+  </picture>
+</section>
+<!-- SERVICIOS ---------------------------------------------------------------->
+<section id="serviciosSection" class="servicios-wrapper">
+  <!-- Se rellena dinámicamente con JS -->
+  <div class="swiper servicios-swiper">
+    <div class="swiper-wrapper" id="serviciosWrapper"></div>
+    <!-- flechas solo visibles en pantallas estrechas -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+</section>
+<!-- ------------------------------------------------------------------------->
+<div class="logo-container">
+  <img id="headerLogo" src="#" alt="Paris & Bea Logo" class="logo">
+</div>
+<!-- MODAL SERVICIO ------------------------------------------------->
+<div id="modalServicio" class="modal-servicio" hidden>
+  <div class="modal-backdrop" data-close></div>
+
+  <div class="modal-card">
+    <button class="modal-close" aria-label="Cerrar" data-close>&times;</button>
+
+    <img id="modalLogo"   class="modal-logo"   src="#" alt="Logo Paris & Bea">
+    <img id="modalImg"    class="modal-img"    src="#" alt="" loading="lazy">
+
+    <h2  id="modalNombre" class="modal-title"></h2>
+
+    <p   id="modalDescripcion" class="modal-descripcion"></p>
+
+    <p   id="modalDetalle" class="modal-detalle"></p>
+    <div class="modal-extra">
+      <span id="modalDuracion" class="modal-chip"></span>
+      <span id="modalPrecio"   class="modal-chip chip-price"></span>
+    </div>
+	<!-- =================== PROFESIONALES =================== -->
+	<section id="modalProfesionales" class="modal-block" hidden>
+	  <h3 class="block-title">Nuestro equipo</h3>
+	  <ul id="prosList" class="pros-grid"><!-- se rellena por JS --></ul>
+	</section>
+	<!-- ======================= BONOS ======================= -->
+	<section id="modalBonos" class="modal-block" hidden>
+	  <h3 class="block-title">Bonos disponibles</h3>
+	  <div class="bonos-grid"><!-- ul no hace falta, pura grid -->
+		 <!-- JS inserta aquí .bono-card -->
+	  </div>
+	</section>
+  </div>
+</div>
+<script>
+/* =======================================================
+ * 1)  REFERENCIAS DOM
+ * ======================================================= */
+const prosSection  = document.getElementById('modalProfesionales');
+const prosGrid     = document.querySelector('.pros-grid');         // tarjetas profesionales
+
+const bonosSection = document.getElementById('modalBonos');
+const bonosGrid    = document.querySelector('.bonos-grid');        // tarjetas bonos
+
+const container    = document.querySelector('.slider-container');  // header-slider
+const slides       = document.querySelectorAll('.slide');
+let   currentSlide = 0;
+
+/* =======================================================
+ * 2)  VARIABLES / REF. MODAL
+ * ======================================================= */
+let homeLogoURL = '';
+
+const modal   = document.getElementById('modalServicio');
+const mLogo   = document.getElementById('modalLogo');
+const mImg    = document.getElementById('modalImg');
+const mNombre = document.getElementById('modalNombre');
+const mDesc   = document.getElementById('modalDescripcion');
+const mDet    = document.getElementById('modalDetalle');
+const mDur    = document.getElementById('modalDuracion');
+const mPre    = document.getElementById('modalPrecio');
+
+/* =======================================================
+ * 3)  HERO SLIDER
+ * ======================================================= */
+function showSlide(i){
+  slides.forEach(s=>s.classList.remove('active'));
+  slides[i].classList.add('active');
+  container.style.height = slides[i].querySelector('img').clientHeight + 'px';
+}
+showSlide(currentSlide);
+setInterval(()=>{ currentSlide=(currentSlide+1)%slides.length; showSlide(currentSlide); },4000);
+
+/* =======================================================
+ * 4)  CARGA DE DATOS HOME (logo, slides, footer…)
+ * ======================================================= */
+  async function loadHomeData() {
+    try {
+      const res = await fetch('/api/home');
+      const data = await res.json();
+
+      // Cargar tipografía de Google
+      const linkFont = document.createElement('link');
+      linkFont.rel = 'stylesheet';
+      linkFont.href = `https://fonts.googleapis.com/css2?family=${data.tipografia.replace(/ /g, '+')}:wght@300;400;600;700&display=swap`;
+      document.head.appendChild(linkFont);
+      document.body.style.fontFamily = `${data.tipografia}, sans-serif`;
+
+      // Logo (header)
+      const headerLogo = document.getElementById('headerLogo');
+      headerLogo.src = data.logo;
+      headerLogo.alt = `Paris & Bea - ${data.nombre}`;
+	  homeLogoURL = data.logo;
+
+      // Slider 01
+      document.getElementById('slide01-mobile-src').srcset = data.slide01_movil;
+      document.getElementById('slide01-desktop-src').srcset = data.slide01;
+      document.getElementById('slide01-img').src = data.slide01;
+
+      // Slider 02
+      document.getElementById('slide02-mobile-src').srcset = data.slide02_movil;
+      document.getElementById('slide02-desktop-src').srcset = data.slide02;
+      document.getElementById('slide02-img').src = data.slide02;
+
+      // Slider 03
+      document.getElementById('slide03-mobile-src').srcset = data.slide03_movil;
+      document.getElementById('slide03-desktop-src').srcset = data.slide03;
+      document.getElementById('slide03-img').src = data.slide03;
+
+      // Footer - mail
+      const footerMailLink = document.getElementById('footerMailLink');
+      footerMailLink.href = `mailto:${data.mail}`;
+      document.getElementById('footerMailText').textContent = data.mail;
+
+      // Footer - teléfono
+      const footerPhoneLink = document.getElementById('footerPhoneLink');
+      footerPhoneLink.href = `tel:${data.telefono.replace(/\s+/g, '')}`;
+      document.getElementById('footerPhoneLabel').textContent = data.telefono;
+
+      // Footer - instagram
+      const footerInstagramLink = document.getElementById('footerInstagramLink');
+      footerInstagramLink.href = data.instagram;
+
+      // Footer - facebook
+      const footerFacebookLink = document.getElementById('footerFacebookLink');
+      footerFacebookLink.href = data.facebook;
+
+      // Footer - whatsapp
+      const footerWhatsAppLink = document.getElementById('footerWhatsAppLink');
+      footerWhatsAppLink.href = `https://wa.me/${data.telefono.replace(/\s+/g, '')}`;
+
+      // Footer - logo
+      const footerLogo = document.getElementById('footerLogo');
+      footerLogo.src = data.logo;
+      footerLogo.alt = `Paris & Bea Footer Logo - ${data.nombre}`;
+
+      // Ajuste de color en el footer
+      const footer = document.querySelector('.footer');
+      footer.style.backgroundColor = data.color03;
+
+      // Ajustes de color de texto según el brillo
+      const brightness = calculateBrightness(hexToRgb(data.color03));
+      const footerElements = document.querySelectorAll('.footer-link, .footer-section h3, .copyright-text');
+      const iconElements = document.querySelectorAll('.footer .material-icons, .footer-icon');
+      if (brightness < 128) {
+        footerElements.forEach(el => el.classList.add('light-text'));
+        iconElements.forEach(el => el.classList.add('light-icon'));
+        document.documentElement.style.setProperty('--footer-card-bg', 'rgba(255, 255, 255, 0.1)');
+        document.documentElement.style.setProperty('--footer-hover-color', '#ffffff');
+      } else {
+        document.documentElement.style.setProperty('--footer-card-bg', 'rgba(0, 0, 0, 0.05)');
+        document.documentElement.style.setProperty('--footer-hover-color', '#910a60');
+      }
+
+    } catch (err) {
+      console.error('Error cargando datos del Home:', err);
+    }
+  }
+
+/* =======================================================
+ * 5)  SERVICIOS  (Swiper + delegación click)
+ * ======================================================= */
+async function loadServices(){
+  try{
+    const servicios = await (await fetch('/api/servicios/public')).json();
+    const wrapper   = document.getElementById('serviciosWrapper');
+
+    servicios.forEach(s=>{
+      wrapper.insertAdjacentHTML('beforeend',`
+        <div class="swiper-slide">
+          <div class="servicios-card" data-slug="${s.slug}" data-id="${s.id_servicio}">
+            <img loading="lazy" src="${s.imagen}" alt="${s.nombre}">
+            <span>${s.nombre}</span>
+          </div>
+        </div>`);
+    });
+
+    initServiciosSwiper();
+
+    wrapper.addEventListener('click', async e=>{
+      const card = e.target.closest('.servicios-card');
+      if(!card) return;
+      try{
+        const svc = await (await fetch(`/api/servicios/public/${card.dataset.slug}`)).json();
+        openModal(svc);
+      }catch(err){ console.error(err); }
+    });
+
+  }catch(err){ console.error('servicios:',err); }
+}
+
+function initServiciosSwiper(){
+  new Swiper('.servicios-swiper',{
+    slidesPerView:7, spaceBetween:20, loop:true,
+    autoplay:{delay:3500,disableOnInteraction:false},
+    keyboard:{enabled:true}, speed:600,
+    breakpoints:{
+      0   :{slidesPerView:1,  spaceBetween:16, centeredSlides:true},
+      480 :{slidesPerView:1.2,spaceBetween:18, centeredSlides:true},
+      640 :{slidesPerView:2,  spaceBetween:20},
+      768 :{slidesPerView:3,  spaceBetween:24},
+      1024:{slidesPerView:3,  spaceBetween:26},
+      1400:{slidesPerView:4,  spaceBetween:28}
+    },
+    navigation:{nextEl:'.swiper-button-next', prevEl:'.swiper-button-prev'}
+  });
+}
+
+/* =======================================================
+ * 6)  MODAL  (abrir / cerrar)
+ * ======================================================= */
+function openModal(s){
+  /* datos servicio */
+  mLogo.src        = homeLogoURL;
+  mImg.src         = s.imagen;               mImg.alt = s.nombre;
+  mNombre.textContent = s.nombre;
+  mDesc.textContent   = s.descripcion || '';
+  mDet.textContent    = s.detalle      || '';
+  mDur.textContent    = s.duracion ? `${s.duracion} min.` : '';
+  mPre.textContent    = s.precio   ? `${Number(s.precio).toFixed(2)} €` : '';
+
+  loadProfessionals(s.slug);
+  loadBonos(s.id_servicio);
+
+  modal.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  modal.hidden = true;
+  document.body.style.overflow = '';
+}
+modal.addEventListener('click', e=>{
+  if(e.target.dataset.close!==undefined) closeModal();
+});
+
+/* =======================================================
+ * 7)  PROFESIONALES
+ * ======================================================= */
+async function loadProfessionals(slug){
+  prosGrid.innerHTML=''; prosSection.hidden=true;
+  try{
+    const pros = await (await fetch(`/api/servicios/public/${slug}/profesionales`)).json();
+    if(!Array.isArray(pros)||!pros.length) return;
+
+    pros.forEach(p=>{
+      prosGrid.insertAdjacentHTML('beforeend',`
+        <li class="pro-item">
+          <img class="pro-avatar"
+               src="${p.foto || 'images/profesionales/default.webp'}"
+               alt="${p.nombre}">
+          <div class="pro-data">
+            <span class="pro-name"><span class="material-icons pro-ic">person</span>${p.nombre}</span>
+            ${p.num_colegiado ? `<span class="pro-field"><span class="material-icons pro-ic">school</span>Colegiado/a: ${p.num_colegiado}</span>` : ''}
+            ${p.especialidad  ? `<span class="pro-field"><span class="material-icons pro-ic">badge</span>${p.especialidad}</span>` : ''}
+            ${p.notas         ? `<span class="pro-field"><span class="material-icons pro-ic">info</span>${p.notas}</span>` : ''}
+            ${p.mail          ? `<a class="pro-mail" href="mailto:${p.mail}"><span class="material-icons pro-ic">email</span>${p.mail}</a>` : ''}
+          </div>
+        </li>`);
+    });
+    prosSection.hidden=false;
+  }catch(err){ console.warn('pros:',err); }
+}
+
+/* =======================================================
+ * 8)  BONOS
+ * ======================================================= */
+async function loadBonos(idServicio){
+  bonosGrid.innerHTML=''; bonosSection.hidden=true;
+  try{
+    const bonos = await (await fetch(`/api/servicios/${idServicio}/bonos`)).json();
+    if(!Array.isArray(bonos)||!bonos.length) return;
+
+    bonos.forEach(b=>{
+      bonosGrid.insertAdjacentHTML('beforeend',`
+        <article class="bono-card">
+          <div class="bono-info">
+            <h4>${b.nombre}</h4>
+            <p><span class="material-icons">schedule</span>${b.sesiones} sesiones</p>
+            <p><span class="material-icons">check_circle</span>${Number(b.precio_total).toFixed(2)} €</p>
+            ${Number(b.porcentaje_descuento)>0 ? `
+              <p class="bono-desc"><span class="material-icons">arrow_circle_down</span>
+                 -${Number(b.porcentaje_descuento).toFixed(2)}%</p>` : ''}
+            ${b.observaciones ? `<p class="bono-obs">${b.observaciones}</p>` : ''}
+          </div>
+        </article>`);
+    });
+    bonosSection.hidden=false;
+  }catch(err){ console.warn('bonos:',err); }
+}
+
+/* =======================================================
+ * 9)  HELPERS
+ * ======================================================= */
+function hexToRgb(hex){
+  hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i,(m,r,g,b)=>r+r+g+g+b+b);
+  const m  = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return m ? {r:parseInt(m[1],16),g:parseInt(m[2],16),b:parseInt(m[3],16)} : null;
+}
+function calculateBrightness({r,g,b}){ return (r*299+g*587+b*114)/1000; }
+
+/* =======================================================
+ * 10)  INIT
+ * ======================================================= */
+document.addEventListener('DOMContentLoaded',()=>{
+  loadHomeData();
+  loadServices();
+});
+</script>
+
+
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-logo-container">
+      <img id="footerLogo" src="#" alt="Paris & Bea Logo" class="footer-logo">
+    </div>
+    
+    <div class="footer-sections">
+      <!-- Tarjeta de Contacto -->
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <div class="footer-links-container">
+          <a id="footerMailLink" class="footer-link">
+            <span class="material-icons">email</span>
+            <span id="footerMailText" class="footer-link-text"></span>
+          </a>
+          <div class="footer-phone-wrapper">
+            <a id="footerPhoneLink" class="footer-link phone-link">
+              <span class="material-icons">phone</span>
+            </a>
+            <span id="footerPhoneLabel" class="phone-label"></span>
+          </div>
+          <div class="social-links">
+            <a id="footerWhatsAppLink" href="#" target="_blank" class="footer-link social-link">
+              <img src="../images/recursos/whatsapp.png" alt="WhatsApp" class="footer-icon">
+              <span class="footer-link-text">WhatsApp</span>
+            </a>
+            <a id="footerInstagramLink" href="#" target="_blank" class="footer-link social-link">
+              <img src="../images/recursos/insta.png" alt="Instagram" class="footer-icon">
+              <span class="footer-link-text">Instagram</span>
+            </a>
+            <a id="footerFacebookLink" href="#" target="_blank" class="footer-link social-link">
+              <img src="../images/recursos/face.png" alt="Facebook" class="footer-icon">
+              <span class="footer-link-text">Facebook</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tarjeta de Documentación -->
+      <div class="footer-section">
+        <h3>Documentación</h3>
+        <div class="footer-links-container">
+          <a href="https://parisandbea.es/terminos-condiciones.html" class="footer-link" target="_blank">
+            <span class="material-icons">article</span>
+            <span class="footer-link-text">Términos y Condiciones</span>
+          </a>
+          <a href="https://parisandbea.es/politica-privacidad.html" class="footer-link" target="_blank">
+            <span class="material-icons">privacy_tip</span>
+            <span class="footer-link-text">Política de Privacidad</span>
+          </a>
+          <a href="https://parisandbea.es/politica-cookies.html" class="footer-link" target="_blank">
+            <span class="material-icons">cookie</span>
+            <span class="footer-link-text">Política de Cookies</span>
+          </a>
+          <a href="https://parisandbea.es/eliminacion-datos.html" class="footer-link" target="_blank">
+            <span class="material-icons">delete_outline</span>
+            <span class="footer-link-text">Eliminación de Datos</span>
+          </a>
+          <a href="https://parisandbea.es/condiciones-servicio.html" class="footer-link" target="_blank">
+            <span class="material-icons">fact_check</span>
+            <span class="footer-link-text">Condiciones de Servicio</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="copyright-section">
+      <p class="copyright-text">© 2025 Paris & Bea. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+</body>
+</html>

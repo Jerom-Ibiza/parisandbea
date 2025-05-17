@@ -1,0 +1,5 @@
+<RequireAll>
+  Require all denied
+  # Permitir solo al backend Node detrás de 127.0.0.1 (Plesk proxy)     
+  Require ip 127.0.0.1
+</RequireAll>

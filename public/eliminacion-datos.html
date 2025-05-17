@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Eliminación de Datos - Paris & Bea</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Instrucciones para la Eliminación de Datos Personales en Paris & Bea">
+  <meta name="keywords" content="Paris & Bea, fisioterapia, osteopatía, RGPD, eliminación de datos">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- LOGO ESTILO INDEX -->
+  <div class="logo-container2">
+    <a href="https://parisandbea.es">
+      <img id="headerLogo" src="#" alt="Paris & Bea Logo" class="logo">
+    </a>
+  </div>
+
+  <!-- Cabecera general de la página -->
+  <div class="page-header">
+    <h2>
+      <span class="material-icons">delete</span>
+      Eliminar Datos Personales
+    </h2>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main>
+    <section class="content-section">
+      <p>
+        Si deseas solicitar la eliminación de tus datos personales en <strong>Paris & Bea</strong>,
+        por favor, sigue estos pasos:
+      </p>
+
+      <ol>
+        <li>
+          <strong>Solicitud:</strong> Envía un mensaje de WhatsApp al 
+          <em>+34 630938107</em> 
+          o un correo electrónico a 
+          <a href="mailto:info@parisandbea.es">info@parisandbea.es</a>, 
+          indicando tu petición de eliminación de datos.
+        </li>
+        <li>
+          <strong>Verificación de Identidad:</strong> Para proteger tu privacidad,
+          es posible que te pidamos más datos o comprobantes para confirmar que la petición
+          procede realmente de ti.
+        </li>
+        <li>
+          <strong>Plazo de Ejecución:</strong> Una vez verificada la solicitud, nos comprometemos
+          a eliminar completamente tus datos en un plazo máximo de 7 días naturales.
+        </li>
+        <li>
+          <strong>Confirmación:</strong> Te enviaremos un correo o mensaje de WhatsApp para
+          confirmar que la eliminación de tus datos se ha completado con éxito.
+        </li>
+      </ol>
+      
+      <p>
+        Ten en cuenta que, en algunos casos, podemos estar legalmente obligados a conservar ciertos
+        datos (p. ej. registros sanitarios o facturas). Si esto ocurre, te lo haremos saber
+        y te explicaremos por qué no podemos borrarlos aún.
+      </p>
+    </section>
+  </main>
+
+  <!-- SCRIPT PARA CARGA DE DATOS DINÁMICOS (logo, colores, tipografía) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHomeData();
+    });
+
+    async function loadHomeData() {
+      try {
+        const res = await fetch('/api/home');
+        const data = await res.json();
+
+        // Cargar la tipografía de Google
+        const linkFont = document.createElement('link');
+        linkFont.rel = 'stylesheet';
+        linkFont.href = `https://fonts.googleapis.com/css2?family=${data.tipografia.replace(/ /g, '+')}:wght@300;400;600;700&display=swap`;
+        document.head.appendChild(linkFont);
+
+        // Fuente para el body
+        document.body.style.fontFamily = `${data.tipografia}, sans-serif`;
+
+        // Colores principales
+        document.body.style.backgroundColor = data.color01;
+        document.body.style.color = data.textos_color;
+
+        // Cabecera de la página
+        const pageHeader = document.querySelector('.page-header');
+        if (pageHeader) {
+          pageHeader.style.backgroundColor = data.color02;
+          pageHeader.style.color = data.titulos_color;
+        }
+
+        // Secciones de contenido
+        const contentSections = document.querySelectorAll('.content-section');
+        contentSections.forEach(section => {
+          section.style.backgroundColor = data.color02;
+        });
+
+        // LOGO del header
+        const headerLogo = document.getElementById('headerLogo');
+        headerLogo.src = data.logo;
+        headerLogo.alt = `Paris & Bea Logo - ${data.nombre}`;
+      } catch (err) {
+        console.error('Error cargando datos del Home:', err);
+      }
+    }
+  </script>
+</body>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-logo-container">
+      <a href="https://parisandbea.es">
+        <img id="footerLogo" src="#" alt="Paris & Bea Logo" class="footer-logo">
+      </a>
+    </div>
+    
+    <!-- Contenedor principal con dos tarjetas -->
+    <div class="footer-sections">
+      
+      <!-- Tarjeta de Contacto -->
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <div class="footer-links-container">
+          <a id="footerMailLink" class="footer-link">
+            <span class="material-icons">email</span>
+            <span id="footerMailText" class="footer-link-text"></span>
+          </a>
+          <div class="footer-phone-wrapper">
+            <a id="footerPhoneLink" class="footer-link phone-link">
+              <span class="material-icons">phone</span>
+            </a>
+            <span id="footerPhoneLabel" class="phone-label"></span>
+          </div>
+          <div class="social-links">
+            <a id="footerWhatsAppLink" href="#" target="_blank" class="footer-link social-link">
+              <img src="../images/recursos/whatsapp.png" alt="WhatsApp" class="footer-icon">
+              <span class="footer-link-text">WhatsApp</span>
+            </a>
+            <a id="footerInstagramLink" href="#" target="_blank" class="footer-link social-link">
+              <img src="../images/recursos/insta.png" alt="Instagram" class="footer-icon">
+              <span class="footer-link-text">Instagram</span>
+            </a>
+            <a id="footerFacebookLink" href="#" target="_blank" class="footer-link social-link">
+              <img src="../images/recursos/face.png" alt="Facebook" class="footer-icon">
+              <span class="footer-link-text">Facebook</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tarjeta de Documentación -->
+      <div class="footer-section">
+        <h3>Documentación</h3>
+        <div class="footer-links-container">
+          <a href="https://parisandbea.es/terminos-condiciones.html" class="footer-link" target="_blank">
+            <span class="material-icons">article</span>
+            <span class="footer-link-text">Términos y Condiciones</span>
+          </a>
+          <a href="https://parisandbea.es/politica-privacidad.html" class="footer-link" target="_blank">
+            <span class="material-icons">privacy_tip</span>
+            <span class="footer-link-text">Política de Privacidad</span>
+          </a>
+          <a href="https://parisandbea.es/politica-cookies.html" class="footer-link" target="_blank">
+            <span class="material-icons">cookie</span>
+            <span class="footer-link-text">Política de Cookies</span>
+          </a>
+          <a href="https://parisandbea.es/condiciones-servicio.html" class="footer-link" target="_blank">
+            <span class="material-icons">fact_check</span>
+            <span class="footer-link-text">Condiciones de Servicio</span>
+          </a>
+        </div>
+      </div>
+      
+    </div>
+    
+    <div class="copyright-section">
+      <p class="copyright-text">© 2025 Paris & Bea. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- FOOTER SCRIPT (logo, mail, etc.) -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    loadFooterData();
+  });
+
+  async function loadFooterData() {
+    try {
+      const res = await fetch('/api/home');
+      const data = await res.json();
+
+      // FOOTER
+      const footer = document.querySelector('.footer');
+      footer.style.backgroundColor = data.color03;
+
+      // LOGO del footer
+      const footerLogo = document.getElementById('footerLogo');
+      footerLogo.src = data.logo;
+      footerLogo.alt = `Paris & Bea Footer Logo - ${data.nombre}`;
+
+      // Enlaces del footer
+      const footerMailLink = document.getElementById('footerMailLink');
+      footerMailLink.href = `mailto:${data.mail}`;
+      document.getElementById('footerMailText').textContent = data.mail;
+
+      const footerPhoneLink = document.getElementById('footerPhoneLink');
+      footerPhoneLink.href = `tel:${data.telefono.replace(/\s+/g, '')}`;
+      document.getElementById('footerPhoneLabel').textContent = data.telefono;
+
+      const footerWhatsAppLink = document.getElementById('footerWhatsAppLink');
+      footerWhatsAppLink.href = `https://wa.me/${data.telefono.replace(/\s+/g, '')}`;
+
+      const footerInstagramLink = document.getElementById('footerInstagramLink');
+      footerInstagramLink.href = data.instagram;
+
+      // Footer - facebook
+      const footerFacebookLink = document.getElementById('footerFacebookLink');
+      footerFacebookLink.href = data.facebook;
+
+      // Ajuste de color de texto según el color03
+      const brightness = calculateBrightness(hexToRgb(data.color03));
+      const footerElements = document.querySelectorAll('.footer-link, .footer-section h3, .copyright-text');
+      const iconElements = document.querySelectorAll('.footer .material-icons, .footer-icon');
+      if (brightness < 128) {
+        footerElements.forEach(el => el.classList.add('light-text'));
+        iconElements.forEach(el => el.classList.add('light-icon'));
+        document.documentElement.style.setProperty('--footer-card-bg', 'rgba(255, 255, 255, 0.1)');
+        document.documentElement.style.setProperty('--footer-hover-color', '#ffffff');
+      } else {
+        document.documentElement.style.setProperty('--footer-card-bg', 'rgba(0, 0, 0, 0.05)');
+        document.documentElement.style.setProperty('--footer-hover-color', '#910a60');
+      }
+    } catch (error) {
+      console.error('Error en loadFooterData:', error);
+    }
+  }
+
+  // Utilidades para calcular el brillo
+  function hexToRgb(hex) {
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
+
+  function calculateBrightness(rgb) {
+    return (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+  }
+</script>
+</html>

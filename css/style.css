@@ -1,0 +1,797 @@
+/* Reseteo y configuración básica */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --footer-card-bg: rgba(0, 0, 0, 0.05);
+  --footer-hover-color: #add1c5;
+  --transition-speed: 0.3s ease;
+}
+
+body {
+  /* Por defecto Poppins, se sobreescribe con la tipografía de la BD en runtime */
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  /* El color de fondo y texto se definen dinámicamente con JS (color01, textos_color) */
+}
+
+/**********************************
+ *  SLIDER (del index) 
+ **********************************/
+.slider-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  transition: height 0.5s ease;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+.slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 820px) {
+  .slider-container {
+    height: 100vh;
+  }
+}
+
+/**********************************
+ * LOGO DEL INDEX (ANIMACIÓN)
+ **********************************/
+.logo-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 999;
+  transform: translateX(-250%);
+  animation: slideIn 1.5s forwards ease;
+  animation-delay: 4s;
+}
+
+.logo-container2 {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 999;
+  transform: translateX(-250%);
+  animation: slideIn 1.5s forwards ease;
+}
+
+.logo {
+  width: 40%;
+  display: block;
+}
+
+@media (max-width: 820px) {
+  .logo {
+    width: 50%;
+  }
+  .logo-container {
+    top: 10px;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-250%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/**********************************
+ * FOOTER
+ **********************************/
+.footer {
+  /* Se usa color03 dinámicamente en runtime */
+  background-color: #f8f8f8; /* fallback */
+  padding: 0;
+  position: relative;
+  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.footer-logo-container {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.footer-logo {
+  width: 180px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.1));
+  transition: transform var(--transition-speed);
+}
+
+.footer-logo:hover {
+  transform: translateY(-5px);
+}
+
+/* Enlaces generales del footer */
+.footer-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  font-weight: 400;
+  transition: color var(--transition-speed), transform var(--transition-speed);
+  font-size: 1rem;
+  margin-bottom: 12px;
+  padding: 8px 0;
+  border-radius: 4px;
+}
+
+.footer-link:hover {
+  color: var(--footer-hover-color);
+  transform: translateX(5px);
+}
+
+.footer-link .material-icons {
+  font-size: 20px;
+  margin-right: 10px;
+  transition: transform var(--transition-speed);
+}
+
+.footer-link:hover .material-icons {
+  transform: scale(1.2);
+}
+
+.footer-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  margin-right: 10px;
+  transition: transform var(--transition-speed);
+}
+
+.footer-link:hover .footer-icon {
+  transform: scale(1.2);
+}
+
+.footer-link-text {
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
+.footer-phone-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* Modificamos esta clase para que el número esté siempre visible */
+.phone-label {
+  margin-left: 8px;
+  font-size: 0.95rem;
+  color: #333;
+  transition: opacity var(--transition-speed);
+  opacity: 1;
+}
+
+/* Se elimina la regla que lo ocultaba al focus
+   y también la del media query que lo ponía display: none */
+
+/**********************************
+ *  NUEVAS CLASES PARA PÁGINAS EXTRAS
+ **********************************/
+
+/* Contenedor del header-logo en páginas de texto */
+.header-logo-container {
+  text-align: center;
+  padding: 1.5rem 0;
+}
+
+/* Cabecera superior con un fondo (color02) y color de texto (titulos_color) */
+.page-header {
+  text-align: center;
+  padding: 2rem 1rem;
+  margin-bottom: 2rem;
+  margin-top: 8rem;
+}
+
+/* Sección principal de contenido.
+   color02 se asigna dinámicamente como fondo,
+   textos_color para el texto.
+*/
+.content-section {
+  max-width: 900px;
+  margin: auto;
+  padding: 2rem 4rem;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 820px) {
+  .content-section {
+    padding: 2rem 2rem;
+    margin: 10px;
+    margin-bottom: 30px;
+  }
+}
+
+/* Títulos dentro del content-section */
+.content-section h2 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  /* titulos_color dinámico */
+}
+
+.content-section p,
+.content-section ul,
+.content-section li,
+.content-section ol {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* Listas con más margen izquierdo */
+.content-section ul,
+.content-section ol {
+  margin-left: 1.5rem;
+}
+
+.content-section li {
+  list-style-position: outside;
+}
+
+/**********************************
+ *  FOOTER - Tarjetas
+ **********************************/
+.footer-sections {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.footer-section {
+  background-color: var(--footer-card-bg);
+  border-radius: 12px;
+  padding: 25px;
+  flex: 1;
+  min-width: 280px;
+  transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.footer-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.footer-section h3 {
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  color: #333;
+  position: relative;
+  padding-bottom: 10px;
+  text-align: left;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.footer-section h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background-color: var(--footer-hover-color);
+  border-radius: 2px;
+}
+
+.footer-links-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Sección de copyright */
+.copyright-section {
+  text-align: center;
+  padding-top: 20px;
+  margin-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.copyright-text {
+  font-size: 0.85rem;
+  color: #666;
+  letter-spacing: 0.5px;
+}
+
+/* Enlaces de redes sociales */
+.social-links {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.social-link {
+  margin-bottom: 10px;
+}
+
+/* Adaptación para fondos oscuros */
+.light-text {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.light-icon {
+  filter: brightness(0) invert(1);
+}
+
+.light-text:hover {
+  color: #ffffff !important;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 820px) {
+  .footer-container {
+    padding: 30px 15px;
+  }
+  
+  .footer-sections {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .footer-section {
+    min-width: 100%;
+    padding: 20px;
+  }
+  
+  /* Se elimina la regla que escondía el .phone-label en dispositivos pequeños */
+  
+  .footer-logo {
+    width: 150px;
+  }
+  
+  .footer-section h3 {
+    text-align: center;
+  }
+  
+  .footer-section h3::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .footer-links-container {
+    align-items: center;
+  }
+  
+  .footer-link {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .footer-link:hover {
+    transform: translateX(0) translateY(-3px);
+  }
+}
+
+/* Animaciones para el footer */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer-section {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.footer-section:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.copyright-section {
+  animation: fadeInUp 0.6s ease-out forwards;
+  animation-delay: 0.4s;
+}
+
+/* ---------- BANNER FULL-WIDTH ENTRE SLIDERS ---------- */
+.wallpaper-banner{
+  width:100%;
+  overflow:hidden;
+}
+
+/* por defecto, móvil: la imagen ocupa todo */
+.wallpaper-img{
+  max-width:90%;
+  border-radius: 20px;
+  height:auto;
+  display:block;
+  margin: auto;
+  margin-top: 40px;
+}
+
+/* sobremesa: centra y limita al 60 % */
+@media (min-width:820px){
+  .wallpaper-banner{
+    display:flex;
+    justify-content:center;   /* centra el hijo directo */
+  }
+  .wallpaper-banner picture{
+    width:70%;                /* << aquí va el 60 % */
+    display:block;            /* ocupa su propio bloque */
+  }
+  .wallpaper-img{
+    width:100%;               /* llena el 60 % del picture */
+  }
+}
+
+/* ---------- SERVICIOS (fichas) ---------- */
+.servicios-wrapper{
+  width:100%;
+  padding:60px 0 40px;
+  background:#fff;
+  overflow:hidden;
+}
+
+.servicios-swiper{
+  width:100%;
+  max-width:1750px;      /* algo más de aire en sobremesa */
+  margin:0 auto;
+}
+
+.servicios-swiper .swiper-slide{
+  display:flex;                /* centra la tarjeta */
+  justify-content:center;
+  overflow:visible;
+}
+
+.servicios-card{
+  width:clamp(400px,11vw,240px); 
+  aspect-ratio:1 / 1;              
+  border-radius:14px;
+  overflow:hidden;
+  position:relative;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+  transition:filter .25s ease, box-shadow .25s ease;
+}
+
+/* 2) móvil full-width */
+@media (max-width:640px){
+  .servicios-card{
+    width:  90vw;
+    height: 90vw;
+  }
+}
+
+.servicios-card:hover{
+  opacity: 0.8;                      
+  box-shadow:0 6px 20px rgba(0,0,0,.12);         /* sombra un poco más marcada (opcional) */
+}
+
+.servicios-card img{
+  width:100%;height:100%;object-fit:cover;
+}
+
+.servicios-card span{
+  position:absolute;left:0;right:0;bottom:0;
+  padding:6px 10px;
+  background:rgba(0,0,0,.55);
+  color:#fff;font-size:.9rem;
+  text-align:center;
+  backdrop-filter:blur(2px);
+}
+
+/* móvil: ficha casi de ancho completo (90 vw) */
+@media(max-width:640px){
+  .servicios-card{
+    width:90vw;
+    height:90vw;
+  }
+}
+
+/* flechas visibles solo cuando hay < 992 px */
+@media(min-width:992px){
+  .swiper-button-prev,.swiper-button-next{display:none;}
+}
+
+/* sobremesa ≥1280 px → fichas ~2× más grandes, siempre cuadradas */
+@media (min-width:920px){
+  .servicios-card{
+    width:clamp(280px,18vw,420px);  /* 280 – 420 px de lado */
+  }
+}
+
+/* -------- Flechas del carrusel de servicios -------- */
+.servicios-wrapper .swiper-button-prev,
+.servicios-wrapper .swiper-button-next{
+  color:#5b5b5b;
+}
+
+/* ---------- MODAL SERVICIO ---------- */
+.modal-servicio[hidden]{ display:none; }
+
+.modal-servicio{
+  position:fixed; inset:0;
+  display:flex; justify-content:center; align-items:center;
+  z-index:10000;
+}
+
+.modal-backdrop{
+  position:absolute; inset:0;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(2px);
+}
+
+.modal-card{
+  position:relative;
+  width:min(92%,620px);
+  max-height:90vh;
+  overflow-y:auto;
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 8px 40px rgba(0,0,0,.25);
+  padding:30px 28px 40px;
+  animation:modalIn .4s ease;
+}
+
+@keyframes modalIn{
+  from{ transform:translateY(30px); opacity:0; }
+  to{   transform:translateY(0);    opacity:1; }
+}
+
+.modal-close{
+  position:absolute; top:14px; right:20px;
+  font-size:1.8rem; line-height:1; cursor:pointer;
+  background:transparent; border:none; color:#666;
+  transition:color .3s;
+}
+.modal-close:hover{ color:#000; }
+
+.modal-logo{
+  width:140px; height:auto; display:block; margin:0 auto 22px;
+}
+
+.modal-img{
+  width:100%;
+  max-height:45vh;          /* nunca pasa de un 45 % de la ventana */
+  object-fit:cover;         /* recorta, no deforma */
+  border-radius:14px;
+  box-shadow:0 4px 16px rgba(0,0,0,.12);
+  margin-bottom:24px;
+}
+@media (min-width:820px){
+  .modal-img{ max-height:320px; }   /* escritorio */
+}
+
+.modal-title{
+  font-size:1.6rem; text-align:center;
+  margin-bottom:14px; color:#222;
+}
+
+.modal-descripcion{
+  font-size:1.05rem; margin-bottom:16px; color:#444;
+}
+
+.modal-detalle{
+  font-size:1rem; margin-bottom:22px; color:#555;
+  white-space:pre-line;              /* respeta saltos de línea */
+}
+
+.modal-extra{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+
+.modal-chip{
+  background:#eee; color:#333;
+  padding:6px 14px; border-radius:50px;
+  font-weight:600; font-size:.9rem;
+}
+
+.chip-price{ background:#5b5b5b; color:#fff; }
+
+/* ---------- PROFESIONALES dentro del modal ---------- */
+.modal-pros{ margin:28px 0 22px; }
+
+.pros-title{
+  font-size:1.15rem;
+  text-align:center;
+  margin-bottom:18px;
+  color:#222;
+  font-weight:600;
+}
+
+.pros-list{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.pro-item{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  padding:14px 16px;
+  background:#f8f8f8;
+  border-radius:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+
+.pro-name{
+  font-weight:600;
+  color:#111;
+}
+
+.pro-field{              /* resto de líneas */
+  font-size:.9rem;
+  color:#555;
+}
+
+.pro-mail{
+  color:#5b5b5b;
+  font-weight:500;
+  text-decoration:none;
+}
+
+.pro-mail:hover{ text-decoration:underline; }
+
+/* ---- profesionales con avatar + iconos -------------- */
+.pro-item{
+  display:flex; gap:14px;
+  padding:14px 16px;
+  background:#f8f8f8; border-radius:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+
+.pro-avatar{
+  flex:0 0 150px;           /* tamaño fijo */
+  width:150px; height:150px;
+  border-radius:50%;
+  object-fit:cover;
+  box-shadow:0 0 0 2px #fff, 0 0 6px rgba(0,0,0,.1);
+}
+
+.pro-data{ display:flex; flex-direction:column; gap:4px; }
+
+.pro-ic{                    /* icono en línea */
+  font-size:1rem;
+  vertical-align:middle;
+  margin-right:4px;
+  color:5b5b5b;            /* tono corporativo */
+}
+
+.pro-name{ font-weight:600; color:#111; }
+
+.pro-field{ font-size:.9rem; color:#555; display:inline-flex; align-items:center; }
+
+.pro-mail{ font-size:.9rem; color:5b5b5b; font-weight:500; text-decoration:none; }
+.pro-mail:hover{ text-decoration:underline; }
+
+/* ---------- Bonos en el modal ---------- */
+.modal-bonos{
+  margin-top:32px;
+}
+.modal-bonos-title{
+  font-size:1.25rem;
+  font-weight:600;
+  text-align:center;
+  margin-bottom:18px;
+  color:#333;
+}
+.modal-bonos-list{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+/* tarjeta bono */
+.bono-card{
+  background:#f7f7f7;
+  border-radius:14px;
+  padding:20px 22px;
+  display:flex;
+  align-items:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+.bono-info h4{
+  margin:0 0 8px;
+  font-size:1.05rem;
+  color:#111;
+}
+.bono-info p{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin:4px 0;
+  font-size:.95rem;
+  color:#555;
+}
+.bono-info .material-icons{
+  font-size:18px;
+  color:#5b5b5b;            /* color corporativo */
+}
+.bono-desc{
+  font-weight:600;
+  color:#cf102d;            /* tono “oferta” */
+}
+.bono-obs{
+  font-size:.85rem;
+  color:#777;
+  margin-top:6px;
+}
+
+/* ---------- SECCIONES DENTRO DEL MODAL ---------- */
+.modal-block{margin:48px 0 32px}
+.block-title{
+  font-size:1.35rem;font-weight:600;text-align:center;
+  margin-bottom:24px;position:relative;display:inline-block
+}
+.block-title::after{
+  content:'';position:absolute;left:0;right:0;bottom:-6px;
+  width:60%;height:3px;margin:auto;background:#5b5b5b;border-radius:2px
+}
+
+/* ---------- EQUIPO ---------- */
+.pros-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:28px;
+}
+.pro-item{
+  display:flex;gap:18px;padding:20px;border-radius:18px;
+  background:var(--footer-card-bg);backdrop-filter:blur(8px);
+  box-shadow:0 2px 8px rgba(0,0,0,.06);transition:transform .25s ease
+}
+.pro-item:hover{transform:translateY(-4px)}
+.pro-data{flex:1;display:flex;flex-direction:column;gap:4px;font-size:.93rem}
+.pro-name{font-weight:600;display:flex;align-items:center;gap:6px}
+.pro-field,.pro-mail{display:flex;align-items:center;gap:6px;color:#555}
+.pro-ic{font-size:18px;color:#5b5b5b}
+
+/* ---------- BONOS ---------- */
+.bonos-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:28px;margin-top:8px
+}
+.bono-card{
+  padding:22px;border-radius:18px;background:#f7f7f7;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .25s ease
+}
+.bono-card:hover{transform:translateY(-4px)}
+.bono-info h4{font-size:1.05rem;font-weight:600;margin-bottom:12px}
+.bono-info p{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:.93rem}
+.bono-info .material-icons{font-size:20px;color:#5b5b5b}
+.bono-desc{color:#008000;font-weight:500}
+.bono-obs{font-size:.85rem;line-height:1.4;color:#555;margin-top:8px}
