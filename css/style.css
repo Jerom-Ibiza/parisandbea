@@ -1362,3 +1362,30 @@ body {
   line-height: 1.55;
   white-space: pre-line;
 }
+
+/* -------- navegación modal producto -------- */
+.modal-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0;
+  line-height: 1;
+  font-size: 2rem;
+  color: #666;
+  cursor: pointer;
+  transition: color .3s;
+}
+
+.modal-nav-btn:hover {
+  color: #000;
+}
+
+.modal-prev {
+  left: 10px;
+}
+
+.modal-next {
+  right: 10px;
+}

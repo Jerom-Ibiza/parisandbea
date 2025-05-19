@@ -64,7 +64,12 @@
 
         <div class="modal-card">
             <button class="modal-close" aria-label="Cerrar" data-close>&times;</button>
-
+            <button id="prevProduct" class="modal-nav-btn modal-prev" aria-label="Anterior">
+                <span class="material-icons">chevron_left</span>
+            </button>
+            <button id="nextProduct" class="modal-nav-btn modal-next" aria-label="Siguiente">
+                <span class="material-icons">chevron_right</span>
+            </button>
             <!-- imagen + marca / nombre -->
             <img id="prodImg" class="prod-img" src="#" alt="" loading="lazy">
             <h2 id="prodNombre" class="prod-title"></h2>
@@ -240,6 +245,7 @@
         async function loadProducts() {
             try {
                 const productos = await (await fetch('/api/productos/public')).json();
+                productList = productos;
                 const section = document.getElementById('productosSection');
                 section.innerHTML = '';
                 const groups = new Map();
@@ -291,6 +297,9 @@
         }
 
         /* === refs modal producto === */
+        let productList = [];
+        let currentProductIndex = -1;
+
         const modalProd = document.getElementById('modalProducto');
         const prodImg = document.getElementById('prodImg');
         const prodNombre = document.getElementById('prodNombre');
@@ -313,10 +322,32 @@
         const prodDosis = document.getElementById('prodPosologia');
 
         const prodPrecio = document.getElementById('prodPrecio');
+        const btnPrev = document.getElementById('prevProduct');
+        const btnNext = document.getElementById('nextProduct');
 
+        function showPrevProduct() {
+            if (!productList.length) return;
+            currentProductIndex = (currentProductIndex - 1 + productList.length) % productList.length;
+            openProductModal(productList[currentProductIndex].slug);
+        }
+
+        function showNextProduct() {
+            if (!productList.length) return;
+            currentProductIndex = (currentProductIndex + 1) % productList.length;
+            openProductModal(productList[currentProductIndex].slug);
+        }
+
+        btnPrev.addEventListener('click', e => { e.stopPropagation(); showPrevProduct(); });
+        btnNext.addEventListener('click', e => { e.stopPropagation(); showNextProduct(); });
+        document.addEventListener('keydown', e => {
+            if (modalProd.hidden) return;
+            if (e.key === 'ArrowLeft') { e.preventDefault(); showPrevProduct(); }
+            else if (e.key === 'ArrowRight') { e.preventDefault(); showNextProduct(); }
+        });
         /* -------- abrir modal -------- */
         async function openProductModal(slug) {
             try {
+                currentProductIndex = productList.findIndex(p => p.slug === slug);
                 const p = await (await fetch('/api/productos/public/' + slug)).json();
 
                 /* cabecera */
