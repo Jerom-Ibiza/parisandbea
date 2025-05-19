@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const sharp = require('sharp'); 
+const sharp = require('sharp');
 const pool = require('../database');
 
 // Directorios permitidos (con subcarpetas incluidas)
@@ -14,6 +14,7 @@ const allowedFolders = [
   'images/recursos',
   'images/servicios',
   'images/profesionales',
+  'images/productos',
   'tmp',
   'attachments_consulta'
 ];
@@ -23,15 +24,15 @@ exports.listFiles = async (req, res) => {
     const folder = req.params.folder;              // ej. "attachments_consulta"
 
     if (!allowedFolders.includes(folder))
-      return res.status(400).json({ error:'Carpeta no permitida' });
+      return res.status(400).json({ error: 'Carpeta no permitida' });
 
     /* ───────────── 1)  TODAS LAS CARPETAS NORMALES ───────────── */
     if (folder !== 'attachments_consulta') {
       const folderPath = path.join(__dirname, '..', folder);
-      const items      = await fs.promises.readdir(folderPath);
-      const files      = (await Promise.all(
-        items.map(async it=>{
-          const stats = await fs.promises.stat(path.join(folderPath,it));
+      const items = await fs.promises.readdir(folderPath);
+      const files = (await Promise.all(
+        items.map(async it => {
+          const stats = await fs.promises.stat(path.join(folderPath, it));
           return stats.isFile() ? it : null;
         })
       )).filter(Boolean);
@@ -48,16 +49,16 @@ exports.listFiles = async (req, res) => {
     `);
 
     /* Devolvemos objeto extendido */
-    const files = rows.map(r=>({
-      filename : r.filename,
-      paciente : r.paciente,
-      filepath : r.filepath            // nos sirve para DELETE múltiple
+    const files = rows.map(r => ({
+      filename: r.filename,
+      paciente: r.paciente,
+      filepath: r.filepath            // nos sirve para DELETE múltiple
     }));
     res.json({ files });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error:'Error al leer la carpeta' });
+    res.status(500).json({ error: 'Error al leer la carpeta' });
   }
 };
 
@@ -66,13 +67,13 @@ exports.uploadFiles = async (req, res) => {
 
   /* ───────── carpetas con tratamiento de imagen ───────── */
   const imageFolders = {
-    'images/servicios'     : { size:1200 },
-    'images/profesionales' : { size:300  }
+    'images/servicios': { size: 1200 },
+    'images/profesionales': { size: 300 }
   };
 
   if (imageFolders[folder]) {
     if (!req.files?.length)
-      return res.status(400).json({ error:'No se recibió ningún archivo' });
+      return res.status(400).json({ error: 'No se recibió ningún archivo' });
 
     const { size } = imageFolders[folder];
     const outFiles = [];
@@ -86,13 +87,13 @@ exports.uploadFiles = async (req, res) => {
         }
 
         /* 2) salida .webp */
-        const base    = path.parse(file.filename).name;
+        const base = path.parse(file.filename).name;
         const outName = `${base}.webp`;
         const outPath = path.join(path.dirname(file.path), outName);
 
         /* 3) convertir + redimensionar */
         await sharp(file.path)
-          .resize(size, size, { fit:'cover' })
+          .resize(size, size, { fit: 'cover' })
           .toFormat('webp')
           .toFile(outPath);
 
@@ -103,8 +104,8 @@ exports.uploadFiles = async (req, res) => {
       }
 
       return res.json({
-        message:`Imágenes convertidas a ${size}×${size} webp`,
-        files  : outFiles
+        message: `Imágenes convertidas a ${size}×${size} webp`,
+        files: outFiles
       });
 
     } catch (err) {
@@ -116,7 +117,7 @@ exports.uploadFiles = async (req, res) => {
   /* ───────── resto de carpetas ───────── */
   return res.json({
     message: 'Archivos subidos correctamente',
-    files  : req.files?.map(f=>f.filename) || []
+    files: req.files?.map(f => f.filename) || []
   });
 };
 
@@ -145,66 +146,66 @@ exports.renameFile = (req, res) => {
   });
 };
 
-exports.deleteFile = async (req,res)=>{
+exports.deleteFile = async (req, res) => {
   const { folder, filename } = req.params;
 
   if (!allowedFolders.includes(folder))
-    return res.status(400).json({ error:'Carpeta no permitida' });
+    return res.status(400).json({ error: 'Carpeta no permitida' });
 
   if (!filename)
-    return res.status(400).json({ error:'Falta filename' });
+    return res.status(400).json({ error: 'Falta filename' });
 
-  try{
+  try {
     /* 1. borrar fichero físico */
-    const filePath = path.join(__dirname,'..',folder, filename);
+    const filePath = path.join(__dirname, '..', folder, filename);
     await fs.promises.unlink(filePath);
 
     /* 2. si es attachments_consulta -> borrar fila en BD */
-    if (folder === 'attachments_consulta'){
-      const relPath = path.join(folder, filename).replace(/\\/g,'/');
+    if (folder === 'attachments_consulta') {
+      const relPath = path.join(folder, filename).replace(/\\/g, '/');
       await pool.query(
         'DELETE FROM patient_files WHERE filepath = ? LIMIT 1',
-        [ relPath ]
+        [relPath]
       );
     }
 
-    res.json({ message:'Archivo eliminado correctamente' });
+    res.json({ message: 'Archivo eliminado correctamente' });
 
-  }catch(err){
+  } catch (err) {
     console.error(err);
-    res.status(500).json({ error:'Error al eliminar el archivo' });
+    res.status(500).json({ error: 'Error al eliminar el archivo' });
   }
 };
 
-exports.deleteMultipleFiles = async (req,res)=>{
+exports.deleteMultipleFiles = async (req, res) => {
   const folder = req.params.folder;
-  const { files=[] } = req.body;
+  const { files = [] } = req.body;
 
   if (!allowedFolders.includes(folder))
-    return res.status(400).json({ error:'Carpeta no permitida' });
+    return res.status(400).json({ error: 'Carpeta no permitida' });
 
   if (!files.length)
-    return res.status(400).json({ error:'Array "files" vacío' });
+    return res.status(400).json({ error: 'Array "files" vacío' });
 
-  try{
+  try {
     /* 1. borrar ficheros */
-    await Promise.all(files.map(f=>fs.promises.unlink(
-      path.join(__dirname,'..',folder,f)
+    await Promise.all(files.map(f => fs.promises.unlink(
+      path.join(__dirname, '..', folder, f)
     )));
 
     /* 2. si procede, borrar filas BD */
-    if (folder === 'attachments_consulta'){
-      const rels = files.map(f=>path.join(folder,f).replace(/\\/g,'/'));
+    if (folder === 'attachments_consulta') {
+      const rels = files.map(f => path.join(folder, f).replace(/\\/g, '/'));
       await pool.query(
-        `DELETE FROM patient_files WHERE filepath IN (${rels.map(()=>'?').join(',')})`,
+        `DELETE FROM patient_files WHERE filepath IN (${rels.map(() => '?').join(',')})`,
         rels
       );
     }
 
-    res.json({ message:'Archivos eliminados correctamente' });
+    res.json({ message: 'Archivos eliminados correctamente' });
 
-  }catch(err){
+  } catch (err) {
     console.error(err);
-    res.status(500).json({ error:'Error al eliminar uno o más archivos' });
+    res.status(500).json({ error: 'Error al eliminar uno o más archivos' });
   }
 };

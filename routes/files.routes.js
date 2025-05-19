@@ -38,6 +38,7 @@ const allowedFolders = [
   'images/recursos',
   'images/servicios',
   'images/profesionales',
+  'images/productos',
   'tmp',
   'attachments_consulta'
 ];
