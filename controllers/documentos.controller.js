@@ -1,23 +1,23 @@
 const PDFDocument = require('pdfkit');
-const fs          = require('fs');
-const path        = require('path');
-const db          = require('../database');
-const pool = require('../database'); 
+const fs = require('fs');
+const path = require('path');
+const db = require('../database');
+const pool = require('../database');
 const { enviarConsentimiento } = require('../utils/viafirma');
 
 const CHUNK_MAX = 15_000;
 
 /**
- * Crea un borrador vac�o y devuelve su id_draft.
+ * Crea un borrador vac�o y devuelve su id_draft.
  * Body requerido: { tituloDocumento, opcionesJSON? }
  */
 exports.startDraft = async (req, res) => {
-  try{
+  try {
     const { tituloDocumento, opcionesJSON } = req.body;
     const id_profesional = req.session?.user?.id_profesional || req.body.profesionalId;
 
-    if(!tituloDocumento)    return res.status(400).json({ error:'Falta tituloDocumento' });
-    if(!id_profesional)     return res.status(400).json({ error:'Falta id_profesional' });
+    if (!tituloDocumento) return res.status(400).json({ error: 'Falta tituloDocumento' });
+    if (!id_profesional) return res.status(400).json({ error: 'Falta id_profesional' });
 
     const [result] = await pool.query(
       'INSERT INTO document_drafts SET ?',
@@ -25,27 +25,27 @@ exports.startDraft = async (req, res) => {
     );
 
     res.status(201).json({ draftId: result.insertId });
-  }catch(err){
+  } catch (err) {
     console.error(err);
-    res.status(500).json({ error:'Error al iniciar borrador' });
+    res.status(500).json({ error: 'Error al iniciar borrador' });
   }
 };
 
 /**
- * A�ade un fragmento a un borrador existente.
+ * A�ade un fragmento a un borrador existente.
  * Body requerido: { draftId, texto }
  */
 exports.appendChunk = async (req, res) => {
-  try{
+  try {
     let { draftId, texto } = req.body;
     draftId = Number(draftId);
-    if(!draftId || !texto) return res.status(400).json({ error:'draftId y texto son obligatorios' });
+    if (!draftId || !texto) return res.status(400).json({ error: 'draftId y texto son obligatorios' });
 
-    /* l�mite b�sico de tama�o */
-    if(texto.length > CHUNK_MAX)
+    /* l�mite b�sico de tama�o */
+    if (texto.length > CHUNK_MAX)
       texto = texto.slice(0, CHUNK_MAX);
 
-    /* calcula orden = �ltimo+1 */
+    /* calcula orden = �ltimo+1 */
     const [[{ next }]] = await pool.query(
       'SELECT IFNULL(MAX(orden),0)+1 AS next FROM document_chunks WHERE id_draft = ?',
       [draftId]
@@ -56,10 +56,10 @@ exports.appendChunk = async (req, res) => {
       { id_draft: draftId, orden: next, texto }
     );
 
-    res.json({ ok:true, orden: next });
-  }catch(err){
+    res.json({ ok: true, orden: next });
+  } catch (err) {
     console.error(err);
-    res.status(500).json({ error:'Error al a�adir chunk' });
+    res.status(500).json({ error: 'Error al a�adir chunk' });
   }
 };
 
@@ -68,32 +68,32 @@ exports.appendChunk = async (req, res) => {
  * y elimina el borrador. Body requerido: { draftId }
  */
 exports.finalizeDraft = async (req, res) => {
-  try{
+  try {
     const draftId = Number(req.body.draftId);
-    if(!draftId) return res.status(400).json({ error:'draftId requerido' });
+    if (!draftId) return res.status(400).json({ error: 'draftId requerido' });
 
     /* cabecera + opciones */
     const [[draft]] = await pool.query(
       'SELECT * FROM document_drafts WHERE id_draft = ?',
       [draftId]
     );
-    if(!draft) return res.status(404).json({ error:'Borrador no encontrado' });
+    if (!draft) return res.status(404).json({ error: 'Borrador no encontrado' });
 
     /* chunks en orden */
     const [rows] = await pool.query(
       'SELECT texto FROM document_chunks WHERE id_draft = ? ORDER BY orden',
       [draftId]
     );
-    if(!rows.length) return res.status(400).json({ error:'Borrador vac�o' });
+    if (!rows.length) return res.status(400).json({ error: 'Borrador vac�o' });
 
     const contenido = rows.map(r => r.texto);
 
-    /* armamos payload reutilizando tu funci�n existente */
+    /* armamos payload reutilizando tu funci�n existente */
     req.body = {
-      tituloDocumento : draft.titulo,
+      tituloDocumento: draft.titulo,
       contenido,
       ...JSON.parse(draft.opciones_json || '{}'),
-      profesionalId   : draft.id_profesional
+      profesionalId: draft.id_profesional
     };
 
     /* delegamos en generateDocument y esperamos su JSON */
@@ -104,15 +104,15 @@ exports.finalizeDraft = async (req, res) => {
       res.json(data);                     // devolvemos al cliente
     };
 
-    // usamos la l�gica ya existente
+    // usamos la l�gica ya existente
     await exports.generateDocument(
       { ...req, body: req.body },
-      { json: mockSend, status: ()=>({json:mockSend}) }
+      { json: mockSend, status: () => ({ json: mockSend }) }
     );
 
-  }catch(err){
+  } catch (err) {
     console.error(err);
-    res.status(500).json({ error:'Error al finalizar borrador' });
+    res.status(500).json({ error: 'Error al finalizar borrador' });
   }
 };
 
@@ -133,8 +133,8 @@ exports.generateDocument = async (req, res) => {
       imagenes
     } = req.body;
 
-    if (!tituloDocumento) return res.status(400).json({ error:"Falta 'tituloDocumento'." });
-    if (!contenido)       return res.status(400).json({ error:"Falta 'contenido'." });
+    if (!tituloDocumento) return res.status(400).json({ error: "Falta 'tituloDocumento'." });
+    if (!contenido) return res.status(400).json({ error: "Falta 'contenido'." });
 
     /* helper: quita guiones largos que provocaban □ */
     const fixDash = str => typeof str === 'string'
@@ -144,68 +144,68 @@ exports.generateDocument = async (req, res) => {
     /* ───────────── 1. Fecha mostrada ───────────── */
     const hoy = new Date();
     const fechaMostrada = fechaDocumento ||
-      `${String(hoy.getDate()).padStart(2,'0')}/${String(hoy.getMonth()+1).padStart(2,'0')}/${hoy.getFullYear()}`;
+      `${String(hoy.getDate()).padStart(2, '0')}/${String(hoy.getMonth() + 1).padStart(2, '0')}/${hoy.getFullYear()}`;
 
     /* ───────────── 2. Datos corporativos ───────────── */
     const [homeRows] = await db.query('SELECT * FROM home ORDER BY id_home DESC LIMIT 1');
     const hd = homeRows[0] || {};
 
-    const centerCIF     = fixDash(hd.cif              || 'B12345678');
+    const centerCIF = fixDash(hd.cif || 'B12345678');
     const centerAddress = fixDash(hd.direccion_centro || 'C/ Ejemplo, nº 1. Ibiza.');
-    const centerMail    = fixDash(hd.mail             || 'info@parisandbea.es');
-    const titColor      = colorTitulo || hd.titulos_color       || '#aed3c1';
-    const datosColor    = colorDatos  || hd.texto_botones_color || '#000000';
-    const textoColor    = colorTexto  || '#000000';
+    const centerMail = fixDash(hd.mail || 'info@parisandbea.es');
+    const titColor = colorTitulo || hd.titulos_color || '#aed3c1';
+    const datosColor = colorDatos || hd.texto_botones_color || '#000000';
+    const textoColor = colorTexto || '#000000';
 
-    const fontBase  = hd.tipografia || 'Montserrat';
-    const regFont   = fs.existsSync(path.join(__dirname,'..','fonts',`${fontBase}-Regular.ttf`))
-      ? path.join(__dirname,'..','fonts',`${fontBase}-Regular.ttf`)
-      : path.join(__dirname,'..','fonts','Montserrat-Regular.ttf');
-    const boldFont  = fs.existsSync(path.join(__dirname,'..','fonts',`${fontBase}-Bold.ttf`))
-      ? path.join(__dirname,'..','fonts',`${fontBase}-Bold.ttf`)
-      : path.join(__dirname,'..','fonts','Montserrat-Bold.ttf');
+    const fontBase = hd.tipografia || 'Montserrat';
+    const regFont = fs.existsSync(path.join(__dirname, '..', 'fonts', `${fontBase}-Regular.ttf`))
+      ? path.join(__dirname, '..', 'fonts', `${fontBase}-Regular.ttf`)
+      : path.join(__dirname, '..', 'fonts', 'Montserrat-Regular.ttf');
+    const boldFont = fs.existsSync(path.join(__dirname, '..', 'fonts', `${fontBase}-Bold.ttf`))
+      ? path.join(__dirname, '..', 'fonts', `${fontBase}-Bold.ttf`)
+      : path.join(__dirname, '..', 'fonts', 'Montserrat-Bold.ttf');
 
     /* ───────────── 3. Crear PDF ───────────── */
-    const doc     = new PDFDocument({ size:'A4', margin:50 });
+    const doc = new PDFDocument({ size: 'A4', margin: 50 });
     const pdfName = nombreArchivo || `Documento_${Date.now()}.pdf`;
-    const pdfPath = path.join(__dirname,'..','documentos',pdfName);
-    const stream  = fs.createWriteStream(pdfPath);
+    const pdfPath = path.join(__dirname, '..', 'documentos', pdfName);
+    const stream = fs.createWriteStream(pdfPath);
     doc.pipe(stream);
 
-    doc.registerFont('Reg',  regFont);
+    doc.registerFont('Reg', regFont);
     doc.registerFont('Bold', boldFont);
     doc.font('Reg');
 
     /* logo opcional */
-    const logo = path.join(__dirname,'..','images','recursos','parisandbealogo.png');
-    if (fs.existsSync(logo)) doc.image(logo, 440, 40, { width:100 });
+    const logo = path.join(__dirname, '..', 'images', 'recursos', 'parisandbealogo.png');
+    if (fs.existsSync(logo)) doc.image(logo, 440, 40, { width: 100 });
 
     /* cabecera */
     doc.fontSize(12).fillColor(datosColor);
     doc.font('Bold')
-       .text(`NIF/CIF: ${centerCIF}`, 340, 100, { align:'right' })
-       .moveDown(0.5)
-       .font('Reg')
-       .text(centerAddress, 340, doc.y, { align:'right', width:220 })
-       .text(`Fecha: ${fechaMostrada}`, 50, Math.max(doc.y,140));
+      .text(`NIF/CIF: ${centerCIF}`, 340, 100, { align: 'right' })
+      .moveDown(0.5)
+      .font('Reg')
+      .text(centerAddress, 340, doc.y, { align: 'right', width: 220 })
+      .text(`Fecha: ${fechaMostrada}`, 50, Math.max(doc.y, 140));
 
     /* línea separadora */
     doc.moveDown(1)
-       .strokeColor(titColor).lineWidth(1)
-       .moveTo(50, doc.y).lineTo(545, doc.y).stroke()
-       .moveDown(1);
+      .strokeColor(titColor).lineWidth(1)
+      .moveTo(50, doc.y).lineTo(545, doc.y).stroke()
+      .moveDown(1);
 
     /* ───────────── 3 bis. Título dinámico con fondo 🔄 ───────────── */
-    const rectWidth  = doc.page.width - doc.page.margins.left - doc.page.margins.right;
-    const rectX      = doc.page.margins.left;
+    const rectWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+    const rectX = doc.page.margins.left;
     const rectYStart = doc.y;                         // posición actual
-    const radius     = 8;
-    const paddingY   = 10;                            // padding vertical
+    const radius = 8;
+    const paddingY = 10;                            // padding vertical
 
     doc.font('Bold').fontSize(14);                    // mismas características que usaremos
     const textHeight = doc.heightOfString(
       fixDash(tituloDocumento),
-      { width: rectWidth, align:'center' }
+      { width: rectWidth, align: 'center' }
     );
     const rectHeight = textHeight + paddingY * 2;     // contenedor dinámico
 
@@ -216,18 +216,18 @@ exports.generateDocument = async (req, res) => {
 
     // Dibujar rectángulo de fondo corporativo
     doc.save()
-       .roundedRect(rectX, rectYStart, rectWidth, rectHeight, radius)
-       .fill(titColor)
-       .restore();
+      .roundedRect(rectX, rectYStart, rectWidth, rectHeight, radius)
+      .fill(titColor)
+      .restore();
 
     // Escribir título (blanco, centrado)
     doc.fillColor('#FFFFFF')
-       .text(
-         fixDash(tituloDocumento),
-         rectX,
-         rectYStart + paddingY,
-         { width: rectWidth, align:'center' }
-       );
+      .text(
+        fixDash(tituloDocumento),
+        rectX,
+        rectYStart + paddingY,
+        { width: rectWidth, align: 'center' }
+      );
 
     // Situar el cursor debajo del contenedor
     doc.y = rectYStart + rectHeight + 20;
@@ -235,35 +235,35 @@ exports.generateDocument = async (req, res) => {
     /* ───────────── 4. Contenido & texto                       ─── */
     doc.font('Reg').fontSize(12).fillColor(textoColor);
 
-    const pageH   = doc.page.height;
+    const pageH = doc.page.height;
     const botMarg = doc.page.margins.bottom;
     const ensureRoom = extra => {
       if (doc.y + extra > pageH - botMarg) doc.addPage();
     };
 
     /* texto (array o string) – ahora justificado 🔄 */
-    (Array.isArray(contenido) ? contenido : [contenido]).forEach(p=>{
+    (Array.isArray(contenido) ? contenido : [contenido]).forEach(p => {
       if (typeof p !== 'string') return;
       doc.text(
         fixDash(p.trim()),
-        { align:'justify', lineGap:4 }
+        { align: 'justify', lineGap: 4 }
       ).moveDown();
       ensureRoom(0);
     });
 
     /* ───────────── 5. Imágenes opcionales ───────────── */
-    const imgs   = Array.isArray(imagenes) ? imagenes : [];
-    const MAX_W  = 460, MAX_H = 520;
-    imgs.forEach(rel=>{
-      const abs = path.join(__dirname,'..', rel.replace(/^[\\/]/,''));
+    const imgs = Array.isArray(imagenes) ? imagenes : [];
+    const MAX_W = 460, MAX_H = 520;
+    imgs.forEach(rel => {
+      const abs = path.join(__dirname, '..', rel.replace(/^[\\/]/, ''));
       if (!fs.existsSync(abs)) return;
 
-      let { width, height } = (()=>{try{return sizeOf(abs);}catch{return{width:MAX_W,height:MAX_H};}})();
-      const scale = Math.min(MAX_W/width, MAX_H/height);
-      width  *= scale; height *= scale;
+      let { width, height } = (() => { try { return sizeOf(abs); } catch { return { width: MAX_W, height: MAX_H }; } })();
+      const scale = Math.min(MAX_W / width, MAX_H / height);
+      width *= scale; height *= scale;
 
       ensureRoom(height + 20);
-      const x = (doc.page.width - width)/2;
+      const x = (doc.page.width - width) / 2;
       doc.image(abs, x, doc.y, { width }).moveDown();
     });
 
@@ -271,85 +271,100 @@ exports.generateDocument = async (req, res) => {
     doc.end();
     stream.on('finish', () =>
       res.json({
-        message:'Documento PDF generado correctamente',
-        pdfURL:`https://parisandbea.es/documentos/${pdfName}`
+        message: 'Documento PDF generado correctamente',
+        pdfURL: `https://parisandbea.es/documentos/${pdfName}`
       })
     );
     stream.on('error', () =>
-      res.status(500).json({ error:'Error al generar el PDF' })
+      res.status(500).json({ error: 'Error al generar el PDF' })
     );
 
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error:e.toString() });
+    res.status(500).json({ error: e.toString() });
   }
 };
 
-/**
- * Genera un consentimiento LOPD, lo guarda en /documentos/consentimientos
- * y lo envía a Viafirma para la firma biométrica del paciente.
- */
+/* ────────────────────────────────────────────────────────────────
+   1. GENERAR CONSENTIMIENTO INFORMADO (LOPD)
+   ---------------------------------------------------------------- */
 exports.generateConsentDocument = async (req, res) => {
   try {
-    /* ----------------------------- datos de entrada ----------------------------- */
+    /* 1.1  datos de entrada */
     const {
-      nombrePaciente,
-      dniPaciente,
-      emailPaciente,           
+      id_paciente,          // ← NUEVO  (recomendado)
       fechaDocumento,
-      nombreArchivo
-    } = req.body;
+      nombreArchivo         // opcional
+    } = req.body || {};
 
-    if (!nombrePaciente || !dniPaciente) {
-      return res
-        .status(400)
-        .json({ error: "Faltan datos del paciente (nombre o DNI)." });
+    /* 1.2  obtenemos datos del paciente directamente de BD
+            (solo nombre, apellidos, dni, email)               */
+    let paciente = {};
+    if (id_paciente) {
+      const [rows] = await db.query(
+        `SELECT id_paciente, nombre, apellidos, dni, email
+           FROM pacientes
+          WHERE id_paciente = ? LIMIT 1`,
+        [id_paciente]
+      );
+      if (!rows.length)
+        return res.status(404).json({ error: 'Paciente no encontrado.' });
+      paciente = rows[0];
     }
 
-    /* --------------------- ruta y stream para el PDF en disco ------------------- */
-    const defaultFileName = `Consentimiento_${Date.now()}.pdf`;
-    const pdfFileName     = nombreArchivo || defaultFileName;
-    const consentFolder   = path.join(__dirname, '..', 'documentos', 'consentimientos');
+    /* 1.3  aseguramos campos mínimos para el PDF                    */
+    const nombrePaciente = `${paciente.nombre || ''} ${paciente.apellidos || ''}`.trim();
+    const dniPaciente = paciente.dni || '—';
+    const emailPaciente = paciente.email || 'info@parisandbea.es';
+
+    if (!nombrePaciente || dniPaciente === '—') {
+      return res
+        .status(400)
+        .json({ error: 'Faltan datos del paciente (nombre o DNI).' });
+    }
+
+    /* 1.4  pseudónimo para nombre de archivo anónimo */
+    const pseudo = id_paciente
+      ? `PAC-${String(id_paciente).padStart(5, '0')}`
+      : `ANON-${Date.now()}`;
+    const defaultFileName = `${pseudo}_LOPD.pdf`;
+    const pdfFileName = nombreArchivo || defaultFileName;
+
+    /* 2. ruta y stream para el PDF en disco ----------------------- */
+    const consentFolder = path.join(__dirname, '..', 'documentos', 'consentimientos');
     if (!fs.existsSync(consentFolder)) fs.mkdirSync(consentFolder, { recursive: true });
     const pdfFilePath = path.join(consentFolder, pdfFileName);
 
-    const doc    = new PDFDocument({ size: 'A4', margin: 50 });
+    const doc = new PDFDocument({ size: 'A4', margin: 50 });
     const stream = fs.createWriteStream(pdfFilePath);
     doc.pipe(stream);
 
-    /* --------------------------- tipografías y logo ----------------------------- */
+    /* 3. tipografías y logo --------------------------------------- */
     const fontRegular = path.join(__dirname, '..', 'fonts', 'Raleway-Regular.ttf');
-    const fontBold    = path.join(__dirname, '..', 'fonts', 'Raleway-Bold.ttf');
-    if (fs.existsSync(fontRegular)) doc.registerFont('Raleway',      fontRegular);
-    if (fs.existsSync(fontBold))    doc.registerFont('Raleway-Bold', fontBold);
+    const fontBold = path.join(__dirname, '..', 'fonts', 'Raleway-Bold.ttf');
+    if (fs.existsSync(fontRegular)) doc.registerFont('Raleway', fontRegular);
+    if (fs.existsSync(fontBold)) doc.registerFont('Raleway-Bold', fontBold);
 
     const logoPath = path.join(__dirname, '..', 'images', 'recursos', 'parisandbealogo.png');
     if (fs.existsSync(logoPath)) {
       doc.image(logoPath, doc.page.width / 2 - 75, 40, { width: 150 });
     }
 
-    /* ------------------------ datos dinámicos de la BBDD ------------------------ */
+    /* 4. datos dinámicos de la BBDD (tabla home) ----------------- */
     const [homeRows] = await db.query('SELECT * FROM home ORDER BY id_home DESC LIMIT 1');
-    const home               = homeRows[0] || {};
-    const nombreResponsable   = home.responsable_datos       || 'PARIS AGUIRREZABALA ARMBRUSTER';
-    const cifResponsable      = home.cif_responsable_datos   || '51067638W';
-    const direccionCentro     = home.direccion_centro        || 'Carrer d’Atenes, 18. C.P. 07817. Sant Josep de sa Talaia, Illes Balears.';
-    const mailCentro          = home.mail                    || 'info@parisandbea.es';
+    const home = homeRows[0] || {};
+    const nombreResponsable = home.responsable_datos || 'PARIS AGUIRREZABALA ARMBRUSTER';
+    const cifResponsable = home.cif_responsable_datos || '51067638W';
+    const direccionCentro = home.direccion_centro || 'Carrer d’Atenes, 18. C.P. 07817. Sant Josep de sa Talaia, Illes Balears.';
+    const mailCentro = home.mail || 'info@parisandbea.es';
 
-    /* --------------------------- fecha mostrada --------------------------- */
+    /* 5. fecha mostrada en el documento -------------------------- */
     const hoy = new Date();
-    let fechaMostrada;
-    if (fechaDocumento) {
-      const [a, m, d] = fechaDocumento.split('-');
-      fechaMostrada   = `${d}-${m}-${a}`;
-    } else {
-      const dia  = String(hoy.getDate()).padStart(2, '0');
-      const mes  = String(hoy.getMonth() + 1).padStart(2, '0');
-      const anio = hoy.getFullYear();
-      fechaMostrada = `${dia}-${mes}-${anio}`;
-    }
+    const fechaMostrada = fechaDocumento
+      ? fechaDocumento.split('-').reverse().join('-')      // yyyy-mm-dd → dd-mm-yyyy
+      : `${String(hoy.getDate()).padStart(2, '0')}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${hoy.getFullYear()}`;
 
-    /* ------------------------------ contenido PDF ------------------------------ */
+    /* 6. contenido del PDF (igual que antes) --------------------- */
     const secciones = [
       ['A. RESPONSABLE:', [
         `• ${nombreResponsable} (${cifResponsable})`,
@@ -385,11 +400,11 @@ exports.generateConsentDocument = async (req, res) => {
       ]]
     ];
 
-    /* --------- maquetación: título, secciones, casillas y pies de página -------- */
+    /* 7. maquetación ------------------------------------------------ */
     doc.moveDown(6);
     doc.fontSize(14).fillColor('#000').font('Raleway-Bold')
-       .text('INFORMACIÓN SOBRE PROTECCIÓN DE DATOS DEL PACIENTE', { align: 'center' })
-       .moveDown(1);
+      .text('INFORMACIÓN SOBRE PROTECCIÓN DE DATOS DEL PACIENTE', { align: 'center' })
+      .moveDown(1);
 
     doc.fontSize(11).fillColor('#000');
     secciones.forEach(([tit, parrs]) => {
@@ -404,8 +419,10 @@ exports.generateConsentDocument = async (req, res) => {
     doc.moveDown(1.2);
 
     // Datos firma manual
-    doc.fontSize(11).font('Raleway-Bold').text('NOMBRE Y APELLIDOS / DNI*:', { align: 'left' });
-    doc.font('Raleway').text(`${nombrePaciente} / ${dniPaciente}`, { align: 'left' });
+    doc.fontSize(11).font('Raleway-Bold')
+      .text('NOMBRE Y APELLIDOS / DNI*:', { align: 'left' });
+    doc.font('Raleway')
+      .text(`${nombrePaciente} / ${dniPaciente}`, { align: 'left' });
     doc.moveDown(0.6);
     const yFirma = doc.y;
     doc.text(`Fecha: ${fechaMostrada}`, 50, yFirma, { continued: true });
@@ -413,29 +430,26 @@ exports.generateConsentDocument = async (req, res) => {
 
     doc.moveDown(1);
     doc.fontSize(9).fillColor('#444')
-       .text('Está prohibida la entrega de resultados médicos a personas distintas de los pacientes, salvo presentación del DNI del paciente y una autorización firmada.', { align: 'justify' })
-       .moveDown(0.3)
-       .text('*En caso de que el paciente sea menor de 16 años, se deberá incluir el nombre del menor y el nombre y firma de su representante legal (madre, padre o tutor).', { align: 'justify' });
+      .text('Está prohibida la entrega de resultados médicos a personas distintas de los pacientes, salvo presentación del DNI del paciente y una autorización firmada.', { align: 'justify' })
+      .moveDown(0.3)
+      .text('*En caso de que el paciente sea menor de 16 años, se deberá incluir el nombre del menor y el nombre y firma de su representante legal (madre, padre o tutor).', { align: 'justify' });
 
     doc.moveDown(0.8);
-    const anioActual = hoy.getFullYear();
     doc.fontSize(10).fillColor('#000')
-       .text(`© ${anioActual} - Paris & Bea - ${mailCentro}`, { align: 'center' });
+      .text(`© ${hoy.getFullYear()} - Paris & Bea - ${mailCentro}`, { align: 'center' });
 
     doc.end();
 
-    /* ------------------------- después de escribirle en disco ------------------------- */
+    /* 8. finalizar y enviar a Viafirma ----------------------------- */
     stream.once('finish', async () => {
       try {
-        const pdfURL  = `https://parisandbea.es/documentos/consentimientos/${pdfFileName}`;
+        const pdfURL = `https://parisandbea.es/documentos/consentimientos/${pdfFileName}`;
 
-        // 1. enviar a Viafirma
         const setCode = await enviarConsentimiento(pdfURL, {
           nombre: nombrePaciente,
-          mail:   emailPaciente || 'info@parisandbea.es'
+          mail: emailPaciente
         });
 
-        // 2. responder al front
         return res.json({
           message: 'Documento de consentimiento generado y enviado a firma',
           pdfURL,
@@ -909,7 +923,7 @@ exports.generateConsentimientoSueloPelvico = async (req, res) => {
 
     doc.moveDown(0.5);
     doc.text('Firma del Paciente:                                                      ', { continued: true })
-       .text('Firma del Fisioterapeuta:', { align: 'right' });
+      .text('Firma del Fisioterapeuta:', { align: 'right' });
     doc.moveDown(2);
 
     // REPRESENTANTE LEGAL (opcional)
@@ -925,7 +939,7 @@ exports.generateConsentimientoSueloPelvico = async (req, res) => {
         .moveDown(2);
 
       doc.text('Firma del Paciente:                                                      ', { continued: true })
-         .text('Firma del Fisioterapeuta:', { align: 'right' });
+        .text('Firma del Fisioterapeuta:', { align: 'right' });
       doc.moveDown(2);
     }
 

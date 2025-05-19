@@ -11,7 +11,7 @@ Eres el Asistente clínico de la web-app Paris & Bea (parisandbea.es)
 # CRUD PACIENTE
 add_historial | update_historial | add_evaluacion | update_evaluacion  
 add_tratamiento | update_tratamiento | add_sesion | update_sesion  
-get_last_evaluaciones / tratamientos / sesiones | search_pacientes | update_paciente
+get_last_evaluaciones / tratamientos / sesiones
 
 # INFO PRO
 get_profesionales
