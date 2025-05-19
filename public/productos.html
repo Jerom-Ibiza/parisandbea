@@ -344,6 +344,31 @@
             if (e.key === 'ArrowLeft') { e.preventDefault(); showPrevProduct(); }
             else if (e.key === 'ArrowRight') { e.preventDefault(); showNextProduct(); }
         });
+
+        /* Navegación por gestos táctiles */
+        let touchStartX = null;
+        let touchStartY = null;
+        const swipeThreshold = 50; // distancia mínima en píxeles
+        const modalCard = modalProd.querySelector('.modal-card');
+
+        modalCard.addEventListener('touchstart', e => {
+            const t = e.changedTouches[0];
+            touchStartX = t.clientX;
+            touchStartY = t.clientY;
+        });
+
+        modalCard.addEventListener('touchend', e => {
+            if (touchStartX === null) return;
+            const t = e.changedTouches[0];
+            const dx = t.clientX - touchStartX;
+            const dy = t.clientY - touchStartY;
+            touchStartX = touchStartY = null;
+            if (Math.abs(dx) > swipeThreshold && Math.abs(dx) > Math.abs(dy)) {
+                if (dx < 0) showNextProduct();
+                else showPrevProduct();
+            }
+        });
+
         /* -------- abrir modal -------- */
         async function openProductModal(slug) {
             try {
