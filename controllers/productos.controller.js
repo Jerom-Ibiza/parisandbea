@@ -18,6 +18,7 @@ exports.getPublicProducts = async (req, res) => {
               nombre,
               slug,
               imagen,
+              proposito,
               pvp
        FROM productos
        WHERE activo = 1

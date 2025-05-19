@@ -1003,6 +1003,17 @@ body {
   background: #fff;
 }
 
+.productos-group {
+  margin-bottom: 40px;
+}
+
+.prod-group-title {
+  margin: 0 20px 20px;
+  font-size: 1.3rem;
+  color: var(--titulos-color, #357765);
+  text-align: center;
+}
+
 .productos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

@@ -56,9 +56,7 @@
 
     <!-- ===== LISTADO DE PRODUCTOS ===== -->
     <main>
-        <section id="productosSection" class="productos-wrapper">
-            <div id="productosGrid" class="productos-grid"><!-- JS inserta tarjetas --></div>
-        </section>
+        <section id="productosSection" class="productos-wrapper"><!-- JS inserta secciones --></section>
     </main>
 
     <!-- ========== MODAL PRODUCTO ========== -->
@@ -243,19 +241,41 @@
         async function loadProducts() {
             try {
                 const productos = await (await fetch('/api/productos/public')).json();
-                const grid = document.getElementById('productosGrid');
+                const section = document.getElementById('productosSection');
+                section.innerHTML = '';
+                const groups = new Map();
 
                 productos.forEach(p => {
-                    grid.insertAdjacentHTML('beforeend',
-                        '<article class="producto-card" data-slug="' + p.slug + '">' +
-                        '<img loading="lazy" src="' + p.imagen + '" alt="' + p.nombre + '">' +
-                        '<h3>' + p.nombre + '</h3>' +
-                        '<span class="prod-brand">' + p.marca + '</span>' +
-                        '</article>');
+                    const key = p.proposito ? p.proposito.split(' ').slice(0, 2).join(' ') : 'Otros';
+                    if (!groups.has(key)) groups.set(key, []);
+                    groups.get(key).push(p);
                 });
 
-                /* click → modal */
-                grid.addEventListener('click', e => {
+                const singles = [];
+                for (const [k, arr] of groups) {
+                    if (arr.length === 1) singles.push(arr[0]), groups.delete(k);
+                }
+
+                function addGroup(title, items) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'productos-group';
+                    wrap.innerHTML = `<h2 class="prod-group-title">${title}</h2><div class="productos-grid"></div>`;
+                    const grid = wrap.querySelector('.productos-grid');
+                    items.forEach(p => {
+                        grid.insertAdjacentHTML('beforeend',
+                            `<article class="producto-card" data-slug="${p.slug}">` +
+                            `<img loading="lazy" src="${p.imagen}" alt="${p.nombre}">` +
+                            `<h3>${p.nombre}</h3>` +
+                            `<span class="prod-brand">${p.marca}</span>` +
+                            `</article>`);
+                    });
+                    section.appendChild(wrap);
+                }
+
+                for (const [k, arr] of groups) addGroup(k, arr);
+                if (singles.length) addGroup('Otros', singles);
+
+                section.addEventListener('click', e => {
                     const card = e.target.closest('.producto-card');
                     if (!card) return;
                     openProductModal(card.dataset.slug);
