@@ -536,6 +536,9 @@
     <div class="tab" data-folder="images/profesionales">
       <i class="material-icons">badge</i> Img Profesionales
     </div>
+    <div class="tab" data-folder="images/productos">
+      <i class="material-icons">inventory_2</i> Img Productos
+    </div>
     <div class="tab" data-folder="password">
       <i class="material-icons">lock</i> Password
     </div>
@@ -581,7 +584,9 @@
     /* 1.1 Helpers para las pestañas “solo-imágenes” */
     const isServicios = () => currentFolder === 'images/servicios';
     const isProfesionales = () => currentFolder === 'images/profesionales';
-    const isOnlyImagesTab = () => isServicios() || isProfesionales();
+    const isProductos = () => currentFolder === 'images/productos';
+    const isOnlyImagesTab = () =>
+      isServicios() || isProfesionales() || isProductos();
 
     /* 2) Pintar tabla / botones */
     function showFileList() {

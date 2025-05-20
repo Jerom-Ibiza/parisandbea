@@ -68,7 +68,8 @@ exports.uploadFiles = async (req, res) => {
   /* ───────── carpetas con tratamiento de imagen ───────── */
   const imageFolders = {
     'images/servicios': { size: 1200 },
-    'images/profesionales': { size: 300 }
+    'images/profesionales': { size: 300 },
+    'images/productos': { size: 900 }
   };
 
   if (imageFolders[folder]) {
