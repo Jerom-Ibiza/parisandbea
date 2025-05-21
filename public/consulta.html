@@ -1,1146 +1,1515 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Consulta | Paris & Bea</title>
-<link rel="stylesheet" href="css/style.css" />
-<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consulta | Paris & Bea</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<style>
-/* —— layout fijo —— */
-html,body{height:100%;margin:0}
-body{background:#efefef;font-family:"Raleway",sans-serif;display:flex;flex-direction:column;overflow:hidden}
+  <style>
+    /* —— layout fijo —— */
+    html,
+    body {
+      height: 100%;
+      margin: 0
+    }
 
-/* —— cabecera —— */
-header{flex:0 0 auto;width:100%;max-width:620px;margin:auto;
-       padding:18px 20px;box-sizing:border-box;display:flex;align-items:center;gap:16px;
-       border-bottom:3px solid #aed3c1;background:#efefef;margin-bottom:5px}
-header img{width:28px}
-header .info{flex:1}
-header .info h1{font-size:20px;margin:0}
-header .info h2{font-size:17px;font-weight:500;margin:2px 0 0;color:#444}
+    body {
+      background: #efefef;
+      font-family: "Raleway", sans-serif;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden
+    }
 
-/* —— panel datos —— */
-#messages{flex:1 1 auto;width:100%;max-width:620px;margin:auto;
-          padding:18px 22px;box-sizing:border-box;background:#fff;border-radius:14px;
-          box-shadow:0 3px 8px rgba(0,0,0,.08);overflow-y:auto;font-size:15px;line-height:1.4}
-.section-title{margin:18px 0 10px;font-weight:1000;font-size:18px;
-               border-bottom:1px solid #aed3c1;display:flex;align-items:center;gap:6px}
-.section-title .material-icons-outlined{font-size:20px;color:#4d4d4d}
-#messages dl{margin:0}
-#messages dt{font-weight:700;float:left;width:120px;clear:left;white-space:nowrap}
-#messages dd{margin:0 0 6px 120px}
-/* log */
-#log{margin-top:14px}
-.feedback{padding:8px 10px;border-radius:8px;margin-bottom:6px;font-size:14px}
-/* mensajes del profesional y del asistente – modo chat */
-.msg-user   {background:#e1efff;color:#13417b;border-left:6px solid #3b7bff}
-.msg-assist {background:#d5f6e3;color:#276040;border-left:6px solid #28a56a}
-.success{background:#d5f6e3;color:#276040}
-.error  {background:#ffd6d6;color:#a12525}
-.loader{display:flex;align-items:center;gap:8px;font-size:14px;color:#555}
-.loader::before{content:'';width:20px;height:20px;border:3px solid #aed3c1;
-                border-top-color:transparent;border-radius:50%;
-                animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(1turn)}}
+    /* —— cabecera —— */
+    header {
+      flex: 0 0 auto;
+      width: 100%;
+      max-width: 620px;
+      margin: auto;
+      padding: 18px 20px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 3px solid #aed3c1;
+      background: #efefef;
+      margin-bottom: 5px
+    }
 
-/* —— selector de bloque —— */
-.block-selector{flex:0 0 auto;width:100%;max-width:620px;margin:auto;
-                padding:8px 4px;display:flex;justify-content:space-around;gap:6px;background:#efefef}
-.chip{flex:1;padding:8px 4px;border:2px solid #aed3c1;border-radius:12px;background:#fff;
-      font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
-.chip.active{background:#aed3c1;color:#fff}
+    header img {
+      width: 28px
+    }
 
-/* —— botonera —— */
-.bottom-bar{flex:0 0 auto;width:100%;max-width:620px;margin:auto;
-            padding:14px 0;display:flex;justify-content:space-around;gap:16px;background:#efefef}
-.btn-round{width:60px;height:60px;border:none;border-radius:50%;background:#aed3c1;
-           display:flex;align-items:center;justify-content:center;cursor:pointer;
-           box-shadow:0 4px 10px rgba(0,0,0,.15);transition:background .2s,transform .15s;width:60px;height:60px;border:2px solid transparent;border-radius:50%;background:#aed3c1;}
-.btn-round.recording{
-  background:#e04141;
-  animation:pulse 1s infinite;
-}
-.btn-round:active{transform:scale(.94)}
-.btn-round.recording{background:#e04141}
-.btn-round .material-icons-outlined{font-size:24px;color:#fff;line-height:1}
-.btn-small{width:45px;height:45px}
-.btn-small .material-icons-outlined{font-size:20px}
+    header .info {
+      flex: 1
+    }
 
-/* —— modal guía —— */
-#modalGuide{
-  position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;
-  align-items:center;justify-content:center;z-index:999;
-  pointer-events:none                /* <- deja pasar los clics */
-}
-#modalGuide .panel{
-  width:90%;max-width:300px;background:#fff;border-radius:14px;padding:20px;
-  box-shadow:0 8px 20px rgba(0,0,0,.25);animation:pop .25s ease-out;
-  pointer-events:auto                /* panel sí recibe scroll */
-}
-#modalGuide h3{margin:0 0 12px;font-size:24px;text-align:center;color:#276040}
-#modalGuide ul{margin:0;padding-left:26px;font-size:20px;line-height:1.5}
-@keyframes pop{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
-.chip.hidden{display:none}
-/* ---------- botón “Hablar” en modo grabación ---------- */
-.btn-round.talking {
-  background:#e04141;           /* rojo */
-  animation:pulse 1s infinite;
-}
-#btnStopTTS { background:#a12525; }
-@keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(224,65,65,.6)}
-                   70%{box-shadow:0 0 0 12px rgba(224,65,65,0)}
-                   100%{box-shadow:0 0 0 0 rgba(224,65,65,0)} }
-/* evita que enlaces largos se salgan del contenedor */
-.feedback a{
-  word-break: break-all;      /* rompe la palabra donde haga falta */
-  overflow-wrap: anywhere;    /* respaldo para otros navegadores   */
-}
-/* miniaturas que muestra el asistente */
-.feedback img.thumb{
-  max-width: 140px;         /* ancho máx. de la miniatura */
-  height: auto;
-  border-radius: 6px;
-  cursor: pointer;
-  display: block;           /* cada imagen en su propia línea */
-  margin: 6px 0;
-}
-	
-.btnSaveAttach{
-  border:none;background:none;cursor:pointer;font-size:17px;
-  margin-left:6px;line-height:1;color:#276040;
-}
-.btnSaveAttach:hover{ transform:scale(1.15); }
-.thumb-wrap { position:relative; display:inline-block; }
-.pin, .lens {
-  cursor:pointer;
-  font-size:18px;
-  margin-left:6px;
-  user-select:none;
-  color:#276040;
-}
-.pin:hover, .lens:hover {
-  transform:scale(1.15);
-}
-.probe{cursor:pointer;margin-left:4px}
-.probe:hover{filter:brightness(1.2)}
-.btnSaveAttach{background:none;border:none;cursor:pointer;margin-left:4px}
-.thumb-wrap,.file-wrap{display:inline-flex;align-items:center;gap:4px}
-</style>
+    header .info h1 {
+      font-size: 20px;
+      margin: 0
+    }
+
+    header .info h2 {
+      font-size: 17px;
+      font-weight: 500;
+      margin: 2px 0 0;
+      color: #444
+    }
+
+    /* —— panel datos —— */
+    #messages {
+      flex: 1 1 auto;
+      width: 100%;
+      max-width: 620px;
+      margin: auto;
+      padding: 18px 22px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, .08);
+      overflow-y: auto;
+      font-size: 15px;
+      line-height: 1.4
+    }
+
+    .section-title {
+      margin: 18px 0 10px;
+      font-weight: 1000;
+      font-size: 18px;
+      border-bottom: 1px solid #aed3c1;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .section-title .material-icons-outlined {
+      font-size: 20px;
+      color: #4d4d4d
+    }
+
+    #messages dl {
+      margin: 0
+    }
+
+    /* log */
+    #log {
+      margin-top: 14px
+    }
+
+    .feedback {
+      padding: 8px 10px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 14px
+    }
+
+    /* mensajes del profesional y del asistente – modo chat */
+    .msg-user {
+      background: #e1efff;
+      color: #13417b;
+      border-left: 6px solid #3b7bff
+    }
+
+    .msg-assist {
+      background: #d5f6e3;
+      color: #276040;
+      border-left: 6px solid #28a56a
+    }
+
+    .success {
+      background: #d5f6e3;
+      color: #276040
+    }
+
+    .error {
+      background: #ffd6d6;
+      color: #a12525
+    }
+
+    .loader {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #555
+    }
+
+    .loader::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 3px solid #aed3c1;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(1turn)
+      }
+    }
+
+    /* —— selector de bloque —— */
+    .block-selector {
+      flex: 0 0 auto;
+      width: 100%;
+      max-width: 620px;
+      margin: auto;
+      padding: 8px 4px;
+      display: flex;
+      justify-content: space-around;
+      gap: 6px;
+      background: #efefef
+    }
+
+    .chip {
+      flex: 1;
+      padding: 8px 4px;
+      border: 2px solid #aed3c1;
+      border-radius: 12px;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .15s
+    }
+
+    .chip.active {
+      background: #aed3c1;
+      color: #fff
+    }
+
+    /* —— botonera —— */
+    .bottom-bar {
+      flex: 0 0 auto;
+      width: 100%;
+      max-width: 620px;
+      margin: auto;
+      padding: 14px 0;
+      display: flex;
+      justify-content: space-around;
+      gap: 16px;
+      background: #efefef
+    }
+
+    .btn-round {
+      width: 60px;
+      height: 60px;
+      border: none;
+      border-radius: 50%;
+      background: #aed3c1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, .15);
+      transition: background .2s, transform .15s;
+      width: 60px;
+      height: 60px;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      background: #aed3c1;
+    }
+
+    .btn-round.recording {
+      background: #e04141;
+      animation: pulse 1s infinite;
+    }
+
+    .btn-round:active {
+      transform: scale(.94)
+    }
+
+    .btn-round.recording {
+      background: #e04141
+    }
+
+    .btn-round .material-icons-outlined {
+      font-size: 24px;
+      color: #fff;
+      line-height: 1
+    }
+
+    .btn-small {
+      width: 45px;
+      height: 45px
+    }
+
+    .btn-small .material-icons-outlined {
+      font-size: 20px
+    }
+
+    /* —— modal guía —— */
+    #modalGuide {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      pointer-events: none
+        /* <- deja pasar los clics */
+    }
+
+    #modalGuide .panel {
+      width: 90%;
+      max-width: 300px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .25);
+      animation: pop .25s ease-out;
+      pointer-events: auto
+        /* panel sí recibe scroll */
+    }
+
+    #modalGuide h3 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      text-align: center;
+      color: #276040
+    }
+
+    #modalGuide ul {
+      margin: 0;
+      padding-left: 26px;
+      font-size: 20px;
+      line-height: 1.5
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(.8);
+        opacity: 0
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    .chip.hidden {
+      display: none
+    }
+
+    /* ---------- botón “Hablar” en modo grabación ---------- */
+    .btn-round.talking {
+      background: #e04141;
+      /* rojo */
+      animation: pulse 1s infinite;
+    }
+
+    #btnStopTTS {
+      background: #a12525;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(224, 65, 65, .6)
+      }
+
+      70% {
+        box-shadow: 0 0 0 12px rgba(224, 65, 65, 0)
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(224, 65, 65, 0)
+      }
+    }
+
+    /* evita que enlaces largos se salgan del contenedor */
+    .feedback a {
+      word-break: break-all;
+      /* rompe la palabra donde haga falta */
+      overflow-wrap: anywhere;
+      /* respaldo para otros navegadores   */
+    }
+
+    /* miniaturas que muestra el asistente */
+    .feedback img.thumb {
+      max-width: 140px;
+      /* ancho máx. de la miniatura */
+      height: auto;
+      border-radius: 6px;
+      cursor: pointer;
+      display: block;
+      /* cada imagen en su propia línea */
+      margin: 6px 0;
+    }
+
+    .btnSaveAttach {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 17px;
+      margin-left: 6px;
+      line-height: 1;
+      color: #276040;
+    }
+
+    .btnSaveAttach:hover {
+      transform: scale(1.15);
+    }
+
+    .thumb-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .pin,
+    .lens {
+      cursor: pointer;
+      font-size: 18px;
+      margin-left: 6px;
+      user-select: none;
+      color: #276040;
+    }
+
+    .pin:hover,
+    .lens:hover {
+      transform: scale(1.15);
+    }
+
+    .probe {
+      cursor: pointer;
+      margin-left: 4px
+    }
+
+    .probe:hover {
+      filter: brightness(1.2)
+    }
+
+    .btnSaveAttach {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: 4px
+    }
+
+    .thumb-wrap,
+    .file-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    /* —— wrapper flex que aloja los dos paneles —— */
+    #panels {
+      flex: 1 1 auto;
+      width: 100%;
+      max-width: 620px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      /* pequeña separación entre paneles */
+    }
+
+    /* —— panel con datos del pac —— */
+    .info-panel {
+      /* heredamos el estilo que antes tenía #messages */
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, .08);
+      padding: 18px 22px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      font-size: 15px;
+      line-height: 1.4;
+      /* ocupa solo lo necesario */
+      flex: 0 0 auto;
+    }
+
+    /* —— panel de chat/log —— */
+    .chat-panel {
+      /* mismo aspecto para mantener coherencia */
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, .08);
+      padding: 18px 22px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      font-size: 15px;
+      line-height: 1.4;
+      /* se expande y ocupa el resto de la altura disponible */
+      flex: 1 1 auto;
+    }
+
+    /* —— ALTURA Y SCROLL ————————————————————————————— */
+    /* el panel con datos ocupará como máximo el 45 % de la ventana;
+   si su contenido crece, aparecerá scroll interno            */
+    .info-panel {
+      max-height: 45vh;
+      /* vh = % de la altura de la ventana */
+      overflow-y: auto;
+    }
+
+    /* el panel de chat crece para usar el resto del espacio        */
+    .chat-panel {
+      flex: 1 1 auto;
+      overflow-y: auto;
+    }
+
+    /* —— RESTAURAMOS LOS ESTILOS DE DT / DD ———————————————————— */
+    .info-panel dl {
+      margin: 0;
+    }
+
+    .info-panel dt {
+      font-weight: 700;
+      float: left;
+      width: 120px;
+      clear: left;
+      white-space: nowrap;
+    }
+
+    .info-panel dd {
+      margin: 0 0 6px 120px;
+    }
+
+    /* —— Títulos de sección dentro del nuevo panel ————————— */
+    .info-panel .section-title {
+      margin: 18px 0 10px;
+      font-weight: 1000;
+      font-size: 18px;
+      border-bottom: 1px solid #aed3c1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-panel .section-title .material-icons-outlined {
+      font-size: 20px;
+      color: #4d4d4d;
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- CABECERA -->
-<header>
-  <img src="images/recursos/otro-logo.png" alt="Logo" />
-  <div class="info">
-    <h1 id="profName">Profesional</h1>
-    <h2 id="pacName">Paciente</h2>
+  <!-- CABECERA -->
+  <header>
+    <img src="images/recursos/otro-logo.png" alt="Logo" />
+    <div class="info">
+      <h1 id="profName">Profesional</h1>
+      <h2 id="pacName">Paciente</h2>
+    </div>
+  </header>
+
+  <!-- PANELES -->
+  <div id="panels">
+    <!-- Datos del paciente -->
+    <div id="infoPanel" class="panel info-panel">
+      <div id="mainData">Cargando…</div>
+    </div>
+
+    <!-- Chat, asistente y logs -->
+    <div id="chatPanel" class="panel chat-panel">
+      <div id="log"></div>
+    </div>
   </div>
-</header>
 
-<!-- PANEL -->
-<div id="messages">
-  <div id="mainData">Cargando…</div>
-  <div id="log"></div>
-</div>
-
-<!-- Modal guía -->
-<div id="modalGuide"><div class="panel">
-  <h3 id="modalTitle"></h3><ul id="modalList"></ul>
-	  <button id="btnGuideCancel"
-          style="margin-top:18px;padding:8px 22px;background:#a12525;
+  <!-- Modal guía -->
+  <div id="modalGuide">
+    <div class="panel">
+      <h3 id="modalTitle"></h3>
+      <ul id="modalList"></ul>
+      <button id="btnGuideCancel" style="margin-top:18px;padding:8px 22px;background:#a12525;
                  border:none;border-radius:10px;color:#fff;font-weight:700;
                  cursor:pointer">
-    Cancelar
-  </button>
- 	</div></div>
-
-<!-- Modal timeout 25 min -->
-<div id="modalTimeout" style="display:none;position:fixed;inset:0;
-     background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center">
-  <div class="panel" style="background:#fff;padding:26px 30px;border-radius:14px;
-       max-width:320px;text-align:center;font-size:16px;pointer-events:auto">
-    <p>⏱️ La grabación lleva más de 25&nbsp;min.<br>¿Qué quieres hacer?</p>
-    <button id="btnCancel" style="margin:10px 8px 0;padding:8px 18px;background:#a12525;
-            border:none;border-radius:10px;color:#fff;cursor:pointer">Cancelar</button>
-    <button id="btnSend"   style="margin:10px 8px 0;padding:8px 18px;background:#276040;
-            border:none;border-radius:10px;color:#fff;cursor:pointer">Enviar</button>
+        Cancelar
+      </button>
+    </div>
   </div>
-</div>
 
-<!-- SELECTOR DE BLOQUE -->
-<div class="block-selector">
-  <button class="chip active"  data-block="historial"  id="chipHist">Historial</button>
-  <button class="chip"         data-block="evaluacion" id="chipEval">Evaluación</button>
-  <button class="chip"         data-block="tratamiento" id="chipTrat">Tratamiento</button>
-  <button class="chip"         data-block="sesion"      id="chipSes">Sesión</button>
-</div>
+  <!-- Modal timeout 25 min -->
+  <div id="modalTimeout" style="display:none;position:fixed;inset:0;
+     background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center">
+    <div class="panel" style="background:#fff;padding:26px 30px;border-radius:14px;
+       max-width:320px;text-align:center;font-size:16px;pointer-events:auto">
+      <p>⏱️ La grabación lleva más de 25&nbsp;min.<br>¿Qué quieres hacer?</p>
+      <button id="btnCancel" style="margin:10px 8px 0;padding:8px 18px;background:#a12525;
+            border:none;border-radius:10px;color:#fff;cursor:pointer">Cancelar</button>
+      <button id="btnSend" style="margin:10px 8px 0;padding:8px 18px;background:#276040;
+            border:none;border-radius:10px;color:#fff;cursor:pointer">Enviar</button>
+    </div>
+  </div>
 
-<!-- BOTONES -->
-<div class="bottom-bar">
-  <button id="btnRecord" class="btn-round" title="Grabar bloque">
-    <span class="material-icons-outlined">mic</span></button>
-  <button id="btnHome"   class="btn-round btn-small" title="Cambiar de paciente">
-    <span class="material-icons-outlined">home</span></button>
-  <button id="btnKeyboard" class="btn-round btn-small" title="Escribir al asistente">
-    <span class="material-icons-outlined">keyboard</span>
-  </button>
-  <button id="btnUpload" class="btn-round btn-small" title="Adjuntar archivo">
-    <span class="material-icons-outlined">add</span>
-  </button>
-  <input id="filePicker" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.gif,.heic"
-         multiple style="display:none">
-  <button id="btnStopTTS" class="btn-round btn-small" title="Parar voz"
-          style="display:none">
-    <span class="material-icons-outlined">stop</span>
-  </button>
-  <button id="btnTalk"   class="btn-round" title="Hablar con el asistente">
-    <img src="images/recursos/voice_icon.png" style="max-width:30px" alt="Logo" /></button>
-</div>
-<div id="textPanel"
-     style="display:none;padding:8px;max-width:620px;margin:auto;text-align:center">
-  <!-- de input → textarea -->
-  <textarea id="txtMessage" placeholder="Escribe…"
-            style="width:100%;min-height:48px;max-height:260px;
+  <!-- SELECTOR DE BLOQUE -->
+  <div class="block-selector">
+    <button class="chip active" data-block="historial" id="chipHist">Historial</button>
+    <button class="chip" data-block="evaluacion" id="chipEval">Evaluación</button>
+    <button class="chip" data-block="tratamiento" id="chipTrat">Tratamiento</button>
+    <button class="chip" data-block="sesion" id="chipSes">Sesión</button>
+  </div>
+
+  <!-- BOTONES -->
+  <div class="bottom-bar">
+    <button id="btnRecord" class="btn-round" title="Grabar bloque">
+      <span class="material-icons-outlined">mic</span></button>
+    <button id="btnHome" class="btn-round btn-small" title="Cambiar de paciente">
+      <span class="material-icons-outlined">home</span></button>
+    <button id="btnKeyboard" class="btn-round btn-small" title="Escribir al asistente">
+      <span class="material-icons-outlined">keyboard</span>
+    </button>
+    <button id="btnUpload" class="btn-round btn-small" title="Adjuntar archivo">
+      <span class="material-icons-outlined">add</span>
+    </button>
+    <input id="filePicker" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.gif,.heic" multiple
+      style="display:none">
+    <button id="btnStopTTS" class="btn-round btn-small" title="Parar voz" style="display:none">
+      <span class="material-icons-outlined">stop</span>
+    </button>
+    <button id="btnTalk" class="btn-round" title="Hablar con el asistente">
+      <img src="images/recursos/voice_icon.png" style="max-width:30px" alt="Logo" /></button>
+  </div>
+  <div id="textPanel" style="display:none;padding:8px;max-width:620px;margin:auto;text-align:center">
+    <!-- de input → textarea -->
+    <textarea id="txtMessage" placeholder="Escribe…" style="width:100%;min-height:48px;max-height:260px;
                    padding:10px;border:2px solid #aed3c1;border-radius:10px;
                    font-size:15px;resize:vertical;overflow:auto"></textarea>
 
-  <button id="btnSaveChat"
-          style="margin:15px;padding:7px 22px;border:none;border-radius:10px;
+    <button id="btnSaveChat" style="margin:15px;padding:7px 22px;border:none;border-radius:10px;
                  background:#aed3c1;color:#fff;font-weight:600;cursor:pointer">
-    Guardar conversación
-  </button>
-</div>
+      Guardar conversación
+    </button>
+  </div>
 
-<script>
-/* ------------------------------------------------ utilidades básicas ------------------------------------------------ */
-const $id = id => document.getElementById(id);
-/* ---------- manejo de chat persistente ---------- */
-let activeChatId = null;          // se rellenará al primer guardado
-let chatChanged  = false;         // true cuando hay algo nuevo sin salvar
-window.sessionImages = [];
-	
-/* ================= CLICK GLOBAL (📌 / 🔍) ================= */
-document.addEventListener('click', async e => {
+  <script>
+    /* ------------------------------------------------ utilidades básicas ------------------------------------------------ */
+    const $id = id => document.getElementById(id);
+    /* ---------- manejo de chat persistente ---------- */
+    let activeChatId = null;          // se rellenará al primer guardado
+    let chatChanged = false;         // true cuando hay algo nuevo sin salvar
+    window.sessionImages = [];
 
-  /* ---------- 1 · GUARDAR adjunto temporal (📌) ---------- */
-  if (e.target.classList.contains('btnSaveAttach')) {
-    /* …handler de guardado… */
-    return;
-  }
+    /* ================= CLICK GLOBAL (📌 / 🔍) ================= */
+    document.addEventListener('click', async e => {
 
-  /* ---------- 2 · ANALIZAR adjunto permanente (🔍) ---------- */
-  const probe = e.target.closest('.probe');
-  if (!probe) return;
+      /* ---------- 1 · GUARDAR adjunto temporal (📌) ---------- */
+      if (e.target.classList.contains('btnSaveAttach')) {
+        /* …handler de guardado… */
+        return;
+      }
 
-  const url = probe.dataset.url;
-  if (!url) return;
+      /* ---------- 2 · ANALIZAR adjunto permanente (🔍) ---------- */
+      const probe = e.target.closest('.probe');
+      if (!probe) return;
 
-  const isImg = /\.(jpe?g|png|webp|gif|bmp|svg|heic)$/i.test(url);
-  const userQ = inpMsg.value.trim() ||
-                (isImg ? 'Describe brevemente esta imagen.'
-                       : 'Hazme un breve resumen de este documento.');
+      const url = probe.dataset.url;
+      if (!url) return;
 
-  /* limpiar textarea y volcar pregunta */
-  inpMsg.value = '';
-  autoGrow(inpMsg);
-  log.insertAdjacentHTML(
-    'beforeend',
-    `<div class="feedback msg-user">${linkify(userQ)}</div>`
-  );
-  chatChanged = true;
-  log.scrollTop = log.scrollHeight;
+      const isImg = /\.(jpe?g|png|webp|gif|bmp|svg|heic)$/i.test(url);
+      const userQ = inpMsg.value.trim() ||
+        (isImg ? 'Describe brevemente esta imagen.'
+          : 'Hazme un breve resumen de este documento.');
 
-  /* ============ 2.a · IMAGEN ============ */
-  if (isImg){
-    if (!window.sessionImages.includes(url)){
-      window.sessionImages.push(url);
-      if (window.sessionImages.length > 5) window.sessionImages.shift();
-    }
-    await sendToAssistant({ message:userQ, images:[...window.sessionImages] });
-    return;
-  }
+      /* limpiar textarea y volcar pregunta */
+      inpMsg.value = '';
+      autoGrow(inpMsg);
+      log.insertAdjacentHTML(
+        'beforeend',
+        `<div class="feedback msg-user">${linkify(userQ)}</div>`
+      );
+      chatChanged = true;
+      log.scrollTop = log.scrollHeight;
 
-	// 2.b · PDF / WORD / OTRO DOC
-	try {
-	  ensureLoader();
+      /* ============ 2.a · IMAGEN ============ */
+      if (isImg) {
+        if (!window.sessionImages.includes(url)) {
+          window.sessionImages.push(url);
+          if (window.sessionImages.length > 5) window.sessionImages.shift();
+        }
+        await sendToAssistant({ message: userQ, images: [...window.sessionImages] });
+        return;
+      }
 
-	  // 1) extrae la ruta relativa (sin protocolo ni host)
-	  const relPath = new URL(probe.dataset.url).pathname.replace(/^\/+/,'');
+      // 2.b · PDF / WORD / OTRO DOC
+      try {
+        ensureLoader();
 
-	  // 2) llama al endpoint de ingesta
-	  const rr = await fetch('/api/assistant/files/ingest', {
-		method: 'POST',
-		headers: { 'Content-Type':'application/json' },
-		body: JSON.stringify({ filepath: relPath }),
-		credentials:'include'
-	  });
-	  const jj = await rr.json();
-	  if (!jj.ok) throw new Error(jj.error||'Error preparando doc');
+        // 1) extrae la ruta relativa (sin protocolo ni host)
+        const relPath = new URL(probe.dataset.url).pathname.replace(/^\/+/, '');
 
-	  // —— Inserta un mensaje en el chat con el resultado de la función ——  
-	  log.insertAdjacentHTML('beforeend',
-		`<div class="feedback info">
+        // 2) llama al endpoint de ingesta
+        const rr = await fetch('/api/assistant/files/ingest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filepath: relPath }),
+          credentials: 'include'
+        });
+        const jj = await rr.json();
+        if (!jj.ok) throw new Error(jj.error || 'Error preparando doc');
+
+        // —— Inserta un mensaje en el chat con el resultado de la función ——  
+        log.insertAdjacentHTML('beforeend',
+          `<div class="feedback info">
 		   📄 Documento preparado: file_id=${jj.file_id}, vs=${jj.vector_store}
 		 </div>`
-	  );
-	  chatChanged = true;
-	  log.scrollTop = log.scrollHeight;
+        );
+        chatChanged = true;
+        log.scrollTop = log.scrollHeight;
 
-	  // 3) ahora sí haz la pregunta al asistente
-	  await sendToAssistant({ message: userQ });
+        // 3) ahora sí haz la pregunta al asistente
+        await sendToAssistant({ message: userQ });
 
-	} catch(err) {
-	  safeRemoveLoader();
-	  log.insertAdjacentHTML('beforeend',
-		`<div class="feedback error">${linkify(err.message)}</div>`
-	  );
-	  chatChanged = true;
-	  log.scrollTop = log.scrollHeight;
-	}
-});
-	
-document.addEventListener('click', async e => {
-  const lens = e.target.closest('.lens');
-  if (!lens) return;
-
-  const url = lens.dataset.url;
-  const msg = $id('txtMessage').value.trim();
-  if (!msg){
-    alert('Escribe tu consulta antes de pulsar el icono 🔬');
-    return;
-  }
-
-  $id('txtMessage').value = '';
-  $id('textPanel').style.display = 'none';
-
-  log.insertAdjacentHTML(
-    'beforeend',
-    `<div class="feedback msg-user">${linkify(msg)}</div>`
-  );
-  chatChanged = true;
-  log.scrollTop = log.scrollHeight;
-
-  const ext = url.split('.').pop().toLowerCase();
-  const isImg = /\.(jpe?g|png|webp|gif|bmp)$/i.test(url);
-
-  const body = {
-    message: msg,
-    ...(isImg ? { images:[url] } : {})
-  };
-
-  ensureLoader();
-  try {
-    const r = await fetch('/api/assistant/chat',{
-      method :'POST',
-      headers:{'Content-Type':'application/json'},
-      body   : JSON.stringify(body),
-      credentials:'include'
+      } catch (err) {
+        safeRemoveLoader();
+        log.insertAdjacentHTML('beforeend',
+          `<div class="feedback error">${linkify(err.message)}</div>`
+        );
+        chatChanged = true;
+        log.scrollTop = log.scrollHeight;
+      }
     });
-    const j = await r.json();
-    await handleAssistantResponse(j);
-  }catch(err){
-    safeRemoveLoader();
-    log.insertAdjacentHTML(
-      'beforeend',
-      `<div class="feedback error">${err.message}</div>`
-    );
-    chatChanged = true;
-    log.scrollTop = log.scrollHeight;
-  }
-});
-	
-/* ---------- construye el body para /assistant/chat ---------- */
-function buildAssistantBody (msg){
-  const body = { message: msg };
-  if (window.sessionImages.length){
-    body.images = [...window.sessionImages];      // copia defensiva
-  }
-  return body;
-}
 
-const serializeChat = () => log.innerHTML;  // volcamos tal cual el HTML
-const row   = (l, v) => v ? `<dt>${l}</dt><dd>${v}</dd>` : '';
-const title = (i, t) => `<div class="section-title"><span class="material-icons-outlined">${i}</span>${t}</div>`;
-/* ---------- formateador de fechas ---------- */
-const fDate = d => {
-  /* 1) vacío, null o undefined → nada */
-  if (!d) return '';
+    document.addEventListener('click', async e => {
+      const lens = e.target.closest('.lens');
+      if (!lens) return;
 
-  /* 2) si viene como string “0000-00-00”  → nada */
-  if (typeof d === 'string' && /^0{4}-0{2}-0{2}$/.test(d.trim())) return '';
+      const url = lens.dataset.url;
+      const msg = $id('txtMessage').value.trim();
+      if (!msg) {
+        alert('Escribe tu consulta antes de pulsar el icono 🔬');
+        return;
+      }
 
-  /* 3) pasamos a objeto Date */
-  const dateObj = new Date(d);
+      $id('txtMessage').value = '';
+      $id('textPanel').style.display = 'none';
 
-  /* 4) inválido o siglo XIX (efecto 30-11-1899) → nada */
-  if (isNaN(dateObj) || dateObj.getFullYear() < 1900) return '';
+      log.insertAdjacentHTML(
+        'beforeend',
+        `<div class="feedback msg-user">${linkify(msg)}</div>`
+      );
+      chatChanged = true;
+      log.scrollTop = log.scrollHeight;
 
-  /* 5) formato dd/mm/aaaa 🇪🇸 */
-  return dateObj.toLocaleDateString('es-ES', {
-    day   : '2-digit',
-    month : '2-digit',
-    year  : 'numeric'
-  });
-};
+      const ext = url.split('.').pop().toLowerCase();
+      const isImg = /\.(jpe?g|png|webp|gif|bmp)$/i.test(url);
 
-const fTime = t => t ? t.slice(0, 5) : '';
+      const body = {
+        message: msg,
+        ...(isImg ? { images: [url] } : {})
+      };
 
-let currentBlock = 'historial';
-	
-/* ---------- linkify con 🔍 y 📌 ---------- */
-const linkify = txt =>
-  txt.replace(/(https?:\/\/[^\s]+)/g, url => {
-    const isImg     = /\.(jpe?g|png|webp|gif|bmp|svg|heic)$/i.test(url);
-    const isStored  = /\/attachments_consulta\//i.test(url);  // ya guardado
-    const showPin   = !isStored && !isImg;                   // pin solo para tmp-PDF
-    const iconProbe = `<span class="probe" data-url="${url}" title="Analizar">🔍</span>`;
-    const iconPin   = showPin ? `<button class="btnSaveAttach" data-tmp="${url.split('/').pop()}" title="Guardar">📌</button>` : '';
+      ensureLoader();
+      try {
+        const r = await fetch('/api/assistant/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+          credentials: 'include'
+        });
+        const j = await r.json();
+        await handleAssistantResponse(j);
+      } catch (err) {
+        safeRemoveLoader();
+        log.insertAdjacentHTML(
+          'beforeend',
+          `<div class="feedback error">${err.message}</div>`
+        );
+        chatChanged = true;
+        log.scrollTop = log.scrollHeight;
+      }
+    });
 
-    if (isImg) {
-      return `
+    /* ---------- construye el body para /assistant/chat ---------- */
+    function buildAssistantBody(msg) {
+      const body = { message: msg };
+      if (window.sessionImages.length) {
+        body.images = [...window.sessionImages];      // copia defensiva
+      }
+      return body;
+    }
+
+    const serializeChat = () => log.innerHTML;  // volcamos tal cual el HTML
+    const row = (l, v) => v ? `<dt>${l}</dt><dd>${v}</dd>` : '';
+    const title = (i, t) => `<div class="section-title"><span class="material-icons-outlined">${i}</span>${t}</div>`;
+    /* ---------- formateador de fechas ---------- */
+    const fDate = d => {
+      /* 1) vacío, null o undefined → nada */
+      if (!d) return '';
+
+      /* 2) si viene como string “0000-00-00”  → nada */
+      if (typeof d === 'string' && /^0{4}-0{2}-0{2}$/.test(d.trim())) return '';
+
+      /* 3) pasamos a objeto Date */
+      const dateObj = new Date(d);
+
+      /* 4) inválido o siglo XIX (efecto 30-11-1899) → nada */
+      if (isNaN(dateObj) || dateObj.getFullYear() < 1900) return '';
+
+      /* 5) formato dd/mm/aaaa 🇪🇸 */
+      return dateObj.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    };
+
+    const fTime = t => t ? t.slice(0, 5) : '';
+
+    let currentBlock = 'historial';
+
+    /* ---------- linkify con 🔍 y 📌 ---------- */
+    const linkify = txt =>
+      txt.replace(/(https?:\/\/[^\s]+)/g, url => {
+        const isImg = /\.(jpe?g|png|webp|gif|bmp|svg|heic)$/i.test(url);
+        const isStored = /\/attachments_consulta\//i.test(url);  // ya guardado
+        const showPin = !isStored && !isImg;                   // pin solo para tmp-PDF
+        const iconProbe = `<span class="probe" data-url="${url}" title="Analizar">🔍</span>`;
+        const iconPin = showPin ? `<button class="btnSaveAttach" data-tmp="${url.split('/').pop()}" title="Guardar">📌</button>` : '';
+
+        if (isImg) {
+          return `
         <div class="thumb-wrap">
           <a href="${url}" target="_blank" rel="noopener"><img src="${url}" class="thumb" /></a>
           ${iconProbe}${iconPin}
         </div>`;
-    }
-    // PDF / Word u otros
-    return `<div class="file-wrap">
+        }
+        // PDF / Word u otros
+        return `<div class="file-wrap">
               <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>
               ${iconProbe}${iconPin}
             </div>`;
-  });
-	
-/* ──── Maneja la respuesta del backend ──── */
-async function handleAssistantResponse(j, silent=false){
-  if(!j.ok) return;                        // errores ya se tratan arriba
+      });
 
-  /* caso 1: respuesta con texto visible */
-  if(j.reply && j.reply.trim()){
-    if(!silent){                           // solo mostramos si no es “silencioso”
-      log.insertAdjacentHTML(
-        'beforeend',
-        `<div class="feedback success">${linkify(j.reply)}</div>`
-      );
-      log.scrollTop = log.scrollHeight;
-    }
-    if(j.audioUrl) playTTS(j.audioUrl);    // voz si procede
-    return;                                // ¡nada más que hacer!
-  }
+    /* ──── Maneja la respuesta del backend ──── */
+    async function handleAssistantResponse(j, silent = false) {
+      if (!j.ok) return;                        // errores ya se tratan arriba
 
-  /* caso 2: mensaje vacío → pedir que complete */
-  console.log('[auto] Respuesta vacía; solicitando continuación…');
-  const next = await sendHidden('Completa todo lo que te he pedido');
-  await handleAssistantResponse(next, true);   // recursivo / silencioso
-}
-	
-/* ------- envía mensaje silencioso ------- */
-async function sendHidden(msg){
-  try{
-    const r = await fetch('/api/assistant/chat',{
-      method :'POST',
-      headers:{'Content-Type':'application/json'},
-      body   : JSON.stringify(buildAssistantBody(msg))
-    });
-    return await r.json();
-  }catch(e){
-    console.error('Hidden call error', e);
-    return { ok:false, reply:'' };
-  }
-}
-
-/* ------- spinner helpers ------- */
-const ensureLoader  = () => $id('spin') || addLoader();
-const safeRemoveLoader = () => removeLoader();
-	
-async function sendToAssistant(body){
-  ensureLoader();
-  try{
-    const r = await fetch('/api/assistant/chat',{
-      method :'POST',
-      headers:{'Content-Type':'application/json'},
-      body   : JSON.stringify(body),
-      credentials:'include'
-    });
-    const j = await r.json();
-    await handleAssistantResponse(j);
-  }catch(err){
-    safeRemoveLoader();
-    log.insertAdjacentHTML(
-      'beforeend', `<div class="feedback error">${linkify(err.message)}</div>`
-    );
-    chatChanged = true; log.scrollTop = log.scrollHeight;
-  }
-}
-
-/* ------- gestor recursivo de respuestas ------- */
-async function handleAssistantResponse(j, silent=false, depth=0){
-  if(depth>3){            // evita bucle infinito
-    safeRemoveLoader();
-    return;
-  }
-  if(!j || !j.ok){        // error ya tratado por caller
-    safeRemoveLoader();
-    return;
-  }
-
-  /* --------- caso 1: hay texto --------- */
-  if(j.reply && j.reply.trim()){
-    safeRemoveLoader();
-    if(!silent){
-      log.insertAdjacentHTML(
-        'beforeend',
-        `<div class="feedback msg-assist">${linkify(j.reply)}</div>`
-      );
-      chatChanged = true;
-      log.scrollTop = log.scrollHeight;
-    }
-    if(j.audioUrl) playTTS(j.audioUrl);
-    return;
-  }
-
-  /* --------- caso 2: solo audio --------- */
-  if(j.audioUrl){
-    safeRemoveLoader();
-    playTTS(j.audioUrl);
-    return;
-  }
-
-  /* --------- caso 3: respuesta vacía → re-preguntar --------- */
-  ensureLoader();                     // mantenemos spinner
-  const next = await sendHidden('Completa todo lo que te he pedido');
-  await handleAssistantResponse(next, true, depth+1);
-}
-
-/* ------------------------------------------------ guías por bloque --------------------------------------------------- */
-const guide = {
-  historial   : ['Motivo consulta','Fecha inicio problema','Antecedentes personales','Antecedentes familiares',
-                 'Tratamientos previos','Medicación actual','Alergias','Hábitos de vida','Profesión'],
-  evaluacion  : ['Localización dolor','Intensidad dolor','Tipo dolor','¿Irradia? Sí/No','Descripción','Inspección visual',
-                 'Palpación','Movilidad articular','Pruebas funcionales','Valoración neurológica','Evaluación funcional',
-                 'Diagnóstico','Objetivos terapéuticos'],
-  tratamiento : ['Fecha inicio','Duración / fecha fin','Técnicas aplicadas','Frecuencia sesiones','Duración sesiones',
-                 'Recomendaciones','Suplementación','Fecha inicio suplementación','Cápsulas por bote','Días antes para alerta'],
-  sesion      : ['Técnicas utilizadas','Evolución paciente','¿Modif. tratamiento?','Observaciones']
-};
-
-function showGuide(block){
-  $id('modalTitle').textContent = block.toUpperCase();
-  $id('modalList').innerHTML    = guide[block].map(li => `<li>${li}</li>`).join('');
-  $id('modalGuide').style.display = 'flex';
-}
-function hideGuide(){ $id('modalGuide').style.display = 'none'; }
-
-/* ------------------------------------------------ control de tiempo de grabación ------------------------------------ */
-const maxBlockMs  = 25 * 60 * 1000;   /* 25 minutos en milisegundos           */
-let   blockTimer  = null;             /* id devuelto por setTimeout           */
-let   exceeded    = false;            /* true si se superó el tiempo          */
-let   manualCancel= false;            /* true si el usuario pulsa “Cancelar”  */
-
-/* ---- helpers modal timeout (Cancelar / Enviar) ---- */
-function showTimeoutModal(){ $id('modalTimeout').style.display = 'flex'; }
-function hideTimeoutModal(){ $id('modalTimeout').style.display = 'none'; }
-
-/* cerrar tocando fuera de la tarjeta */
-$id('modalTimeout').addEventListener('click', e=>{
-  if(e.target.id === 'modalTimeout') hideTimeoutModal();
-});
-
-/* botones dentro del modal (tope 25 min) */
-$id('btnCancel').onclick = ()=>{
-  hideTimeoutModal();
-  log.insertAdjacentHTML('beforeend',
-    '<div class="feedback error">❌ Grabación cancelada (excedía 25&nbsp;min)</div>');
-  chatChanged = true;
-  log.scrollTop = log.scrollHeight;
-};
-$id('btnSend').onclick = ()=>{
-  hideTimeoutModal();
-  exceeded = false;          /* permite continuar */
-  sendBlock();               /* relanza envío      */
-};
-
-/* ------------------------------------------------ botón Cancelar en modal-guía -------------------------------------- */
-function cancelGuideRecording(){
-  if(rec){
-    manualCancel = true;                /* marcar cancelación manual */
-    clearTimeout(blockTimer);
-    recorder.stop();                    /* disparará sendBlock()     */
-    rec = false;
-    btnRec.classList.remove('recording');
-  }
-  hideGuide();
-}
-$id('btnGuideCancel').onclick = cancelGuideRecording;
-
-/* ------------------------------------------------ carga inicial de la ficha ----------------------------------------- */
-async function loadSession(){
-  const main = $id('mainData');
-  try{
-    const data = await (await fetch('/api/session/info')).json();
-    if(!data.user || !data.patient){ main.textContent = '❌ Sesión no válida'; return; }
-    $id('profName').textContent = data.user.nombre;
-    $id('pacName').textContent  = data.patient.nombre + ' ' + data.patient.apellidos;
-
-    /* ---- ocultar chip Historial si ya existe ---- */
-    const chipHist = $id('chipHist');
-    if(data.historial){
-      chipHist.classList.add('hidden');
-      if(currentBlock === 'historial'){                       /* cambiamos chip activo */
-        currentBlock = 'evaluacion';
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        $id('chipEval').classList.add('active');
-      }
-    }else{
-      chipHist.classList.remove('hidden');
-    }
-
-    /* ---- construir HTML de detalles ---- */
-    let html = '', p = data.patient, h = data.historial;
-    html += title('account_circle','Historial clínico');
-    html += `<dl>${row('Alta',fDate(p.fecha_registro))}${row('Nacimiento',fDate(p.fecha_nacimiento))}
-             ${h ? `${row('Motivo',h.motivo_consulta)}${row('Inicio',fDate(h.fecha_inicio_problema))}
-                    ${row('Anteced.',h.antecedentes_personales)}${row('Ant. fam.',h.antecedentes_familiares)}${row('Trat. prev.',h.tratamientos_previos)}
-                    ${row('Medicación',h.medicacion_actual)}${row('Alergias',h.alergias)}
-                    ${row('Hábitos',h.habitos_vida)}${row('Profesión',h.profesion)}` : ''}</dl>`;
-
-    if(data.evaluacion){
-      const e = data.evaluacion;
-      html += title('fact_check','Última evaluación');
-      html += `<dl>${row('Profesional',e.prof_nombre)}${row('Fecha',fDate(e.fecha_evaluacion))}
-               ${row('Localiz. dolor',e.dolor_localizacion)}${row('Intensidad',e.dolor_intensidad)}
-               ${row('Tipo dolor',e.dolor_tipo)}${row('Irradia',e.dolor_irradia?'Sí':'No')}
-               ${row('Descripción',e.dolor_descripcion)}${row('Insp. visual',e.inspeccion_visual)}
-               ${row('Palpación',e.palpacion)}${row('Mov. artic.',e.movilidad_articular)}
-               ${row('Pruebas fun.',e.pruebas_funcionales)}${row('Val. neuro.',e.valoracion_neurologica)}
-               ${row('Val. post.',e.valoracion_postural)}${row('Val. func.',e.evaluacion_funcional)}
-               ${row('Diagnóstico',e.diagnostico)}${row('Obj. terap.',e.objetivos_terapeuticos)}</dl>`;
-    }
-
-    if(data.tratamiento){
-      const t = data.tratamiento;
-      html += title('local_hospital','Último tratamiento');
-      html += `<dl>${row('Profesional',t.prof_nombre)}${row('Inicio',fDate(t.fecha_inicio))}
-               ${row('Fin',fDate(t.fecha_fin))}${row('Tec. aplic.',t.tecnicas_aplicadas)}
-               ${row('Frec. sesión',t.frecuencia_sesiones)}${row('Dur. sesión',t.duracion_sesion)}
-               ${row('Recomend.',t.recomendaciones)}${row('Estado',t.estado)}
-               ${row('Suplemento',t.suplemento_prescrito?'Sí':'No')}
-               ${row('Caps. x bote',t.capsulas_por_bote)}${row('Dosis diaria',t.dosis_diaria)}
-               ${row('Ini. suplem.',fDate(t.fecha_inicio_suplementacion))}
-               ${row('Alert. suplem.',t.dias_alerta)}</dl>`;
-    }
-
-    if(data.sesion){
-      const s = data.sesion;
-      html += title('event','Última sesión');
-      html += `<dl>${row('Profesional',s.prof_nombre)}
-               ${row('Fecha',fDate(s.fecha_sesion)+' '+fTime(s.hora_sesion))}
-               ${row('Técnicas',s.tecnicas_utilizadas)}${row('Evolución',s.evolucion)}
-               ${row('Mod. trat.',s.modificaciones_tratamiento)}${row('Observac.',s.observaciones)}
-               ${row('Bono',s.id_bono)}</dl>`;
-    }
-
-    main.innerHTML = html;
-  }catch(e){ console.error(e); main.textContent = 'Error cargando datos'; }
-}
-loadSession();
-
-/* ------------------------------------------------ selector de bloque ------------------------------------------------ */
-document.querySelectorAll('.chip').forEach(btn=>{
-  btn.onclick = () => {
-    if(btn.classList.contains('hidden')) return;      /* ignorar chip oculto */
-    document.querySelector('.chip.active')?.classList.remove('active');
-    btn.classList.add('active');
-    currentBlock = btn.dataset.block;
-  };
-});
-
-/* ------------------------------------------------ grabación --------------------------------------------------------- */
-const btnRec = $id('btnRecord'), log = $id('log');
-let rec = false, recorder, chunks = [];
-
-btnRec.onclick = async () => {
-  if (!rec) {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-    // 1) elegimos MIME según soporte
-    let options = {};
-    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-      options.mimeType = 'audio/webm;codecs=opus';
-    } else {
-      options.mimeType = 'video/mp4';
-    }
-
-    // 2) creamos recorder con timeslice de 1 s
-    recorder = new MediaRecorder(stream, options);
-    chunks = [];
-    recorder.ondataavailable = e => chunks.push(e.data);
-    recorder.onstop          = sendBlock;
-    recorder.start(1000);
-
-    // … resto idéntico …
-    rec  = true;
-    manualCancel = false;
-    btnRec.classList.add('recording');
-    showGuide(currentBlock);
-
-    exceeded   = false;
-    blockTimer = setTimeout(()=>{
-      if (rec) { exceeded = true; btnRec.click(); }
-    }, maxBlockMs);
-
-  } else {
-    // parada normal, igual que antes
-    clearTimeout(blockTimer);
-    recorder.stop();
-    rec = false;
-    btnRec.classList.remove('recording');
-  }
-};
-
-/* ------------------------------------------------ feedback / loader -------------------------------------------------- */
-function addLoader(){
-  log.insertAdjacentHTML('beforeend','<div class="loader" id="spin">Procesando…</div>');
-  chatChanged = true;
-  log.scrollTop = log.scrollHeight;
-}
-const removeLoader = () => { $id('spin')?.remove(); };
-
-/* -------------------- guardar adjunto permanente -------------------- */
-log.addEventListener('click', async e=>{
-  if(!e.target.classList.contains('btnSaveAttach')) return;
-
-  const btn     = e.target;
-  const wrapper = btn.closest('.attach');
-  const tmpName = btn.dataset.tmp;
-  if(!tmpName) return;
-
-  btn.disabled = true;
-  btn.textContent = '⏳';
-
-  try{
-    const r = await fetch('/api/assistant/files/save',{
-      method :'POST',
-      headers:{'Content-Type':'application/json'},
-      body   : JSON.stringify({ tmpName }),
-      credentials:'include'
-    });
-    const j = await r.json();
-    if(!j.ok) throw new Error(j.error || 'Error');
-
-    wrapper.classList.remove('success');
-    wrapper.classList.add   ('info');
-    btn.remove();                         // ya no hace falta el pin
-    wrapper.insertAdjacentHTML(
-      'beforeend',
-      `<div style="margin-top:4px">✅ Guardado</div>`
-    );
-  }catch(err){
-    btn.disabled = false;
-    btn.textContent = '📌';
-    alert('No se pudo guardar: '+err.message);
-  }
-});
-
-
-/* ------------------------------------------------ envío del bloque --------------------------------------------------- */
-async function sendBlock(){
-  hideGuide();
-  clearTimeout(blockTimer);
-
-  /* cancelación manual desde el modal-guía */
-  if(manualCancel){
-    manualCancel = false;
-    chunks = [];                       /* ignoramos audio */
-    log.insertAdjacentHTML('beforeend',
-      '<div class="feedback error">❌ Grabación cancelada</div>');
-    chatChanged = true;
-    log.scrollTop = log.scrollHeight;
-    return;
-  }
-
-  /* se excedió el tiempo: mostrar modal decidir */
-  if(exceeded){
-    showTimeoutModal();
-    return;
-  }
-
-  addLoader();
-  // 1) obtenemos MIME y extensión
-  const mime = recorder.mimeType || 'audio/webm';
-  const ext  = mime.includes('mp4') ? '.mp4' : '.webm';
-
-  // 2) construimos blob+form con la extensión correcta
-  const blob = new Blob(chunks, { type: mime });
-  const form = new FormData();
-  form.append('audio', blob, 'bloque' + ext);
-  form.append('block', currentBlock);
-
-  try{
-    const r = await fetch('/api/blocks/upload', { method:'POST', body:form });
-    const j = await r.json(); removeLoader();
-
-    log.insertAdjacentHTML('beforeend',
-      `<div class="feedback ${j.ok ? 'success' : 'error'}">${j.ok ? j.message : j.error}</div>`);
-	chatChanged = true;
-    log.scrollTop = log.scrollHeight;
-
-    if(j.ok) loadSession();
-  }catch(e){
-    removeLoader();
-    log.insertAdjacentHTML('beforeend','<div class="feedback error">Error de red</div>');
-	chatChanged = true;
-    log.scrollTop = log.scrollHeight;
-  }
-}
-
-/* ------------------------------------------------ botón HABLAR (voz ↔ assistant) ---------------------------------- */
-const btnTalk  = $id('btnTalk');
-const btnStop  = $id('btnStopTTS');     // mismo botón sirve para “parar voz / cancelar”
-
-let talking     = false;                // ¿estamos grabando pregunta?
-let recVoice,  chunksVoice = [];
-let currentAudio = null;                // reproducción TTS activa
-
-/* --- voz española “femenina” si existe --- */
-function getVoiceES () {
-  const v = speechSynthesis.getVoices();
-  return v.find(x => /^es(-|$)/i.test(x.lang) && /female|mujer|woman/i.test(x.name))
-      || v.find(x => /^es(-|$)/i.test(x.lang))
-      || null;
-}
-
-/* ---------- helpers TTS ---------- */
-function playTTS (url){
-  currentAudio?.pause();                // detén la que hubiera
-  currentAudio = new Audio(url);
-  btnStop.style.display = 'flex';       // muestra botón stop
-
-  currentAudio.addEventListener('ended', cleanupTTS);
-  currentAudio.addEventListener('pause', cleanupTTS);
-  currentAudio.addEventListener('error', cleanupTTS);
-
-  currentAudio.play().catch(console.error);
-}
-function cleanupTTS(){
-  if(!currentAudio) return;
-  fetch(currentAudio.src,{method:'DELETE'});   // lo borras del servidor
-  currentAudio = null;
-  btnStop.style.display = talking ? 'flex' : 'none';
-}
-
-/* ---------- cancelar GRABACIÓN ---------- */
-function cancelRecording(){
-  if(!talking) return;
-  recVoice.stop();                      // onstop no enviará nada
-  talking = false;
-  btnTalk.classList.remove('talking');
-  btnStop.style.display = 'none';
-
-  log.insertAdjacentHTML(
-    'beforeend',
-    '<div class="feedback error">❌ Pregunta cancelada</div>'
-  );
-  chatChanged = true;
-  log.scrollTop = log.scrollHeight;
-}
-
-/* ---------- botón STOP (voz / grabación) ---------- */
-btnStop.onclick = () => {
-  if(currentAudio){        // se está oyendo la respuesta  → parar voz
-    currentAudio.pause();
-  }else{                   // estamos grabando            → cancelar
-    cancelRecording();
-  }
-};
-
-/* patrón común de confirmación */
-const confRE = /(registrad[oa]|actualizaci[oó]n) realizada correctamente/i;
-
-/* ---------- click HABLAR (voz ↔ assistant) ---------- */
-btnTalk.onclick = async () => {
-  if (!talking) {  // ─ EMPEZAR ─
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-    // 1. elegir mimeType
-    let options = {};
-    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-      options.mimeType = 'audio/webm;codecs=opus';
-    } else {
-      options.mimeType = 'video/mp4';
-    }
-
-    recVoice = new MediaRecorder(stream, options);
-    chunksVoice = [];
-    recVoice.ondataavailable = e => chunksVoice.push(e.data);
-    recVoice.start(1000);            // 2. timeslice 1s
-
-    talking = true;
-    btnTalk.classList.add('talking');
-    btnStop.style.display = 'flex';
-  } else {       // ─ DETENER ─
-    recVoice.stop();
-    talking = false;
-    btnTalk.classList.remove('talking');
-
-    recVoice.onstop = async () => {
-      // 3. determinar extensión según mimeType
-      const mime = recVoice.mimeType || 'audio/webm';
-      const ext  = mime.includes('mp4') ? '.mp4' : '.webm';
-      const blob = new Blob(chunksVoice, { type: mime });
-      const form = new FormData();
-      form.append('audio', blob, 'pregunta' + ext);
-
-      ensureLoader();  // spinner
-      try {
-		const r = await fetch('/api/assistant/voice', {
-		  method: 'POST',
-		  credentials: 'include',
-		  body: form
-		});
-        const j = await r.json();
-        if (!j.ok) throw new Error(j.error || 'Error desconocido');
-
-        // mostrar pregunta transcrita
-        if (j.question) {
+      /* caso 1: respuesta con texto visible */
+      if (j.reply && j.reply.trim()) {
+        if (!silent) {                           // solo mostramos si no es “silencioso”
           log.insertAdjacentHTML(
             'beforeend',
-            `<div class="feedback msg-user">${linkify(j.question)}</div>`
+            `<div class="feedback success">${linkify(j.reply)}</div>`
+          );
+          log.scrollTop = log.scrollHeight;
+        }
+        if (j.audioUrl) playTTS(j.audioUrl);    // voz si procede
+        return;                                // ¡nada más que hacer!
+      }
+
+      /* caso 2: mensaje vacío → pedir que complete */
+      console.log('[auto] Respuesta vacía; solicitando continuación…');
+      const next = await sendHidden('Completa todo lo que te he pedido');
+      await handleAssistantResponse(next, true);   // recursivo / silencioso
+    }
+
+    /* ------- envía mensaje silencioso ------- */
+    async function sendHidden(msg) {
+      try {
+        const r = await fetch('/api/assistant/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(buildAssistantBody(msg))
+        });
+        return await r.json();
+      } catch (e) {
+        console.error('Hidden call error', e);
+        return { ok: false, reply: '' };
+      }
+    }
+
+    /* ------- spinner helpers ------- */
+    const ensureLoader = () => $id('spin') || addLoader();
+    const safeRemoveLoader = () => removeLoader();
+
+    async function sendToAssistant(body) {
+      ensureLoader();
+      try {
+        const r = await fetch('/api/assistant/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+          credentials: 'include'
+        });
+        const j = await r.json();
+        await handleAssistantResponse(j);
+      } catch (err) {
+        safeRemoveLoader();
+        log.insertAdjacentHTML(
+          'beforeend', `<div class="feedback error">${linkify(err.message)}</div>`
+        );
+        chatChanged = true; log.scrollTop = log.scrollHeight;
+      }
+    }
+
+    /* ------- gestor recursivo de respuestas ------- */
+    async function handleAssistantResponse(j, silent = false, depth = 0) {
+      if (depth > 3) {            // evita bucle infinito
+        safeRemoveLoader();
+        return;
+      }
+      if (!j || !j.ok) {        // error ya tratado por caller
+        safeRemoveLoader();
+        return;
+      }
+
+      /* --------- caso 1: hay texto --------- */
+      if (j.reply && j.reply.trim()) {
+        safeRemoveLoader();
+        if (!silent) {
+          log.insertAdjacentHTML(
+            'beforeend',
+            `<div class="feedback msg-assist">${linkify(j.reply)}</div>`
           );
           chatChanged = true;
+          log.scrollTop = log.scrollHeight;
         }
-        // manejar respuesta
-        await handleAssistantResponse(j);
+        if (j.audioUrl) playTTS(j.audioUrl);
+        return;
+      }
 
-      } catch (err) {
-        removeLoader();
-        log.insertAdjacentHTML(
-          'beforeend',
-          `<div class="feedback error">${linkify(err.message)}</div>`
-        );
-        if (j?.audioUrl) playTTS(j.audioUrl);
-      } finally {
-        if (!currentAudio) btnStop.style.display = 'none';
+      /* --------- caso 2: solo audio --------- */
+      if (j.audioUrl) {
+        safeRemoveLoader();
+        playTTS(j.audioUrl);
+        return;
+      }
+
+      /* --------- caso 3: respuesta vacía → re-preguntar --------- */
+      ensureLoader();                     // mantenemos spinner
+      const next = await sendHidden('Completa todo lo que te he pedido');
+      await handleAssistantResponse(next, true, depth + 1);
+    }
+
+    /* ------------------------------------------------ guías por bloque --------------------------------------------------- */
+    const guide = {
+      historial: ['Motivo consulta', 'Fecha inicio problema', 'Antecedentes personales', 'Antecedentes familiares',
+        'Tratamientos previos', 'Medicación actual', 'Alergias', 'Hábitos de vida', 'Profesión'],
+      evaluacion: ['Localización dolor', 'Intensidad dolor', 'Tipo dolor', '¿Irradia? Sí/No', 'Descripción', 'Inspección visual',
+        'Palpación', 'Movilidad articular', 'Pruebas funcionales', 'Valoración neurológica', 'Evaluación funcional',
+        'Diagnóstico', 'Objetivos terapéuticos'],
+      tratamiento: ['Fecha inicio', 'Duración / fecha fin', 'Técnicas aplicadas', 'Frecuencia sesiones', 'Duración sesiones',
+        'Recomendaciones', 'Suplementación', 'Fecha inicio suplementación', 'Cápsulas por bote', 'Días antes para alerta'],
+      sesion: ['Técnicas utilizadas', 'Evolución paciente', '¿Modif. tratamiento?', 'Observaciones']
+    };
+
+    function showGuide(block) {
+      $id('modalTitle').textContent = block.toUpperCase();
+      $id('modalList').innerHTML = guide[block].map(li => `<li>${li}</li>`).join('');
+      $id('modalGuide').style.display = 'flex';
+    }
+    function hideGuide() { $id('modalGuide').style.display = 'none'; }
+
+    /* ------------------------------------------------ control de tiempo de grabación ------------------------------------ */
+    const maxBlockMs = 25 * 60 * 1000;   /* 25 minutos en milisegundos           */
+    let blockTimer = null;             /* id devuelto por setTimeout           */
+    let exceeded = false;            /* true si se superó el tiempo          */
+    let manualCancel = false;            /* true si el usuario pulsa “Cancelar”  */
+
+    /* ---- helpers modal timeout (Cancelar / Enviar) ---- */
+    function showTimeoutModal() { $id('modalTimeout').style.display = 'flex'; }
+    function hideTimeoutModal() { $id('modalTimeout').style.display = 'none'; }
+
+    /* cerrar tocando fuera de la tarjeta */
+    $id('modalTimeout').addEventListener('click', e => {
+      if (e.target.id === 'modalTimeout') hideTimeoutModal();
+    });
+
+    /* botones dentro del modal (tope 25 min) */
+    $id('btnCancel').onclick = () => {
+      hideTimeoutModal();
+      log.insertAdjacentHTML('beforeend',
+        '<div class="feedback error">❌ Grabación cancelada (excedía 25&nbsp;min)</div>');
+      chatChanged = true;
+      log.scrollTop = log.scrollHeight;
+    };
+    $id('btnSend').onclick = () => {
+      hideTimeoutModal();
+      exceeded = false;          /* permite continuar */
+      sendBlock();               /* relanza envío      */
+    };
+
+    /* ------------------------------------------------ botón Cancelar en modal-guía -------------------------------------- */
+    function cancelGuideRecording() {
+      if (rec) {
+        manualCancel = true;                /* marcar cancelación manual */
+        clearTimeout(blockTimer);
+        recorder.stop();                    /* disparará sendBlock()     */
+        rec = false;
+        btnRec.classList.remove('recording');
+      }
+      hideGuide();
+    }
+    $id('btnGuideCancel').onclick = cancelGuideRecording;
+
+    /* ------------------------------------------------ carga inicial de la ficha ----------------------------------------- */
+    async function loadSession() {
+      const main = $id('mainData');
+      try {
+        const data = await (await fetch('/api/session/info')).json();
+        if (!data.user || !data.patient) { main.textContent = '❌ Sesión no válida'; return; }
+        $id('profName').textContent = data.user.nombre;
+        $id('pacName').textContent = data.patient.nombre + ' ' + data.patient.apellidos;
+
+        /* ---- ocultar chip Historial si ya existe ---- */
+        const chipHist = $id('chipHist');
+        if (data.historial) {
+          chipHist.classList.add('hidden');
+          if (currentBlock === 'historial') {                       /* cambiamos chip activo */
+            currentBlock = 'evaluacion';
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            $id('chipEval').classList.add('active');
+          }
+        } else {
+          chipHist.classList.remove('hidden');
+        }
+
+        /* ---- construir HTML de detalles ---- */
+        let html = '', p = data.patient, h = data.historial;
+        html += title('account_circle', 'Historial clínico');
+        html += `<dl>${row('Alta', fDate(p.fecha_registro))}${row('Nacimiento', fDate(p.fecha_nacimiento))}
+             ${h ? `${row('Motivo', h.motivo_consulta)}${row('Inicio', fDate(h.fecha_inicio_problema))}
+                    ${row('Anteced.', h.antecedentes_personales)}${row('Ant. fam.', h.antecedentes_familiares)}${row('Trat. prev.', h.tratamientos_previos)}
+                    ${row('Medicación', h.medicacion_actual)}${row('Alergias', h.alergias)}
+                    ${row('Hábitos', h.habitos_vida)}${row('Profesión', h.profesion)}` : ''}</dl>`;
+
+        if (data.evaluacion) {
+          const e = data.evaluacion;
+          html += title('fact_check', 'Última evaluación');
+          html += `<dl>${row('Profesional', e.prof_nombre)}${row('Fecha', fDate(e.fecha_evaluacion))}
+               ${row('Localiz. dolor', e.dolor_localizacion)}${row('Intensidad', e.dolor_intensidad)}
+               ${row('Tipo dolor', e.dolor_tipo)}${row('Irradia', e.dolor_irradia ? 'Sí' : 'No')}
+               ${row('Descripción', e.dolor_descripcion)}${row('Insp. visual', e.inspeccion_visual)}
+               ${row('Palpación', e.palpacion)}${row('Mov. artic.', e.movilidad_articular)}
+               ${row('Pruebas fun.', e.pruebas_funcionales)}${row('Val. neuro.', e.valoracion_neurologica)}
+               ${row('Val. post.', e.valoracion_postural)}${row('Val. func.', e.evaluacion_funcional)}
+               ${row('Diagnóstico', e.diagnostico)}${row('Obj. terap.', e.objetivos_terapeuticos)}</dl>`;
+        }
+
+        if (data.tratamiento) {
+          const t = data.tratamiento;
+          html += title('local_hospital', 'Último tratamiento');
+          html += `<dl>${row('Profesional', t.prof_nombre)}${row('Inicio', fDate(t.fecha_inicio))}
+               ${row('Fin', fDate(t.fecha_fin))}${row('Tec. aplic.', t.tecnicas_aplicadas)}
+               ${row('Frec. sesión', t.frecuencia_sesiones)}${row('Dur. sesión', t.duracion_sesion)}
+               ${row('Recomend.', t.recomendaciones)}${row('Estado', t.estado)}
+               ${row('Suplemento', t.suplemento_prescrito ? 'Sí' : 'No')}
+               ${row('Caps. x bote', t.capsulas_por_bote)}${row('Dosis diaria', t.dosis_diaria)}
+               ${row('Ini. suplem.', fDate(t.fecha_inicio_suplementacion))}
+               ${row('Alert. suplem.', t.dias_alerta)}</dl>`;
+        }
+
+        if (data.sesion) {
+          const s = data.sesion;
+          html += title('event', 'Última sesión');
+          html += `<dl>${row('Profesional', s.prof_nombre)}
+               ${row('Fecha', fDate(s.fecha_sesion) + ' ' + fTime(s.hora_sesion))}
+               ${row('Técnicas', s.tecnicas_utilizadas)}${row('Evolución', s.evolucion)}
+               ${row('Mod. trat.', s.modificaciones_tratamiento)}${row('Observac.', s.observaciones)}
+               ${row('Bono', s.id_bono)}</dl>`;
+        }
+
+        main.innerHTML = html;
+      } catch (e) { console.error(e); main.textContent = 'Error cargando datos'; }
+    }
+    loadSession();
+
+    /* ------------------------------------------------ selector de bloque ------------------------------------------------ */
+    document.querySelectorAll('.chip').forEach(btn => {
+      btn.onclick = () => {
+        if (btn.classList.contains('hidden')) return;      /* ignorar chip oculto */
+        document.querySelector('.chip.active')?.classList.remove('active');
+        btn.classList.add('active');
+        currentBlock = btn.dataset.block;
+      };
+    });
+
+    /* ------------------------------------------------ grabación --------------------------------------------------------- */
+    const btnRec = $id('btnRecord'), log = $id('log');
+    let rec = false, recorder, chunks = [];
+
+    btnRec.onclick = async () => {
+      if (!rec) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        // 1) elegimos MIME según soporte
+        let options = {};
+        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+          options.mimeType = 'audio/webm;codecs=opus';
+        } else {
+          options.mimeType = 'video/mp4';
+        }
+
+        // 2) creamos recorder con timeslice de 1 s
+        recorder = new MediaRecorder(stream, options);
+        chunks = [];
+        recorder.ondataavailable = e => chunks.push(e.data);
+        recorder.onstop = sendBlock;
+        recorder.start(1000);
+
+        // … resto idéntico …
+        rec = true;
+        manualCancel = false;
+        btnRec.classList.add('recording');
+        showGuide(currentBlock);
+
+        exceeded = false;
+        blockTimer = setTimeout(() => {
+          if (rec) { exceeded = true; btnRec.click(); }
+        }, maxBlockMs);
+
+      } else {
+        // parada normal, igual que antes
+        clearTimeout(blockTimer);
+        recorder.stop();
+        rec = false;
+        btnRec.classList.remove('recording');
       }
     };
-  }
-};
 
-$id('btnHome').onclick = () => location.href = '/inicio-consulta.html';
-	
-const panelTxt = $id('textPanel');
-const inpMsg   = $id('txtMessage');
+    /* ------------------------------------------------ feedback / loader -------------------------------------------------- */
+    function addLoader() {
+      log.insertAdjacentHTML('beforeend', '<div class="loader" id="spin">Procesando…</div>');
+      chatChanged = true;
+      log.scrollTop = log.scrollHeight;
+    }
+    const removeLoader = () => { $id('spin')?.remove(); };
 
-$id('btnKeyboard').onclick = () => {
-  panelTxt.style.display = panelTxt.style.display === 'none' ? 'block' : 'none';
-  if(panelTxt.style.display==='block') { inpMsg.focus(); }
-};
+    /* -------------------- guardar adjunto permanente -------------------- */
+    log.addEventListener('click', async e => {
+      if (!e.target.classList.contains('btnSaveAttach')) return;
 
-/* ---------- auto-grow del <textarea> (sin scroll interno) ---------- */
-const autoGrow = el => {
-  el.style.height = 'auto';               // reset
-  el.style.height = (el.scrollHeight + 2) + 'px';
-};
+      const btn = e.target;
+      const wrapper = btn.closest('.attach');
+      const tmpName = btn.dataset.tmp;
+      if (!tmpName) return;
 
-/* ---------- entrada por teclado ---------- */
-inpMsg.addEventListener('keydown', async e => {
-  if(e.key === 'Enter' && !e.shiftKey){
-    e.preventDefault();
-    const msg = inpMsg.value.trim();
-    if(!msg) return;
+      btn.disabled = true;
+      btn.textContent = '⏳';
 
-    inpMsg.value = '';
-    autoGrow(inpMsg);
+      try {
+        const r = await fetch('/api/assistant/files/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tmpName }),
+          credentials: 'include'
+        });
+        const j = await r.json();
+        if (!j.ok) throw new Error(j.error || 'Error');
 
-    log.insertAdjacentHTML(
-      'beforeend',
-      `<div class="feedback msg-user">${linkify(msg)}</div>`
-    );
-    chatChanged = true;
-    log.scrollTop = log.scrollHeight;
+        wrapper.classList.remove('success');
+        wrapper.classList.add('info');
+        btn.remove();                         // ya no hace falta el pin
+        wrapper.insertAdjacentHTML(
+          'beforeend',
+          `<div style="margin-top:4px">✅ Guardado</div>`
+        );
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = '📌';
+        alert('No se pudo guardar: ' + err.message);
+      }
+    });
 
-    ensureLoader();                 // spinner
-    let j = null;
-    try{
-      const r = await fetch('/api/assistant/chat',{
-        method :'POST',
-        headers:{'Content-Type':'application/json'},
-        body   : JSON.stringify(buildAssistantBody(msg))
-      });
-      j = await r.json();
-      if(!j.ok) throw new Error(j.error || 'Error');
 
-      await handleAssistantResponse(j);
+    /* ------------------------------------------------ envío del bloque --------------------------------------------------- */
+    async function sendBlock() {
+      hideGuide();
+      clearTimeout(blockTimer);
 
-    }catch(err){
-      safeRemoveLoader();
+      /* cancelación manual desde el modal-guía */
+      if (manualCancel) {
+        manualCancel = false;
+        chunks = [];                       /* ignoramos audio */
+        log.insertAdjacentHTML('beforeend',
+          '<div class="feedback error">❌ Grabación cancelada</div>');
+        chatChanged = true;
+        log.scrollTop = log.scrollHeight;
+        return;
+      }
+
+      /* se excedió el tiempo: mostrar modal decidir */
+      if (exceeded) {
+        showTimeoutModal();
+        return;
+      }
+
+      addLoader();
+      // 1) obtenemos MIME y extensión
+      const mime = recorder.mimeType || 'audio/webm';
+      const ext = mime.includes('mp4') ? '.mp4' : '.webm';
+
+      // 2) construimos blob+form con la extensión correcta
+      const blob = new Blob(chunks, { type: mime });
+      const form = new FormData();
+      form.append('audio', blob, 'bloque' + ext);
+      form.append('block', currentBlock);
+
+      try {
+        const r = await fetch('/api/blocks/upload', { method: 'POST', body: form });
+        const j = await r.json(); removeLoader();
+
+        log.insertAdjacentHTML('beforeend',
+          `<div class="feedback ${j.ok ? 'success' : 'error'}">${j.ok ? j.message : j.error}</div>`);
+        chatChanged = true;
+        log.scrollTop = log.scrollHeight;
+
+        if (j.ok) loadSession();
+      } catch (e) {
+        removeLoader();
+        log.insertAdjacentHTML('beforeend', '<div class="feedback error">Error de red</div>');
+        chatChanged = true;
+        log.scrollTop = log.scrollHeight;
+      }
+    }
+
+    /* ------------------------------------------------ botón HABLAR (voz ↔ assistant) ---------------------------------- */
+    const btnTalk = $id('btnTalk');
+    const btnStop = $id('btnStopTTS');     // mismo botón sirve para “parar voz / cancelar”
+
+    let talking = false;                // ¿estamos grabando pregunta?
+    let recVoice, chunksVoice = [];
+    let currentAudio = null;                // reproducción TTS activa
+
+    /* --- voz española “femenina” si existe --- */
+    function getVoiceES() {
+      const v = speechSynthesis.getVoices();
+      return v.find(x => /^es(-|$)/i.test(x.lang) && /female|mujer|woman/i.test(x.name))
+        || v.find(x => /^es(-|$)/i.test(x.lang))
+        || null;
+    }
+
+    /* ---------- helpers TTS ---------- */
+    function playTTS(url) {
+      currentAudio?.pause();                // detén la que hubiera
+      currentAudio = new Audio(url);
+      btnStop.style.display = 'flex';       // muestra botón stop
+
+      currentAudio.addEventListener('ended', cleanupTTS);
+      currentAudio.addEventListener('pause', cleanupTTS);
+      currentAudio.addEventListener('error', cleanupTTS);
+
+      currentAudio.play().catch(console.error);
+    }
+    function cleanupTTS() {
+      if (!currentAudio) return;
+      fetch(currentAudio.src, { method: 'DELETE' });   // lo borras del servidor
+      currentAudio = null;
+      btnStop.style.display = talking ? 'flex' : 'none';
+    }
+
+    /* ---------- cancelar GRABACIÓN ---------- */
+    function cancelRecording() {
+      if (!talking) return;
+      recVoice.stop();                      // onstop no enviará nada
+      talking = false;
+      btnTalk.classList.remove('talking');
+      btnStop.style.display = 'none';
+
       log.insertAdjacentHTML(
         'beforeend',
-        `<div class="feedback error">${linkify(err.message)}</div>`
+        '<div class="feedback error">❌ Pregunta cancelada</div>'
       );
       chatChanged = true;
       log.scrollTop = log.scrollHeight;
-
-      if(j?.audioUrl) playTTS(j.audioUrl);
-    }finally{
-      if(!currentAudio) btnStop.style.display = 'none';
     }
 
-  }else{
-    setTimeout(()=>autoGrow(inpMsg),0);
-  }
-});
+    /* ---------- botón STOP (voz / grabación) ---------- */
+    btnStop.onclick = () => {
+      if (currentAudio) {        // se está oyendo la respuesta  → parar voz
+        currentAudio.pause();
+      } else {                   // estamos grabando            → cancelar
+        cancelRecording();
+      }
+    };
 
+    /* patrón común de confirmación */
+    const confRE = /(registrad[oa]|actualizaci[oó]n) realizada correctamente/i;
 
-/* ---------- GUARDAR / ACTUALIZAR EL CHAT ---------- */
-$id('btnSaveChat').onclick = async () => {
+    /* ---------- click HABLAR (voz ↔ assistant) ---------- */
+    btnTalk.onclick = async () => {
+      if (!talking) {  // ─ EMPEZAR ─
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-  /* 2.1 – Nada que guardar */
-  if (!chatChanged) {
-    Swal.fire({
-      icon : 'info',
-      title: 'Sin cambios',
-      text : 'No has hecho ninguna modificación desde el último guardado',
-      confirmButtonColor: '#276040'
+        // 1. elegir mimeType
+        let options = {};
+        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+          options.mimeType = 'audio/webm;codecs=opus';
+        } else {
+          options.mimeType = 'video/mp4';
+        }
+
+        recVoice = new MediaRecorder(stream, options);
+        chunksVoice = [];
+        recVoice.ondataavailable = e => chunksVoice.push(e.data);
+        recVoice.start(1000);            // 2. timeslice 1s
+
+        talking = true;
+        btnTalk.classList.add('talking');
+        btnStop.style.display = 'flex';
+      } else {       // ─ DETENER ─
+        recVoice.stop();
+        talking = false;
+        btnTalk.classList.remove('talking');
+
+        recVoice.onstop = async () => {
+          // 3. determinar extensión según mimeType
+          const mime = recVoice.mimeType || 'audio/webm';
+          const ext = mime.includes('mp4') ? '.mp4' : '.webm';
+          const blob = new Blob(chunksVoice, { type: mime });
+          const form = new FormData();
+          form.append('audio', blob, 'pregunta' + ext);
+
+          ensureLoader();  // spinner
+          try {
+            const r = await fetch('/api/assistant/voice', {
+              method: 'POST',
+              credentials: 'include',
+              body: form
+            });
+            const j = await r.json();
+            if (!j.ok) throw new Error(j.error || 'Error desconocido');
+
+            // mostrar pregunta transcrita
+            if (j.question) {
+              log.insertAdjacentHTML(
+                'beforeend',
+                `<div class="feedback msg-user">${linkify(j.question)}</div>`
+              );
+              chatChanged = true;
+            }
+            // manejar respuesta
+            await handleAssistantResponse(j);
+
+          } catch (err) {
+            removeLoader();
+            log.insertAdjacentHTML(
+              'beforeend',
+              `<div class="feedback error">${linkify(err.message)}</div>`
+            );
+            if (j?.audioUrl) playTTS(j.audioUrl);
+          } finally {
+            if (!currentAudio) btnStop.style.display = 'none';
+          }
+        };
+      }
+    };
+
+    $id('btnHome').onclick = () => location.href = '/inicio-consulta.html';
+
+    const panelTxt = $id('textPanel');
+    const inpMsg = $id('txtMessage');
+
+    $id('btnKeyboard').onclick = () => {
+      panelTxt.style.display = panelTxt.style.display === 'none' ? 'block' : 'none';
+      if (panelTxt.style.display === 'block') { inpMsg.focus(); }
+    };
+
+    /* ---------- auto-grow del <textarea> (sin scroll interno) ---------- */
+    const autoGrow = el => {
+      el.style.height = 'auto';               // reset
+      el.style.height = (el.scrollHeight + 2) + 'px';
+    };
+
+    /* ---------- entrada por teclado ---------- */
+    inpMsg.addEventListener('keydown', async e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const msg = inpMsg.value.trim();
+        if (!msg) return;
+
+        inpMsg.value = '';
+        autoGrow(inpMsg);
+
+        log.insertAdjacentHTML(
+          'beforeend',
+          `<div class="feedback msg-user">${linkify(msg)}</div>`
+        );
+        chatChanged = true;
+        log.scrollTop = log.scrollHeight;
+
+        ensureLoader();                 // spinner
+        let j = null;
+        try {
+          const r = await fetch('/api/assistant/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(buildAssistantBody(msg))
+          });
+          j = await r.json();
+          if (!j.ok) throw new Error(j.error || 'Error');
+
+          await handleAssistantResponse(j);
+
+        } catch (err) {
+          safeRemoveLoader();
+          log.insertAdjacentHTML(
+            'beforeend',
+            `<div class="feedback error">${linkify(err.message)}</div>`
+          );
+          chatChanged = true;
+          log.scrollTop = log.scrollHeight;
+
+          if (j?.audioUrl) playTTS(j.audioUrl);
+        } finally {
+          if (!currentAudio) btnStop.style.display = 'none';
+        }
+
+      } else {
+        setTimeout(() => autoGrow(inpMsg), 0);
+      }
     });
-    return;
-  }
 
-  /* 2.2 – Preparamos cuerpo y método */
-  const body   = { conversation: serializeChat() };
-  if (activeChatId) body.id_chat = activeChatId;
 
-  try {
-    const r = await fetch('/api/chats/save', {
-      method : 'POST',
-      headers: { 'Content-Type':'application/json' },
-      body   : JSON.stringify(body)
-    });
-    const j = await r.json();
-    if (!j.id_chat && !j.ok) throw new Error(j.error || 'Error');
+    /* ---------- GUARDAR / ACTUALIZAR EL CHAT ---------- */
+    $id('btnSaveChat').onclick = async () => {
 
-    activeChatId = activeChatId || j.id_chat;
-    chatChanged  = false;
+      /* 2.1 – Nada que guardar */
+      if (!chatChanged) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Sin cambios',
+          text: 'No has hecho ninguna modificación desde el último guardado',
+          confirmButtonColor: '#276040'
+        });
+        return;
+      }
 
-    /* 2.3 – ÉXITO */
-    Swal.fire({
-      icon : 'success',
-      title: '¡Guardado!',
-      text : 'La conversación se ha almacenado correctamente',
-      confirmButtonColor: '#276040',
-      timer: 2000,
-      showConfirmButton: false
-    });
+      /* 2.2 – Preparamos cuerpo y método */
+      const body = { conversation: serializeChat() };
+      if (activeChatId) body.id_chat = activeChatId;
 
-  } catch (err) {
-    /* 2.4 – ERROR */
-    Swal.fire({
-      icon : 'error',
-      title: 'Ups…',
-      text : err.message || 'Error al guardar el chat',
-      confirmButtonColor: '#a12525'
-    });
-  }
-};
-	
-/* =======================  SUBIDA DE ARCHIVOS  ======================= */
-const picker   = $id('filePicker');
-const btnPlus  = $id('btnUpload');
+      try {
+        const r = await fetch('/api/chats/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const j = await r.json();
+        if (!j.id_chat && !j.ok) throw new Error(j.error || 'Error');
 
-btnPlus.onclick = () => picker.click();
-	
-function addAttachmentToLog ({ fileName, tmpName, isImg }){
-  const html = `
+        activeChatId = activeChatId || j.id_chat;
+        chatChanged = false;
+
+        /* 2.3 – ÉXITO */
+        Swal.fire({
+          icon: 'success',
+          title: '¡Guardado!',
+          text: 'La conversación se ha almacenado correctamente',
+          confirmButtonColor: '#276040',
+          timer: 2000,
+          showConfirmButton: false
+        });
+
+      } catch (err) {
+        /* 2.4 – ERROR */
+        Swal.fire({
+          icon: 'error',
+          title: 'Ups…',
+          text: err.message || 'Error al guardar el chat',
+          confirmButtonColor: '#a12525'
+        });
+      }
+    };
+
+    /* =======================  SUBIDA DE ARCHIVOS  ======================= */
+    const picker = $id('filePicker');
+    const btnPlus = $id('btnUpload');
+
+    btnPlus.onclick = () => picker.click();
+
+    function addAttachmentToLog({ fileName, tmpName, isImg }) {
+      const html = `
     <div class="feedback success attach" data-tmp="${tmpName}">
       📎 ${fileName} adjuntado
       <button class="btnSaveAttach" data-tmp="${tmpName}"
               title="Guardar en ficha del paciente">📌</button>
       ${isImg ? `<br><img src="/tmp/${tmpName}" class="thumb">` : ''}
     </div>`;
-  log.insertAdjacentHTML('beforeend', html);
-  chatChanged = true;
-  log.scrollTop = log.scrollHeight;
-}
-
-picker.onchange = async () => {
-  if (!picker.files.length) return;
-
-  for (const file of picker.files){
-    try{
-      /* ---- 1.a – enviamos a /tmp ---- */
-      const form = new FormData();
-      form.append('files', file, file.name);
-
-      const r  = await fetch('/api/files/tmp/upload', {
-        method :'POST',
-        body   : form,
-        credentials:'include'
-      });
-      const j  = await r.json();
-      if (!j.files?.length) throw new Error('Falló la subida');
-
-      const tmpName = j.files[0].filename;          // ej.: tmp-123.pdf
-
-      /* ---- 1.b – registramos en backend ---- */
-      const r2 = await fetch('/api/assistant/files/register',{
-        method :'POST',
-        headers:{'Content-Type':'application/json'},
-        body   : JSON.stringify({ tmpName, origName:file.name }),
-        credentials:'include'
-      });
-      const j2 = await r2.json();
-      if (!j2.ok) throw new Error(j2.error || 'Error registrando archivo');
-
-      /* ---- 1.c – si es imagen la añadimos al array vision ---- */
-      if (j2.kind === 'image'){
-        window.sessionImages.push(`${location.origin}/tmp/${tmpName}`);
-        if (window.sessionImages.length > 5) window.sessionImages.shift(); // límite 5
-      }
-
-	  /* ---- 1.d – feedback + pin ---- */
-	  addAttachmentToLog({
-	    fileName: file.name,
-	    tmpName,
-	    isImg: /\.(png|jpe?g|webp|gif|heic)$/i.test(file.name)
-	  });
-
-      chatChanged = true;
-      log.scrollTop = log.scrollHeight;
-
-    }catch(err){
-      log.insertAdjacentHTML(
-        'beforeend',
-        `<div class="feedback error">${err.message}</div>`
-      );
+      log.insertAdjacentHTML('beforeend', html);
       chatChanged = true;
       log.scrollTop = log.scrollHeight;
     }
-  }
-  picker.value = '';          // reset
-};
 
-/* ─── Finalizar chat si se abandona la página ─── */
-window.addEventListener('beforeunload', () => {
-  /* Solo si hay un chat abierto */
-  if (activeChatId !== null) {
-    /* Serializamos lo que haya en pantalla */
-    const payload = {
-      id_chat     : activeChatId,
-      conversation: serializeChat(),
-      finalizar   : true
+    picker.onchange = async () => {
+      if (!picker.files.length) return;
+
+      for (const file of picker.files) {
+        try {
+          /* ---- 1.a – enviamos a /tmp ---- */
+          const form = new FormData();
+          form.append('files', file, file.name);
+
+          const r = await fetch('/api/files/tmp/upload', {
+            method: 'POST',
+            body: form,
+            credentials: 'include'
+          });
+          const j = await r.json();
+          if (!j.files?.length) throw new Error('Falló la subida');
+
+          const tmpName = j.files[0].filename;          // ej.: tmp-123.pdf
+
+          /* ---- 1.b – registramos en backend ---- */
+          const r2 = await fetch('/api/assistant/files/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tmpName, origName: file.name }),
+            credentials: 'include'
+          });
+          const j2 = await r2.json();
+          if (!j2.ok) throw new Error(j2.error || 'Error registrando archivo');
+
+          /* ---- 1.c – si es imagen la añadimos al array vision ---- */
+          if (j2.kind === 'image') {
+            window.sessionImages.push(`${location.origin}/tmp/${tmpName}`);
+            if (window.sessionImages.length > 5) window.sessionImages.shift(); // límite 5
+          }
+
+          /* ---- 1.d – feedback + pin ---- */
+          addAttachmentToLog({
+            fileName: file.name,
+            tmpName,
+            isImg: /\.(png|jpe?g|webp|gif|heic)$/i.test(file.name)
+          });
+
+          chatChanged = true;
+          log.scrollTop = log.scrollHeight;
+
+        } catch (err) {
+          log.insertAdjacentHTML(
+            'beforeend',
+            `<div class="feedback error">${err.message}</div>`
+          );
+          chatChanged = true;
+          log.scrollTop = log.scrollHeight;
+        }
+      }
+      picker.value = '';          // reset
     };
 
-    /* sendBeacon ⇒ dispara en segundo plano sin bloquear la salida */
-    navigator.sendBeacon(
-      '/api/chats/save',
-      new Blob([JSON.stringify(payload)], { type:'application/json' })
-    );
-  }
-});
-</script>
+    /* ─── Finalizar chat si se abandona la página ─── */
+    window.addEventListener('beforeunload', () => {
+      /* Solo si hay un chat abierto */
+      if (activeChatId !== null) {
+        /* Serializamos lo que haya en pantalla */
+        const payload = {
+          id_chat: activeChatId,
+          conversation: serializeChat(),
+          finalizar: true
+        };
+
+        /* sendBeacon ⇒ dispara en segundo plano sin bloquear la salida */
+        navigator.sendBeacon(
+          '/api/chats/save',
+          new Blob([JSON.stringify(payload)], { type: 'application/json' })
+        );
+      }
+    });
+  </script>
 
 </body>
+
 </html>
