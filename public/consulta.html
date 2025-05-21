@@ -405,7 +405,7 @@
     #panels {
       flex: 1 1 auto;
       width: 100%;
-      max-width: 620px;
+      max-width: 1900px;
       margin: auto;
       display: flex;
       flex-direction: column;
@@ -489,6 +489,142 @@
     .info-panel .section-title .material-icons-outlined {
       font-size: 20px;
       color: #4d4d4d;
+    }
+
+    @media (min-width:900px) {
+
+      /* El wrapper pasa de columna → fila */
+      #panels {
+        flex-direction: row;
+      }
+
+      /* Ambos paneles comparten el ancho disponible ---------------- */
+      .info-panel,
+      .chat-panel {
+        flex: 1 1 50%;
+        /* mitad cada uno                                      */
+        max-width: 50%;
+        /* evita que crezcan más del 50 %                      */
+        height: auto;
+        /* dejamos que hereden la altura del contenedor flex   */
+      }
+
+      /* El panel de datos ya no necesita limitación de altura
+     (se repartirá verticalmente junto al chat) */
+      .info-panel {
+        max-height: none;
+      }
+
+      /* Opcional: añade un poco más de separación entre ellos       */
+      #panels {
+        gap: 16px;
+        /* en vertical seguirá usando el gap original (8 px)   */
+      }
+    }
+
+    /* ——  GARANTIZA QUE #panels PUEDE ENCOGERSE  —— */
+    #panels {
+      min-height: 0;
+      /* clave: deja que se reduzca verticalmente */
+    }
+
+    /* ——  LOS DOS SUB-PANELES TAMBIÉN PUEDEN ENCOGERSE  —— */
+    .info-panel,
+    .chat-panel {
+      min-height: 0;
+      /* sin esto “crecen” y empujan al footer   */
+      overflow-y: auto;
+      /* si se quedan sin espacio → scroll interno */
+    }
+
+    /* ——  OPCIONAL: en escritorio quita explícitamente height:auto ———— */
+    @media (min-width:900px) {
+
+      .info-panel,
+      .chat-panel {
+        height: auto;
+        margin: 3px;
+      }
+    }
+
+    @media (min-width:900px) {
+
+      /* 1) Reservamos hueco al fondo para header + bottom-bar */
+      body {
+        padding-bottom: calc(60px
+            /* bottom-bar */
+            + 16px
+            /* gap */
+            + 60px
+            /* header */
+          );
+      }
+
+      /* 2) Fijamos la bottom-bar */
+      .bottom-bar {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 600px;
+        z-index: 20;
+      }
+
+      /* 3) Fijamos la cabecera justo encima de la bottom-bar */
+      header {
+        position: fixed;
+        bottom: calc(60px + 16px);
+        /* altura bottom-bar + gap */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 1900px;
+        z-index: 20;
+      }
+
+      /* 4) Ajustes menores al wrapper de paneles */
+      #panels {
+        margin-top: 0;
+        /* pegadito arriba */
+        /* el gap horizontal ya lo tienes a 16px */
+      }
+
+      /* 1) Fija el selector de bloques encima del header */
+      .block-selector {
+        position: fixed;
+        bottom: calc(50px
+            /* altura de la bottom-bar */
+            + 16px
+            /* gap */
+            + 60px
+            /* altura de tu header fija */
+          );
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 600px;
+        z-index: 20;
+        /* conserva su fondo para que no transparente */
+        background: transparent;
+      }
+
+      /* 2) Reserva hueco en el body para:
+     - bottom-bar (60px)
+     - gap (16px)
+     - header (60px)
+     - block-selector (aprox. 40px) */
+      body {
+        padding-bottom: calc(60px
+            /* bottom-bar */
+            + 16px
+            /* gap */
+            + 60px
+            /* header */
+            + 40px
+            /* block-selector */
+          );
+      }
     }
   </style>
 </head>
