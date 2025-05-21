@@ -1389,3 +1389,21 @@ body {
 .modal-next {
   right: 10px;
 }
+
+/* ===== SweetAlert2 global styles ===== */
+.swal2-popup {
+  font-family: "Raleway", sans-serif;
+  border-radius: 15px;
+}
+
+button.swal2-confirm {
+  background-color: #aed3c1 !important;
+  border-radius: 10px !important;
+  font-family: "Raleway", sans-serif;
+}
+
+button.swal2-cancel {
+  background-color: #a12525 !important;
+  border-radius: 10px !important;
+  font-family: "Raleway", sans-serif;
+}
