@@ -10,7 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
-    /* —— layout fijo —— */
+    /* ───────────────────  RESET / LAYOUT BÁSICO ─────────────────── */
     html,
     body {
       height: 100%;
@@ -23,9 +23,10 @@
       display: flex;
       flex-direction: column;
       overflow: hidden
+        /* evita scroll del body  */
     }
 
-    /* —— cabecera —— */
+    /* ───────────────────  CABECERA (móvil) ──────────────────────── */
     header {
       flex: 0 0 auto;
       width: 100%;
@@ -61,20 +62,168 @@
       color: #444
     }
 
-    /* —— panel datos —— */
-    #messages {
-      flex: 1 1 auto;
+    /* ───────────────────  SELECTOR DE BLOQUE ────────────────────── */
+    .block-selector {
+      flex: 0 0 auto;
       width: 100%;
       max-width: 620px;
       margin: auto;
-      padding: 18px 22px;
-      box-sizing: border-box;
+      padding: 8px 4px;
+      display: flex;
+      justify-content: space-around;
+      gap: 6px;
+      background: transparent;
+    }
+
+    .chip {
+      flex: 1;
+      padding: 8px 4px;
+      border: 2px solid #aed3c1;
+      border-radius: 12px;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .15s
+    }
+
+    .chip.active {
+      background: #aed3c1;
+      color: #fff
+    }
+
+    .chip.hidden {
+      display: none
+    }
+
+    /* ───────────────────  BOTONERA INFERIOR (móvil) ─────────────── */
+    .bottom-bar {
+      flex: 0 0 auto;
+      width: 100%;
+      max-width: 620px;
+      margin: auto;
+      padding: 14px 0;
+      display: flex;
+      justify-content: space-around;
+      gap: 16px;
+      background: #efefef
+    }
+
+    .btn-round,
+    .btn-small {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, .15)
+    }
+
+    .btn-round {
+      width: 60px;
+      height: 60px;
+      background: #aed3c1;
+      border: 2px solid transparent
+    }
+
+    .btn-small {
+      width: 45px;
+      height: 45px
+    }
+
+    .btn-round .material-icons-outlined {
+      font-size: 24px;
+      color: #fff
+    }
+
+    .btn-small .material-icons-outlined {
+      font-size: 20px
+    }
+
+    .btn-round:active {
+      transform: scale(.94)
+    }
+
+    .btn-round.recording {
+      background: #e04141;
+      animation: pulse 1s infinite
+    }
+
+    .btn-round.talking {
+      background: #e04141;
+      animation: pulse 1s infinite
+    }
+
+    #btnStopTTS {
+      background: #a12525
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(224, 65, 65, .6)
+      }
+
+      70% {
+        box-shadow: 0 0 0 12px rgba(224, 65, 65, 0)
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(224, 65, 65, 0)
+      }
+    }
+
+    /* ───────────────────  WRAPPER & PANELES ─────────────────────── */
+    #panels {
+      flex: 1 1 auto;
+      width: 100%;
+      max-width: 1900px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 0
+        /* puede contraerse */
+    }
+
+    .info-panel,
+    .chat-panel {
       background: #fff;
       border-radius: 14px;
       box-shadow: 0 3px 8px rgba(0, 0, 0, .08);
-      overflow-y: auto;
+      padding: 18px 22px;
+      box-sizing: border-box;
       font-size: 15px;
-      line-height: 1.4
+      line-height: 1.4;
+      overflow-y: auto;
+      min-height: 0
+    }
+
+    .info-panel {
+      flex: 0 0 auto;
+      max-height: 35vh
+    }
+
+    .chat-panel {
+      flex: 1 1 auto
+    }
+
+    /* ─────── estilos propios de los bloques (dt/dd & títulos) ───── */
+    .info-panel dl {
+      margin: 0
+    }
+
+    .info-panel dt {
+      font-weight: 700;
+      float: left;
+      width: 120px;
+      clear: left;
+      white-space: nowrap
+    }
+
+    .info-panel dd {
+      margin: 0 0 6px 120px
     }
 
     .section-title {
@@ -92,15 +241,7 @@
       color: #4d4d4d
     }
 
-    #messages dl {
-      margin: 0
-    }
-
-    /* log */
-    #log {
-      margin-top: 14px
-    }
-
+    /* ───────────────────  ESTADOS DE MENSAJES / LOG ─────────────── */
     .feedback {
       padding: 8px 10px;
       border-radius: 8px;
@@ -108,7 +249,6 @@
       font-size: 14px
     }
 
-    /* mensajes del profesional y del asistente – modo chat */
     .msg-user {
       background: #e1efff;
       color: #13417b;
@@ -155,97 +295,55 @@
       }
     }
 
-    /* —— selector de bloque —— */
-    .block-selector {
-      flex: 0 0 auto;
-      width: 100%;
-      max-width: 620px;
-      margin: auto;
-      padding: 8px 4px;
-      display: flex;
-      justify-content: space-around;
-      gap: 6px;
-      background: #efefef
+    .feedback a {
+      word-break: break-all;
+      overflow-wrap: anywhere
     }
 
-    .chip {
-      flex: 1;
-      padding: 8px 4px;
-      border: 2px solid #aed3c1;
-      border-radius: 12px;
-      background: #fff;
-      font-size: 13px;
-      font-weight: 600;
+    .feedback img.thumb {
+      max-width: 140px;
+      height: auto;
+      border-radius: 6px;
       cursor: pointer;
-      transition: .15s
+      display: block;
+      margin: 6px 0
     }
 
-    .chip.active {
-      background: #aed3c1;
-      color: #fff
-    }
-
-    /* —— botonera —— */
-    .bottom-bar {
-      flex: 0 0 auto;
-      width: 100%;
-      max-width: 620px;
-      margin: auto;
-      padding: 14px 0;
-      display: flex;
-      justify-content: space-around;
-      gap: 16px;
-      background: #efefef
-    }
-
-    .btn-round {
-      width: 60px;
-      height: 60px;
-      border: none;
-      border-radius: 50%;
-      background: #aed3c1;
-      display: flex;
+    /* ───────────────────  ICONOS EN THUMBS / ADJUNTOS ───────────── */
+    .thumb-wrap,
+    .file-wrap {
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
+      gap: 4px
+    }
+
+    .btnSaveAttach,
+    .pin,
+    .lens {
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, .15);
-      transition: background .2s, transform .15s;
-      width: 60px;
-      height: 60px;
-      border: 2px solid transparent;
-      border-radius: 50%;
-      background: #aed3c1;
+      font-size: 18px;
+      margin-left: 6px;
+      color: #276040;
+      background: none;
+      border: none
     }
 
-    .btn-round.recording {
-      background: #e04141;
-      animation: pulse 1s infinite;
+    .btnSaveAttach:hover,
+    .pin:hover,
+    .lens:hover {
+      transform: scale(1.15)
     }
 
-    .btn-round:active {
-      transform: scale(.94)
+    .probe {
+      cursor: pointer;
+      margin-left: 4px
     }
 
-    .btn-round.recording {
-      background: #e04141
+    .probe:hover {
+      filter: brightness(1.2)
     }
 
-    .btn-round .material-icons-outlined {
-      font-size: 24px;
-      color: #fff;
-      line-height: 1
-    }
-
-    .btn-small {
-      width: 45px;
-      height: 45px
-    }
-
-    .btn-small .material-icons-outlined {
-      font-size: 20px
-    }
-
-    /* —— modal guía —— */
+    /* ───────────────────  MODAL GUÍA ────────────────────────────── */
     #modalGuide {
       position: fixed;
       inset: 0;
@@ -255,7 +353,6 @@
       justify-content: center;
       z-index: 999;
       pointer-events: none
-        /* <- deja pasar los clics */
     }
 
     #modalGuide .panel {
@@ -267,7 +364,6 @@
       box-shadow: 0 8px 20px rgba(0, 0, 0, .25);
       animation: pop .25s ease-out;
       pointer-events: auto
-        /* panel sí recibe scroll */
     }
 
     #modalGuide h3 {
@@ -296,21 +392,68 @@
       }
     }
 
-    .chip.hidden {
-      display: none
+    /* ───────────────────  MEDIA QUERY DESKTOP ≥ 1200px ───────────── */
+    @media (min-width:1200px) {
+
+      /* 1. paneles lado a lado */
+      #panels {
+        flex-direction: row;
+        gap: 16px;
+        margin-top: 0
+      }
+
+      .info-panel,
+      .chat-panel {
+        flex: 1 1 50%;
+        max-width: 50%;
+        height: auto
+      }
+
+      .info-panel {
+        max-height: none
+      }
+
+      /* 2. header & bottom-bar fijas al pie */
+      body {
+        padding-bottom: calc(60px + 16px + 60px)
+      }
+
+      /* bottom-bar + gap + header */
+      .bottom-bar {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 620px;
+        z-index: 20
+      }
+
+      header {
+        position: fixed;
+        bottom: calc(60px + 16px);
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 1900px;
+        z-index: 20
+      }
+
+      /* 3. block-selector fijo encima del header */
+      .block-selector {
+        position: fixed;
+        bottom: calc(30px + 16px + 60px);
+        /* bottom-bar + gap + header */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 520px;
+        z-index: 20;
+        background: transparent
+      }
     }
 
-    /* ---------- botón “Hablar” en modo grabación ---------- */
-    .btn-round.talking {
-      background: #e04141;
-      /* rojo */
-      animation: pulse 1s infinite;
-    }
-
-    #btnStopTTS {
-      background: #a12525;
-    }
-
+    /* ───────────────────  ANIMACIONES / UTILIDADES ─────────────── */
     @keyframes pulse {
       0% {
         box-shadow: 0 0 0 0 rgba(224, 65, 65, .6)
@@ -324,309 +467,8 @@
         box-shadow: 0 0 0 0 rgba(224, 65, 65, 0)
       }
     }
-
-    /* evita que enlaces largos se salgan del contenedor */
-    .feedback a {
-      word-break: break-all;
-      /* rompe la palabra donde haga falta */
-      overflow-wrap: anywhere;
-      /* respaldo para otros navegadores   */
-    }
-
-    /* miniaturas que muestra el asistente */
-    .feedback img.thumb {
-      max-width: 140px;
-      /* ancho máx. de la miniatura */
-      height: auto;
-      border-radius: 6px;
-      cursor: pointer;
-      display: block;
-      /* cada imagen en su propia línea */
-      margin: 6px 0;
-    }
-
-    .btnSaveAttach {
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-size: 17px;
-      margin-left: 6px;
-      line-height: 1;
-      color: #276040;
-    }
-
-    .btnSaveAttach:hover {
-      transform: scale(1.15);
-    }
-
-    .thumb-wrap {
-      position: relative;
-      display: inline-block;
-    }
-
-    .pin,
-    .lens {
-      cursor: pointer;
-      font-size: 18px;
-      margin-left: 6px;
-      user-select: none;
-      color: #276040;
-    }
-
-    .pin:hover,
-    .lens:hover {
-      transform: scale(1.15);
-    }
-
-    .probe {
-      cursor: pointer;
-      margin-left: 4px
-    }
-
-    .probe:hover {
-      filter: brightness(1.2)
-    }
-
-    .btnSaveAttach {
-      background: none;
-      border: none;
-      cursor: pointer;
-      margin-left: 4px
-    }
-
-    .thumb-wrap,
-    .file-wrap {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px
-    }
-
-    /* —— wrapper flex que aloja los dos paneles —— */
-    #panels {
-      flex: 1 1 auto;
-      width: 100%;
-      max-width: 1900px;
-      margin: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      /* pequeña separación entre paneles */
-    }
-
-    /* —— panel con datos del pac —— */
-    .info-panel {
-      /* heredamos el estilo que antes tenía #messages */
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, .08);
-      padding: 18px 22px;
-      box-sizing: border-box;
-      overflow-y: auto;
-      font-size: 15px;
-      line-height: 1.4;
-      /* ocupa solo lo necesario */
-      flex: 0 0 auto;
-    }
-
-    /* —— panel de chat/log —— */
-    .chat-panel {
-      /* mismo aspecto para mantener coherencia */
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, .08);
-      padding: 18px 22px;
-      box-sizing: border-box;
-      overflow-y: auto;
-      font-size: 15px;
-      line-height: 1.4;
-      /* se expande y ocupa el resto de la altura disponible */
-      flex: 1 1 auto;
-    }
-
-    /* —— ALTURA Y SCROLL ————————————————————————————— */
-    /* el panel con datos ocupará como máximo el 45 % de la ventana;
-   si su contenido crece, aparecerá scroll interno            */
-    .info-panel {
-      max-height: 35vh;
-      /* vh = % de la altura de la ventana */
-      overflow-y: auto;
-    }
-
-    /* el panel de chat crece para usar el resto del espacio        */
-    .chat-panel {
-      flex: 1 1 auto;
-      overflow-y: auto;
-    }
-
-    /* —— RESTAURAMOS LOS ESTILOS DE DT / DD ———————————————————— */
-    .info-panel dl {
-      margin: 0;
-    }
-
-    .info-panel dt {
-      font-weight: 700;
-      float: left;
-      width: 120px;
-      clear: left;
-      white-space: nowrap;
-    }
-
-    .info-panel dd {
-      margin: 0 0 6px 120px;
-    }
-
-    /* —— Títulos de sección dentro del nuevo panel ————————— */
-    .info-panel .section-title {
-      margin: 18px 0 10px;
-      font-weight: 1000;
-      font-size: 18px;
-      border-bottom: 1px solid #aed3c1;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .info-panel .section-title .material-icons-outlined {
-      font-size: 20px;
-      color: #4d4d4d;
-    }
-
-    @media (min-width:900px) {
-
-      /* El wrapper pasa de columna → fila */
-      #panels {
-        flex-direction: row;
-      }
-
-      /* Ambos paneles comparten el ancho disponible ---------------- */
-      .info-panel,
-      .chat-panel {
-        flex: 1 1 50%;
-        /* mitad cada uno                                      */
-        max-width: 50%;
-        /* evita que crezcan más del 50 %                      */
-        height: auto;
-        /* dejamos que hereden la altura del contenedor flex   */
-      }
-
-      /* El panel de datos ya no necesita limitación de altura
-     (se repartirá verticalmente junto al chat) */
-      .info-panel {
-        max-height: none;
-      }
-
-      /* Opcional: añade un poco más de separación entre ellos       */
-      #panels {
-        gap: 16px;
-        /* en vertical seguirá usando el gap original (8 px)   */
-      }
-    }
-
-    /* ——  GARANTIZA QUE #panels PUEDE ENCOGERSE  —— */
-    #panels {
-      min-height: 0;
-      /* clave: deja que se reduzca verticalmente */
-    }
-
-    /* ——  LOS DOS SUB-PANELES TAMBIÉN PUEDEN ENCOGERSE  —— */
-    .info-panel,
-    .chat-panel {
-      min-height: 0;
-      /* sin esto “crecen” y empujan al footer   */
-      overflow-y: auto;
-      /* si se quedan sin espacio → scroll interno */
-    }
-
-    /* ——  OPCIONAL: en escritorio quita explícitamente height:auto ———— */
-    @media (min-width:900px) {
-
-      .info-panel,
-      .chat-panel {
-        height: auto;
-        margin: 3px;
-      }
-    }
-
-    @media (min-width:900px) {
-
-      /* 1) Reservamos hueco al fondo para header + bottom-bar */
-      body {
-        padding-bottom: calc(60px
-            /* bottom-bar */
-            + 16px
-            /* gap */
-            + 60px
-            /* header */
-          );
-      }
-
-      /* 2) Fijamos la bottom-bar */
-      .bottom-bar {
-        position: fixed;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100%;
-        max-width: 600px;
-        z-index: 20;
-      }
-
-      /* 3) Fijamos la cabecera justo encima de la bottom-bar */
-      header {
-        position: fixed;
-        bottom: calc(60px + 16px);
-        /* altura bottom-bar + gap */
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100%;
-        max-width: 1900px;
-        z-index: 20;
-      }
-
-      /* 4) Ajustes menores al wrapper de paneles */
-      #panels {
-        margin-top: 0;
-        /* pegadito arriba */
-        /* el gap horizontal ya lo tienes a 16px */
-      }
-
-      /* 1) Fija el selector de bloques encima del header */
-      .block-selector {
-        position: fixed;
-        bottom: calc(50px
-            /* altura de la bottom-bar */
-            + 16px
-            /* gap */
-            + 60px
-            /* altura de tu header fija */
-          );
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100%;
-        max-width: 600px;
-        z-index: 20;
-        /* conserva su fondo para que no transparente */
-        background: transparent;
-      }
-
-      /* 2) Reserva hueco en el body para:
-     - bottom-bar (60px)
-     - gap (16px)
-     - header (60px)
-     - block-selector (aprox. 40px) */
-      body {
-        padding-bottom: calc(60px
-            /* bottom-bar */
-            + 16px
-            /* gap */
-            + 60px
-            /* header */
-            + 40px
-            /* block-selector */
-          );
-      }
-    }
   </style>
+
 </head>
 
 <body>
@@ -707,7 +549,8 @@
     <button id="btnTalk" class="btn-round" title="Hablar con el asistente">
       <img src="images/recursos/voice_icon.png" style="max-width:30px" alt="Logo" /></button>
   </div>
-  <div id="textPanel" style="display:none;padding:8px;max-width:620px;margin:auto;text-align:center">
+  <div id="textPanel"
+    style="display:none;padding:8px;max-width:620px;margin:auto;text-align:center;margin-bottom: 20px;">
     <!-- de input → textarea -->
     <textarea id="txtMessage" placeholder="Escribe…" style="width:100%;min-height:48px;max-height:260px;
                    padding:10px;border:2px solid #aed3c1;border-radius:10px;
@@ -1458,6 +1301,7 @@
 
         inpMsg.value = '';
         autoGrow(inpMsg);
+        panelTxt.style.display = 'none';
 
         log.insertAdjacentHTML(
           'beforeend',
