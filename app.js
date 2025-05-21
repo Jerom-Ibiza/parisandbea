@@ -9,6 +9,11 @@ const { limpiarDrafts } = require('./cron/cleanDraftsCron');
 const cors = require('cors');
 const TMP = path.join(__dirname, 'tmp');
 
+if (process.env.OPENAI_API_KEY_PAB) {
+  process.env.OPENAI_API_KEY = process.env.OPENAI_API_KEY_PAB;
+}
+
+
 require('./database');
 
 app.use(session({
