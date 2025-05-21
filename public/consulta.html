@@ -190,7 +190,6 @@
     .info-panel,
     .chat-panel {
       background: #fff;
-      border-radius: 14px;
       box-shadow: 0 3px 8px rgba(0, 0, 0, .08);
       padding: 18px 22px;
       box-sizing: border-box;
@@ -238,7 +237,13 @@
 
     .section-title .material-icons-outlined {
       font-size: 20px;
-      color: #4d4d4d
+    }
+
+    .info-panel .section-title {
+      color: white;
+      background: #aed3c1;
+      padding: 4px;
+      border-radius: 10px;
     }
 
     /* ───────────────────  ESTADOS DE MENSAJES / LOG ─────────────── */
@@ -259,6 +264,27 @@
       background: #d5f6e3;
       color: #276040;
       border-left: 6px solid #28a56a
+    }
+
+    /* ─── 3 · Burbujas de chat: usuario a la derecha ─── */
+    .msg-user {
+      margin-left: auto;
+      /* empuja la burbuja a la derecha */
+      text-align: right;
+      /* texto alineado al borde derecho */
+
+      /* quitamos la barrita azul de la izquierda y la
+     movemos al lado contrario para que haga de “punta” */
+      border-left: none;
+      border-right: 6px solid #3b7bff;
+
+      /* forma típica de bocadillo: vértice en la derecha-arriba */
+      border-radius: 12px 0 12px 12px;
+    }
+
+    /* opcional: redondeo complementario en la burbuja del asistente */
+    .msg-assist {
+      border-radius: 0 12px 12px 12px;
     }
 
     .success {
@@ -406,7 +432,8 @@
       .chat-panel {
         flex: 1 1 50%;
         max-width: 50%;
-        height: auto
+        height: auto;
+        margin-bottom: 30px
       }
 
       .info-panel {
@@ -425,7 +452,7 @@
         left: 50%;
         transform: translateX(-50%);
         width: 100%;
-        max-width: 620px;
+        max-width: 520px;
         z-index: 20
       }
 
@@ -447,7 +474,7 @@
         left: 50%;
         transform: translateX(-50%);
         width: 100%;
-        max-width: 520px;
+        max-width: 450px;
         z-index: 20;
         background: transparent
       }
@@ -466,6 +493,39 @@
       100% {
         box-shadow: 0 0 0 0 rgba(224, 65, 65, 0)
       }
+    }
+
+    /* ─── 4 · Scrollbars estilizadas en los paneles ─── */
+
+    /* WebKit / Blink (Chrome, Edge, Opera, Brave, Safari) */
+    .info-panel::-webkit-scrollbar,
+    .chat-panel::-webkit-scrollbar {
+      width: 6px;
+      /* grosor vertical        */
+      height: 6px;
+      /* grosor horizontal (por si acaso) */
+    }
+
+    .info-panel::-webkit-scrollbar-thumb,
+    .chat-panel::-webkit-scrollbar-thumb {
+      background: #c7d8d1;
+      /* verde grisáceo suave    */
+      border-radius: 3px;
+    }
+
+    .info-panel::-webkit-scrollbar-track,
+    .chat-panel::-webkit-scrollbar-track {
+      background: transparent;
+      /* sin canal visible   */
+    }
+
+    /* Firefox */
+    .info-panel,
+    .chat-panel {
+      scrollbar-width: thin;
+      /* grosor ≈ 6 px          */
+      scrollbar-color: #c7d8d1 transparent;
+      /* thumb  y  track        */
     }
   </style>
 
@@ -761,29 +821,6 @@
             </div>`;
       });
 
-    /* ──── Maneja la respuesta del backend ──── */
-    async function handleAssistantResponse(j, silent = false) {
-      if (!j.ok) return;                        // errores ya se tratan arriba
-
-      /* caso 1: respuesta con texto visible */
-      if (j.reply && j.reply.trim()) {
-        if (!silent) {                           // solo mostramos si no es “silencioso”
-          log.insertAdjacentHTML(
-            'beforeend',
-            `<div class="feedback success">${linkify(j.reply)}</div>`
-          );
-          log.scrollTop = log.scrollHeight;
-        }
-        if (j.audioUrl) playTTS(j.audioUrl);    // voz si procede
-        return;                                // ¡nada más que hacer!
-      }
-
-      /* caso 2: mensaje vacío → pedir que complete */
-      console.log('[auto] Respuesta vacía; solicitando continuación…');
-      const next = await sendHidden('Completa todo lo que te he pedido');
-      await handleAssistantResponse(next, true);   // recursivo / silencioso
-    }
-
     /* ------- envía mensaje silencioso ------- */
     async function sendHidden(msg) {
       try {
@@ -845,8 +882,15 @@
           chatChanged = true;
           log.scrollTop = log.scrollHeight;
         }
+        if (/operaci[oó]n completada correctamente|actualizaci[oó]n.*correctamente|registrad[oa].*correctamente/i.test(j.reply)) {
+          await loadSession();
+        }
         if (j.audioUrl) playTTS(j.audioUrl);
         return;
+      }
+
+      if (confRE.test(j.reply)) {
+        await loadSession();   // vuelve a pedir los datos al servidor
       }
 
       /* --------- caso 2: solo audio --------- */
