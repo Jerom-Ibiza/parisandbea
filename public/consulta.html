@@ -8,6 +8,15 @@
   <link rel="stylesheet" href="css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Favicon “clásico” -->
+  <link rel="icon" type="image/png" sizes="32x32" href="images/recursos/favicon-32.png">
+
+  <!-- Icono para iOS / iPadOS (pantalla de inicio) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="images/recursos/icon-180.png">
+
+  <!-- Manifest PWA con los tamaños que Android / Chrome necesita -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#276040"><!-- color de la barra en Android -->
 
   <style>
     /* ───────────────────  RESET / LAYOUT BÁSICO ─────────────────── */
@@ -527,6 +536,12 @@
       scrollbar-color: #c7d8d1 transparent;
       /* thumb  y  track        */
     }
+
+    /* Estilo fijo para el contenedor de datos */
+    #mainData {
+      font-size: 15px;
+      line-height: 1.4;
+    }
   </style>
 
 </head>
@@ -882,7 +897,7 @@
           chatChanged = true;
           log.scrollTop = log.scrollHeight;
         }
-        if (/operaci[oó]n completada correctamente|actualizaci[oó]n.*correctamente|registrad[oa].*correctamente/i.test(j.reply)) {
+        if (/operaci[oó]n (?:completada|realizada) correctamente|actualizaci[oó]n.*correctamente|registrad[oa].*correctamente/i.test(j.reply)) {
           await loadSession();
         }
         if (j.audioUrl) playTTS(j.audioUrl);
@@ -1249,7 +1264,7 @@
     };
 
     /* patrón común de confirmación */
-    const confRE = /(registrad[oa]|actualizaci[oó]n) realizada correctamente/i;
+    const confRE = /(registrad[oa]|actualizaci[oó]n|operaci[oó]n) (?:realizada|completada) correctamente/i;
 
     /* ---------- click HABLAR (voz ↔ assistant) ---------- */
     btnTalk.onclick = async () => {

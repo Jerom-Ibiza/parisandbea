@@ -1,57 +1,95 @@
 /* controllers/assistantFiles.controller.js
    Maneja /tmp + vector‑store + guardado permanente                       */
-const fs      = require('fs');
-const path    = require('path');
-const OpenAI  = require('openai');
+const fs = require('fs');
+const path = require('path');
+const OpenAI = require('openai');
 const mime = require('mime-types');           // ← npm i mime --save
-const pool    = require('../database');   // ← faltaba
+const pool = require('../database');   // ← faltaba
 const slugify = require('../utils/slugify');
-const logger  = require('../logger');
+const logger = require('../logger');
 
-const TMP     = path.join(__dirname, '..', 'tmp');
-const openai  = new OpenAI();
+const TMP = path.join(__dirname, '..', 'tmp');
+const openai = new OpenAI();
 
 /* ------------- registerFile (sin cambios salvo tmpFiles push) -------- */
 exports.registerFile = async (req, res) => {
-  try{
-    if (!req.session.user) return res.status(403).json({ error:'Sin sesión' });
+  try {
+    /* 1. sesión válida -------------------------------------------------- */
+    if (!req.session.user)
+      return res.status(403).json({ error: 'Sin sesión' });
 
-    const { tmpName, origName } = req.body || {};
-    if (!tmpName || !origName)   return res.status(400).json({ error:'Faltan datos' });
+    /* 2. intentamos obtener tmpName y origName -------------------------- */
+    let {
+      tmpName,
+      tmpname,
+      tmp_name,
+      filename,           // a veces la key del uploader
+      file,               // por si acaso
+      origName,
+      originalName
+    } = req.body || {};
 
+    /* — normalizamos ---------------------------------------------------- */
+    tmpName = tmpName || tmpname || tmp_name || filename || file || null;
+    origName = origName || originalName || null;
+
+    /* — plan B: buscar cualquier valor que empiece por "tmp-" ----------- */
+    if (!tmpName) {
+      for (const v of Object.values(req.body || {})) {
+        if (typeof v === 'string' && /^tmp-/.test(v)) { tmpName = v; break; }
+      }
+    }
+
+    if (!tmpName)
+      return res.status(400).json({ error: 'Falta tmpName' });
+
+    /* 3. existe físicamente en /tmp ------------------------------------- */
     const abs = path.join(TMP, tmpName);
-    if (!fs.existsSync(abs))     return res.status(404).json({ error:'No existe en tmp' });
+    if (!fs.existsSync(abs))
+      return res.status(404).json({ error: 'No existe en tmp' });
 
-    const ext      = path.extname(origName).toLowerCase();
-    const isImage  = ['.jpg','.jpeg','.png','.webp','.gif','.heic'].includes(ext);
+    /* 4. identificamos tipo de archivo ---------------------------------- */
+    const ext = path.extname(origName || tmpName).toLowerCase();
+    const isImage = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.heic'].includes(ext);
 
+    /* 5. si es documento → Files API + vector-store --------------------- */
     let fileId = null, vsId = null;
-
-    if (!isImage){
-      const up = await openai.files.create({ file:fs.createReadStream(abs), purpose:'assistants' });
+    if (!isImage) {
+      const up = await openai.files.create({
+        file: fs.createReadStream(abs),
+        purpose: 'assistants'
+      });
       fileId = up.id;
 
       vsId = req.session.vectorStoreId;
-      if (!vsId){
-        const vs = await openai.vectorStores.create({ name:`vs_${Date.now()}` });
+      if (!vsId) {
+        const vs = await openai.vectorStores.create({ name: `vs_${Date.now()}` });
         vsId = vs.id;
         req.session.vectorStoreId = vsId;
       }
-      await openai.vectorStores.files.create(vsId, { file_id:fileId });
+      await openai.vectorStores.files.create(vsId, { file_id: fileId });
       req.session.uploadedFiles = (req.session.uploadedFiles || []).concat(fileId);
     }
 
-    /* ------- guardamos mapa tmp ↔ nombre original ------- */
-    req.session.tmpFiles = (req.session.tmpFiles || []).concat({ tmpName, origName });
-
-    return res.json({
-      ok:true, kind:isImage?'image':'doc',
-      tmpName, fileId, vectorStoreId:vsId, filename:origName
+    /* 6. guardamos en la sesión el mapa tmp ↔ nombre original ----------- */
+    req.session.tmpFiles = (req.session.tmpFiles || []).concat({
+      tmpName,
+      origName: origName || tmpName
     });
 
-  }catch(err){
-    logger.error('[registerFile] '+err.message);
-    res.status(500).json({ error:err.message });
+    /* 7. respondemos ----------------------------------------------------- */
+    return res.json({
+      ok: true,
+      kind: isImage ? 'image' : 'doc',
+      tmpName,
+      filename: origName || tmpName,
+      fileId,
+      vectorStoreId: vsId
+    });
+
+  } catch (err) {
+    logger.error('[registerFile] ' + err.message);
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -72,24 +110,24 @@ exports.saveAttachment = async (req, res) => {
       if (hit) tmpName = hit.tmpName;
     }
 
-    if (!tmpName) 
-      return res.status(400).json({ error:'Falta tmpName u image_url válido' });
+    if (!tmpName)
+      return res.status(400).json({ error: 'Falta tmpName u image_url válido' });
 
     if (!req.session.patient)
-      return res.status(403).json({ error:'Sesión sin paciente' });
+      return res.status(403).json({ error: 'Sesión sin paciente' });
 
     const src = path.join(TMP, tmpName);
     if (!fs.existsSync(src))
-      return res.status(404).json({ error:'No existe en tmp' });
+      return res.status(404).json({ error: 'No existe en tmp' });
 
     // 3) Construye nombre definitivo
-    const idPac   = req.session.patient.id_paciente;
-    const ext     = path.extname(finalName || tmpName).toLowerCase();
-    const base    = slugify(path.basename(finalName || tmpName, ext));
+    const idPac = req.session.patient.id_paciente;
+    const ext = path.extname(finalName || tmpName).toLowerCase();
+    const base = slugify(path.basename(finalName || tmpName, ext));
     const dstName = `${idPac}-${Date.now()}-${base}${ext}`;
 
-    const dstRel  = path.join('attachments_consulta', dstName);
-    const dstAbs  = path.join(__dirname, '..', dstRel);
+    const dstRel = path.join('attachments_consulta', dstName);
+    const dstAbs = path.join(__dirname, '..', dstRel);
 
     // 4) Mueve el archivo
     await fs.promises.rename(src, dstAbs);
@@ -104,19 +142,19 @@ exports.saveAttachment = async (req, res) => {
     await pool.query(
       `INSERT INTO patient_files
          SET id_paciente=?, filename=?, filepath=?, mime_type=?, descripcion=?`,
-      [ idPac, finalName || (base+ext), dstRel, mimeType, description ]
+      [idPac, finalName || (base + ext), dstRel, mimeType, description]
     );
 
     // 7) Responde OK
     return res.json({
-      ok:true,
-      message:'Archivo guardado',
-      url:`/${dstRel}`
+      ok: true,
+      message: 'Archivo guardado',
+      url: `/${dstRel}`
     });
 
-  } catch(err) {
+  } catch (err) {
     logger.error('[saveAttachment] ', err);
-    return res.status(500).json({ error:'Error guardando archivo: '+err.message });
+    return res.status(500).json({ error: 'Error guardando archivo: ' + err.message });
   }
 };
 
@@ -126,24 +164,24 @@ exports.saveAttachment = async (req, res) => {
 exports.ingestAttachment = async (req, res) => {
   try {
     const { filepath } = req.body || {};
-    if (!filepath) return res.status(400).json({ error:'Falta filepath' });
+    if (!filepath) return res.status(400).json({ error: 'Falta filepath' });
 
     // 1) localiza el fichero en disco
-    const abs = path.join(__dirname, '..', filepath.replace(/^[\\/]/,''));
+    const abs = path.join(__dirname, '..', filepath.replace(/^[\\/]/, ''));
     if (!fs.existsSync(abs))
-      return res.status(404).json({ error:'No existe el archivo' });
+      return res.status(404).json({ error: 'No existe el archivo' });
 
     // 2) sube a Files API
     const up = await openai.files.create({
-      file   : fs.createReadStream(abs),
+      file: fs.createReadStream(abs),
       purpose: 'assistants'
     });
 
     // 3) vector-store (uno por sesión)
     let vsId = req.session.vectorStoreId;
-    if (!vsId){
+    if (!vsId) {
       const vs = await openai.vectorStores.create({
-        name:`vs_${Date.now()}`
+        name: `vs_${Date.now()}`
       });
       vsId = vs.id;
       req.session.vectorStoreId = vsId;
@@ -152,36 +190,36 @@ exports.ingestAttachment = async (req, res) => {
     // 4) enlaza file → vector store
     await openai.vectorStores.files.create(vsId, { file_id: up.id });
 
-    res.json({ ok:true, file_id: up.id, vectorStoreId: vsId });
-  }catch(err){
-    logger.error('[ingestAttachment] '+err.message);
-    res.status(500).json({ error:err.message });
+    res.json({ ok: true, file_id: up.id, vectorStoreId: vsId });
+  } catch (err) {
+    logger.error('[ingestAttachment] ' + err.message);
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.ingestFile = async (req, res) => {
-  try{
+  try {
     const { filepath } = req.body || {};
-    if (!filepath) return res.status(400).json({ ok:false, error:'Falta filepath' });
+    if (!filepath) return res.status(400).json({ ok: false, error: 'Falta filepath' });
 
     const abs = path.join(__dirname, '..', filepath);
-    if (!fs.existsSync(abs)) return res.status(404).json({ ok:false, error:'No existe el archivo' });
+    if (!fs.existsSync(abs)) return res.status(404).json({ ok: false, error: 'No existe el archivo' });
 
     /* 1· subimos el archivo a la Files API (si no está ya) */
-    const fileUp   = await openai.files.create({ file: fs.createReadStream(abs), purpose:'assistants' });
+    const fileUp = await openai.files.create({ file: fs.createReadStream(abs), purpose: 'assistants' });
 
     /* 2· creamos (o usamos) el vector-store de la sesión */
-    const vsId = req.session.vectorStoreId || (await openai.vectorStores.create({ name:`vs_${Date.now()}` })).id;
+    const vsId = req.session.vectorStoreId || (await openai.vectorStores.create({ name: `vs_${Date.now()}` })).id;
     if (!req.session.vectorStoreId) req.session.vectorStoreId = vsId;
 
     /* 3· vinculamos el file al VS (idempotente) */
     await openai.vectorStores.files.create(vsId, { file_id: fileUp.id });
 
-    res.json({ ok:true, message:'Documento preparado', file_id:fileUp.id, vector_store:vsId });
+    res.json({ ok: true, message: 'Documento preparado', file_id: fileUp.id, vector_store: vsId });
 
-  }catch(err){
-    logger.error('[ingestFile] '+err.message);
-    res.status(500).json({ ok:false, error: err.message });
+  } catch (err) {
+    logger.error('[ingestFile] ' + err.message);
+    res.status(500).json({ ok: false, error: err.message });
   }
 };
 
