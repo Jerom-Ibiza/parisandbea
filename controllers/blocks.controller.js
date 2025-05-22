@@ -1,11 +1,11 @@
 // controllers/blocks.controller.js
 
-const fs      = require('fs');
-const path    = require('path');
-const multer  = require('multer');
-const pool    = require('../database');
-const OpenAI  = require('openai');
-const logger  = require('../logger');
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
+const pool = require('../database');
+const OpenAI = require('openai');
+const logger = require('../logger');
 
 // ───────── carpeta temporal para audios ─────────
 const TMP = path.join(__dirname, '..', 'tmp');
@@ -53,7 +53,7 @@ const prompts = {
  "duracion_sesion":"",
  "recomendaciones":"",
  "estado":"",
- "suplemento_prescrito":false,
+ "suplemento_prescrito":"",
  "capsulas_por_bote":null,
  "dosis_diaria":null,
  "fecha_inicio_suplementacion":"YYYY-MM-DD",
@@ -75,23 +75,23 @@ const extractJson = str => {
   const i = str.indexOf('{'), j = str.lastIndexOf('}');
   return i >= 0 && j >= i ? str.slice(i, j + 1) : str;
 };
-const today   = () => new Date().toISOString().slice(0, 10);
+const today = () => new Date().toISOString().slice(0, 10);
 const nowHHMM = () => new Date().toTimeString().slice(0, 5);
 
 // ───────── requisitos mínimos por bloque ─────────
 const required = {
-  historial   : ['motivo_consulta'],
-  evaluacion  : ['fecha_evaluacion','dolor_localizacion'],
-  tratamiento : ['fecha_inicio','tecnicas_aplicadas'],
-  sesion      : ['tecnicas_utilizadas']
+  historial: ['motivo_consulta'],
+  evaluacion: ['fecha_evaluacion', 'dolor_localizacion'],
+  tratamiento: ['fecha_inicio', 'tecnicas_aplicadas'],
+  sesion: ['tecnicas_utilizadas']
 };
 
 // ───────── nombres “bonitos” para mensajes ─────────
 const niceName = {
-  historial  : 'Historial clínico',
-  evaluacion : 'Evaluación',
+  historial: 'Historial clínico',
+  evaluacion: 'Evaluación',
   tratamiento: 'Tratamiento',
-  sesion     : 'Sesión'
+  sesion: 'Sesión'
 };
 
 // ------------------------------------------------------------------
@@ -102,11 +102,11 @@ exports.handleBlock = [
 
   async (req, res) => {
     const block = (req.body.block || '').toLowerCase();
-    const user  = req.session.user;
-    const pat   = req.session.patient;
+    const user = req.session.user;
+    const pat = req.session.patient;
 
-    if (!user || !pat)    return res.status(403).json({ error: 'Sin sesión' });
-    if (!prompts[block])  return res.status(400).json({ error: 'Bloque inválido' });
+    if (!user || !pat) return res.status(403).json({ error: 'Sin sesión' });
+    if (!prompts[block]) return res.status(400).json({ error: 'Bloque inválido' });
 
     logger.info(`[block] ► ${block} – prof ${user.id_profesional} / pac ${pat.id_paciente}`);
 
@@ -117,8 +117,8 @@ exports.handleBlock = [
 
       if (!ext) {
         const mime = req.file.mimetype;
-        if (mime === 'audio/webm')                 ext = '.webm';
-        else if (mime === 'video/mp4')             ext = '.mp4';
+        if (mime === 'audio/webm') ext = '.webm';
+        else if (mime === 'video/mp4') ext = '.mp4';
         else if (mime === 'audio/mp4' || mime === 'audio/x-m4a') ext = '.m4a';
       }
 
@@ -127,21 +127,21 @@ exports.handleBlock = [
 
       const openai = new OpenAI();
       const { text } = await openai.audio.transcriptions.create({
-        file    : fs.createReadStream(realPath),
-        model   : 'whisper-1',
+        file: fs.createReadStream(realPath),
+        model: 'whisper-1',
         language: 'es'
       });
-      fs.unlink(realPath, () => {});
+      fs.unlink(realPath, () => { });
       logger.info('[block] texto: ' + text.slice(0, 80) + '…');
 
       // 2 ─ GPT-4.1-mini JSON-only
       const chat = await openai.chat.completions.create({
-        model            : 'gpt-4.1-mini',
-        temperature      : 0,
-        response_format  : { type: 'json_object' },
+        model: 'gpt-4.1-mini',
+        temperature: 0,
+        response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: prompts[block] },
-          { role: 'user',   content: text }
+          { role: 'user', content: text }
         ]
       });
 
@@ -158,7 +158,7 @@ exports.handleBlock = [
       // 3 ─ Defaults y validación mínima
       if (block === 'sesion') {
         if (!json.fecha_sesion) json.fecha_sesion = today();
-        if (!json.hora_sesion)  json.hora_sesion  = nowHHMM();
+        if (!json.hora_sesion) json.hora_sesion = nowHHMM();
       }
       const missing = required[block].filter(k =>
         !(k in json) || json[k] === null || String(json[k]).trim() === ''

@@ -131,7 +131,7 @@ module.exports = (LOCAL_FUNCTIONS = {}) => {
           duracion_sesion: { type: 'string' },
           recomendaciones: { type: 'string' },
           estado: { type: 'string', enum: ['Activo', 'Finalizado', 'Suspendido'] },
-          suplemento_prescrito: { type: 'boolean' },
+          suplemento_prescrito: { type: 'string', description: 'Nombre comercial del suplemento (vacío si no hay)' },
           capsulas_por_bote: { type: 'integer' },
           dosis_diaria: { type: 'number' },
           fecha_inicio_suplementacion: { type: 'string', format: 'date' },

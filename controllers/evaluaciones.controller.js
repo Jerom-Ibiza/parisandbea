@@ -1,16 +1,16 @@
-const pool        = require('../database');
+const pool = require('../database');
 const PDFDocument = require('pdfkit');
-const fs          = require('fs');
-const path        = require('path');
+const fs = require('fs');
+const path = require('path');
 
 /* ───────── helpers generales ───────── */
-const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
-               'septiembre','octubre','noviembre','diciembre'];
+const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto',
+  'septiembre', 'octubre', 'noviembre', 'diciembre'];
 
 const hoyYHora = () => {
-  const now  = new Date();
-  const hoy  = `${String(now.getDate()).padStart(2,'0')} de ${meses[now.getMonth()]} de ${now.getFullYear()}`;
-  const hora = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const now = new Date();
+  const hoy = `${String(now.getDate()).padStart(2, '0')} de ${meses[now.getMonth()]} de ${now.getFullYear()}`;
+  const hora = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   return { hoy, hora };
 };
 
@@ -110,9 +110,9 @@ exports.createConsentimientoFusionado = async (req, res) => {
     }
 
     /* alias para los datos del representante */
-    const repNombre  = nombre_representante  || req.body.nombre_representado  || '________________';
-    const repDni     = dni_representante     || req.body.dni_representado     || '________';
-    const repCalidad = calidad_representante || req.body.rol_representante    || '________';
+    const repNombre = nombre_representante || req.body.nombre_representado || '________________';
+    const repDni = dni_representante || req.body.dni_representado || '________';
+    const repCalidad = calidad_representante || req.body.rol_representante || '________';
 
     /* ───── datos de BD ───── */
     const [[pac]] = await pool.query('SELECT * FROM pacientes WHERE id_paciente = ?', [id_paciente]);
@@ -127,13 +127,13 @@ exports.createConsentimientoFusionado = async (req, res) => {
     const [[home]] = await pool.query('SELECT * FROM home LIMIT 1');
 
     /* ───── preparar PDF ───── */
-    const ts       = Date.now();
+    const ts = Date.now();
     const fileName = `consent_${id_paciente}_${ts}.pdf`;
-    const dirOut   = path.join(__dirname, '..', 'documentos', 'consentimientos');
+    const dirOut = path.join(__dirname, '..', 'documentos', 'consentimientos');
     if (!fs.existsSync(dirOut)) fs.mkdirSync(dirOut, { recursive: true });
     const filePath = path.join(dirOut, fileName);
 
-    const doc    = new PDFDocument({ size: 'A4', margin: 50 });
+    const doc = new PDFDocument({ size: 'A4', margin: 50 });
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
 
@@ -142,7 +142,7 @@ exports.createConsentimientoFusionado = async (req, res) => {
       const fp = path.join(__dirname, '..', rel);
       if (fs.existsSync(fp)) doc.registerFont(alias, fp);
     };
-    font('Raleway',      'fonts/Raleway-Regular.ttf');
+    font('Raleway', 'fonts/Raleway-Regular.ttf');
     font('Raleway-Bold', 'fonts/Raleway-Bold.ttf');
     doc.font('Raleway');
 
@@ -165,9 +165,9 @@ exports.createConsentimientoFusionado = async (req, res) => {
         if (rest.length === 1 && typeof rest[0] !== 'number') {
           options = rest[0] || {};
         } else if (rest.length === 2 && typeof rest[0] === 'number') {
-          x = rest[0];  options = rest[1] || {};
+          x = rest[0]; options = rest[1] || {};
         } else if (rest.length >= 3) {
-          x = rest[0];  y = rest[1];       options = rest[2] || {};
+          x = rest[0]; y = rest[1]; options = rest[2] || {};
         }
 
         // Partir la cadena en fragmentos
@@ -216,13 +216,13 @@ exports.createConsentimientoFusionado = async (req, res) => {
         const imgPath = path.join(__dirname, '..', home.logo);
         if (!fs.existsSync(imgPath)) return;
         const img = doc.openImage(imgPath);
-        const W   = 120;
-        const H   = W * (img.height / img.width);
-        const X   = (doc.page.width - W) / 2;
-        const Y   = doc.y;
+        const W = 120;
+        const H = W * (img.height / img.width);
+        const X = (doc.page.width - W) / 2;
+        const Y = doc.y;
         doc.image(img, X, Y, { width: W });
         doc.y = Y + H + 20;
-      } catch {/* sin imagen */}
+      } catch {/* sin imagen */ }
     };
 
     /* garantiza que quede “minHeight” libre; si no, crea página nueva */
@@ -256,16 +256,16 @@ exports.createConsentimientoFusionado = async (req, res) => {
     logoCenter();
 
     doc.font('Raleway-Bold').fontSize(13)
-       .text('CONSENTIMIENTO INFORMADO Y ACEPTACIÓN DE SERVICIOS PROFESIONALES DE OSTEOPATÍA INTEGRAL Y FISIOTERAPIA', {
-         align: 'center', lineGap: 2
-       })
-       .moveDown();
+      .text('CONSENTIMIENTO INFORMADO Y ACEPTACIÓN DE SERVICIOS PROFESIONALES DE OSTEOPATÍA INTEGRAL Y FISIOTERAPIA', {
+        align: 'center', lineGap: 2
+      })
+      .moveDown();
 
     doc.font('Raleway').fontSize(11)
-       .text('Con el fin de que disponga de la información necesaria y otorgue su consentimiento de forma libre y voluntaria antes de iniciar cualquier intervención, se le facilita el presente documento. Lea detenidamente cada apartado y pregunte cualquier duda.', {
-         align: 'justify'
-       })
-       .moveDown();
+      .text('Con el fin de que disponga de la información necesaria y otorgue su consentimiento de forma libre y voluntaria antes de iniciar cualquier intervención, se le facilita el presente documento. Lea detenidamente cada apartado y pregunte cualquier duda.', {
+        align: 'justify'
+      })
+      .moveDown();
 
     /* CENTRO */
     addTitulo('· CENTRO DE OSTEOPATÍA INTEGRAL Y FISIOTERAPIA:');
@@ -281,10 +281,10 @@ exports.createConsentimientoFusionado = async (req, res) => {
     addTitulo('· PROFESIONAL:');
     const compInit = [
       `Nombre: ${profInit.nombre}`,
-      profInit.dni            && `DNI/NIE: ${profInit.dni}`,
-      profInit.num_colegiado  && `Nº colegiado/a: ${profInit.num_colegiado}`,
-      profInit.especialidad   && `Especialidad: ${profInit.especialidad}`,
-      profInit.notas?.trim()  && `Formación complementaria: ${profInit.notas.trim()}`
+      profInit.dni && `DNI/NIE: ${profInit.dni}`,
+      profInit.num_colegiado && `Nº colegiado/a: ${profInit.num_colegiado}`,
+      profInit.especialidad && `Especialidad: ${profInit.especialidad}`,
+      profInit.notas?.trim() && `Formación complementaria: ${profInit.notas.trim()}`
     ].filter(Boolean);
     addListaSafe(compInit);
 
@@ -294,9 +294,9 @@ exports.createConsentimientoFusionado = async (req, res) => {
       otros.forEach(p => {
         const comp = [
           `Nombre: ${p.nombre}`,
-          p.dni           && `DNI/NIE: ${p.dni}`,
+          p.dni && `DNI/NIE: ${p.dni}`,
           p.num_colegiado && `Nº colegiado/a: ${p.num_colegiado}`,
-          p.especialidad  && `Especialidad: ${p.especialidad}`,
+          p.especialidad && `Especialidad: ${p.especialidad}`,
           p.notas?.trim() && `Formación complementaria: ${p.notas.trim()}`
         ].filter(Boolean);
         addListaSafe(comp);
@@ -483,9 +483,9 @@ exports.createConsentimientoFusionado = async (req, res) => {
     doc.end();
 
     stream.on('finish', () => res.status(201).json({
-      message : 'Consentimiento generado correctamente',
-      pdfFile : fileName,
-      pdfUrl  : `https://parisandbea.es/documentos/consentimientos/${fileName}`
+      message: 'Consentimiento generado correctamente',
+      pdfFile: fileName,
+      pdfUrl: `https://parisandbea.es/documentos/consentimientos/${fileName}`
     }));
     stream.on('error', err => res.status(500).json({ error: 'Error al guardar PDF', details: err.message }));
 
@@ -819,7 +819,7 @@ exports.getTratamientosByPatient = async (req, res) => {
 
 /**
  * Crear un nuevo tratamiento
- * (Ahora incluye las columnas de suplementación opcionales)
+ *  (ahora suplemento_prescrito es texto o NULL)
  */
 exports.createTratamiento = async (req, res) => {
   try {
@@ -840,18 +840,18 @@ exports.createTratamiento = async (req, res) => {
       dias_alerta
     } = req.body;
 
+    // ── validación mínima ────────────────────────────
     if (!id_paciente || !fecha_inicio) {
-      return res
-        .status(400)
-        .json({ error: 'Faltan datos obligatorios (id_paciente, fecha_inicio)' });
+      return res.status(400).json({
+        error: 'Faltan datos obligatorios (id_paciente, fecha_inicio)'
+      });
     }
 
-    // Convertir suplemento_prescrito a 1/0 (o por defecto 0).
-    let suplementoPrescritoValue = 0;
-    if (suplemento_prescrito !== undefined) {
-      suplementoPrescritoValue =
-        (suplemento_prescrito === true || suplemento_prescrito === 'true') ? 1 : 0;
-    }
+    // si viene "" o undefined ⇒ NULL
+    const suplementoValue =
+      suplemento_prescrito && suplemento_prescrito.trim() !== ''
+        ? suplemento_prescrito.trim()
+        : null;
 
     const query = `
       INSERT INTO tratamientos (
@@ -872,6 +872,7 @@ exports.createTratamiento = async (req, res) => {
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
+
     const params = [
       id_paciente,
       id_profesional || null,
@@ -882,11 +883,11 @@ exports.createTratamiento = async (req, res) => {
       duracion_sesion || null,
       recomendaciones || null,
       estado || 'Activo',
-      suplementoPrescritoValue,
-      capsulas_por_bote !== undefined ? capsulas_por_bote : null,
-      dosis_diaria !== undefined ? dosis_diaria : null,
+      suplementoValue,
+      capsulas_por_bote ?? null,
+      dosis_diaria ?? null,
       fecha_inicio_suplementacion || null,
-      dias_alerta !== undefined ? dias_alerta : null
+      dias_alerta ?? null
     ];
 
     const [result] = await pool.query(query, params);
@@ -901,19 +902,23 @@ exports.createTratamiento = async (req, res) => {
 };
 
 /**
- * Actualizar un tratamiento (incluyendo las columnas de suplementación)
+ * Actualizar un tratamiento (incluye suplementación como texto)
  */
 exports.updateTratamiento = async (req, res) => {
   try {
     const { id } = req.params;
-    const [currentDataArr] = await pool.query('SELECT * FROM tratamientos WHERE id_tratamiento = ?', [
-      id
-    ]);
+
+    // ── obtener el registro actual ───────────────────
+    const [currentDataArr] = await pool.query(
+      'SELECT * FROM tratamientos WHERE id_tratamiento = ?',
+      [id]
+    );
     if (!currentDataArr.length) {
       return res.status(404).json({ error: 'Tratamiento no encontrado' });
     }
-    const currentData = currentDataArr[0];
+    const current = currentDataArr[0];
 
+    // ── desestructurar body ──────────────────────────
     const {
       id_paciente,
       id_profesional,
@@ -931,42 +936,28 @@ exports.updateTratamiento = async (req, res) => {
       dias_alerta
     } = req.body;
 
-    // Merge con los datos actuales
-    const newIdPaciente = id_paciente !== undefined ? id_paciente : currentData.id_paciente;
-    const newIdProfesional =
-      id_profesional !== undefined ? id_profesional : currentData.id_profesional;
-    const newFechaInicio =
-      fecha_inicio !== undefined ? fecha_inicio : currentData.fecha_inicio;
-    const newFechaFin = fecha_fin !== undefined ? fecha_fin : currentData.fecha_fin;
-    const newTecnicasAplicadas =
-      tecnicas_aplicadas !== undefined ? tecnicas_aplicadas : currentData.tecnicas_aplicadas;
-    const newFrecuenciaSesiones =
-      frecuencia_sesiones !== undefined
-        ? frecuencia_sesiones
-        : currentData.frecuencia_sesiones;
-    const newDuracionSesion =
-      duracion_sesion !== undefined ? duracion_sesion : currentData.duracion_sesion;
-    const newRecomendaciones =
-      recomendaciones !== undefined ? recomendaciones : currentData.recomendaciones;
-    const newEstado = estado !== undefined ? estado : currentData.estado;
-
-    // Manejo de suplemento_prescrito
-    let newSuplementoPrescrito = currentData.suplemento_prescrito;
-    if (suplemento_prescrito !== undefined) {
-      newSuplementoPrescrito =
-        (suplemento_prescrito === true || suplemento_prescrito === 'true') ? 1 : 0;
-    }
-
-    const newCapsulasPorBote =
-      capsulas_por_bote !== undefined ? capsulas_por_bote : currentData.capsulas_por_bote;
-    const newDosisDiaria =
-      dosis_diaria !== undefined ? dosis_diaria : currentData.dosis_diaria;
-    const newFechaInicioSuplementacion =
-      fecha_inicio_suplementacion !== undefined
-        ? fecha_inicio_suplementacion
-        : currentData.fecha_inicio_suplementacion;
-    const newDiasAlerta =
-      dias_alerta !== undefined ? dias_alerta : currentData.dias_alerta;
+    // ── merge con valores actuales ───────────────────
+    const newValues = {
+      id_paciente: id_paciente ?? current.id_paciente,
+      id_profesional: id_profesional ?? current.id_profesional,
+      fecha_inicio: fecha_inicio ?? current.fecha_inicio,
+      fecha_fin: fecha_fin ?? current.fecha_fin,
+      tecnicas_aplicadas: tecnicas_aplicadas ?? current.tecnicas_aplicadas,
+      frecuencia_sesiones: frecuencia_sesiones ?? current.frecuencia_sesiones,
+      duracion_sesion: duracion_sesion ?? current.duracion_sesion,
+      recomendaciones: recomendaciones ?? current.recomendaciones,
+      estado: estado ?? current.estado,
+      suplemento_prescrito:
+        suplemento_prescrito !== undefined
+          ? (suplemento_prescrito && suplemento_prescrito.trim() !== ''
+            ? suplemento_prescrito.trim()
+            : null)
+          : current.suplemento_prescrito,
+      capsulas_por_bote: capsulas_por_bote ?? current.capsulas_por_bote,
+      dosis_diaria: dosis_diaria ?? current.dosis_diaria,
+      fecha_inicio_suplementacion: fecha_inicio_suplementacion ?? current.fecha_inicio_suplementacion,
+      dias_alerta: dias_alerta ?? current.dias_alerta
+    };
 
     const updateQuery = `
       UPDATE tratamientos
@@ -985,24 +976,24 @@ exports.updateTratamiento = async (req, res) => {
         dosis_diaria = ?,
         fecha_inicio_suplementacion = ?,
         dias_alerta = ?
-      WHERE
-        id_tratamiento = ?
+      WHERE id_tratamiento = ?
     `;
+
     const params = [
-      newIdPaciente,
-      newIdProfesional,
-      newFechaInicio,
-      newFechaFin,
-      newTecnicasAplicadas,
-      newFrecuenciaSesiones,
-      newDuracionSesion,
-      newRecomendaciones,
-      newEstado,
-      newSuplementoPrescrito,
-      newCapsulasPorBote,
-      newDosisDiaria,
-      newFechaInicioSuplementacion,
-      newDiasAlerta,
+      newValues.id_paciente,
+      newValues.id_profesional,
+      newValues.fecha_inicio,
+      newValues.fecha_fin,
+      newValues.tecnicas_aplicadas,
+      newValues.frecuencia_sesiones,
+      newValues.duracion_sesion,
+      newValues.recomendaciones,
+      newValues.estado,
+      newValues.suplemento_prescrito,
+      newValues.capsulas_por_bote,
+      newValues.dosis_diaria,
+      newValues.fecha_inicio_suplementacion,
+      newValues.dias_alerta,
       id
     ];
 

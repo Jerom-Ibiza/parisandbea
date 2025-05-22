@@ -565,7 +565,7 @@
       }
 
       .chip {
-        min-width: 120px;
+        min-width: 90px;
         margin-bottom: 25px;
       }
     }
@@ -1114,7 +1114,7 @@
                ${row('Fin', fDate(t.fecha_fin))}${row('Tec. aplic.', t.tecnicas_aplicadas)}
                ${row('Frec. sesión', t.frecuencia_sesiones)}${row('Dur. sesión', t.duracion_sesion)}
                ${row('Recomend.', t.recomendaciones)}${row('Estado', t.estado)}
-               ${row('Suplemento', t.suplemento_prescrito ? 'Sí' : 'No')}
+               ${row('Suplemento', t.suplemento_prescrito || 'No')}
                ${row('Caps. x bote', t.capsulas_por_bote)}${row('Dosis diaria', t.dosis_diaria)}
                ${row('Ini. suplem.', fDate(t.fecha_inicio_suplementacion))}
                ${row('Alert. suplem.', t.dias_alerta)}</dl>`;
