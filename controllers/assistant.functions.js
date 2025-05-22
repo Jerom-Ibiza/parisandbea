@@ -505,6 +505,46 @@ const LOCAL_FUNCTIONS = {
     });
   },
 
+  /* ────────── PRODUCTOS ────────── */
+  /**
+   * Devuelve todos los productos activos con campos mínimos
+   *   id_producto, nombre, marca, proposito, imagen y pvp
+   */
+  async get_active_products() {
+    const [rows] = await pool.query(
+      `SELECT id_producto, nombre, marca, proposito, imagen, pvp
+         FROM productos
+        WHERE activo = 1
+     ORDER BY orden ASC, id_producto ASC`
+    );
+    return rows;               // [{ id_producto, nombre, marca, ... }, …]
+  },
+
+  /**
+   * Devuelve la información completa de un producto por ID
+   *   marca, nombre, dosis, forma, cantidad_envase,
+   *   imagen, peso_neto, proposito, caracteristicas,
+   *   info_fabricante, explicacion_centro, posologia,
+   *   en_stock_clinica y pvp
+   */
+  async get_product_by_id({ id_producto }) {
+    if (!id_producto) throw new Error('Falta id_producto');
+
+    const [rows] = await pool.query(
+      `SELECT marca, nombre, dosis, forma, cantidad_envase,
+              imagen, peso_neto, proposito, caracteristicas,
+              info_fabricante, explicacion_centro, posologia,
+              en_stock_clinica, pvp
+         FROM productos
+        WHERE id_producto = ?
+        LIMIT 1`,
+      [id_producto]
+    );
+
+    if (!rows.length) throw new Error('Producto no encontrado');
+    return rows[0];
+  },
+
   /* ────────── FECHA / HORA ACTUAL ────────── */
   /**
    * Devuelve la fecha y hora actuales en formato ISO-8601

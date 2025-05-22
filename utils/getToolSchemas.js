@@ -375,6 +375,23 @@ module.exports = (LOCAL_FUNCTIONS = {}) => {
       parameters: { type: 'object', properties: {}, additionalProperties: false }
     });
 
+  /* ---------- PRODUCTOS ---------- */
+  if (LOCAL_FUNCTIONS.get_active_products)
+    tools.push({
+      type: 'function',
+      name: 'get_active_products',
+      description: 'Lista id, nombre, marca, proposito, imagen y pvp de los productos activos',
+      parameters: { type: 'object', properties: {}, additionalProperties: false }
+    });
+
+  if (LOCAL_FUNCTIONS.get_product_by_id)
+    tools.push({
+      type: 'function',
+      name: 'get_product_by_id',
+      description: 'Informaci\xC3\xB3n completa de un producto por id_producto',
+      parameters: { type: 'object', required: ['id_producto'], properties: { id_producto: { type: 'integer' } }, additionalProperties: false }
+    });
+
   /* ---------- FECHA / HORA ---------- */
   if (LOCAL_FUNCTIONS.get_datetime)
     tools.push({

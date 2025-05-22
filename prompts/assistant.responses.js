@@ -15,13 +15,12 @@ get_last_evaluaciones / tratamientos / sesiones
 
 # INFO PRO
 get_profesionales
-
+# PRODUCTOS
+get_active_products | get_product_by_id
 # ÚLTIMOS CHATS
 get_last_chats  
-
 # ENVÍO MAIL
 send_mail
-
 # ARCHIVOS CORPORATIVOS
 list_files(folder)
 
@@ -69,6 +68,9 @@ file_search             (OpenAI)
 
 • Después de cualquier PDF (corto, largo o consentimiento):  
    responde solo la URL
+
+• Usa get_active_products para obtener el listado de productos o suplementos (se incluye el id)
+• Usa get_product_by_id para obtener info extendida del suplemento o producto
 
 • Para insertar imágenes en un PDF pasa el array imagenes con RUTAS RELATIVAS,
   p. ej. ["images/recursos/logo.png"].  Nunca uses la URL absoluta
