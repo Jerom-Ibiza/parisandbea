@@ -41,7 +41,7 @@ exports.listFiles = async (req, res) => {
 
     /* ───────────── 2)  CASO ESPECIAL: adjuntos_consulta ───────────── */
     const [rows] = await pool.query(`
-      SELECT pf.filename, pf.filepath,
+      SELECT pf.filename, pf.filepath, pf.id_paciente,
              CONCAT(p.nombre,' ',p.apellidos)  AS paciente
         FROM patient_files pf
         JOIN pacientes p USING (id_paciente)
@@ -52,6 +52,7 @@ exports.listFiles = async (req, res) => {
     const files = rows.map(r => ({
       filename: r.filename,
       paciente: r.paciente,
+      id_paciente: r.id_paciente,
       filepath: r.filepath            // nos sirve para DELETE múltiple
     }));
     res.json({ files });

@@ -598,7 +598,7 @@
           <tr>
             <th><input type="checkbox" id="selectAll" /></th>
             <th>Archivo</th>
-            ${currentFolder === 'attachments_consulta' ? '<th>Paciente</th>' : ''}
+            ${currentFolder === 'attachments_consulta' ? '<th>ID Paciente</th><th>Paciente</th>' : ''}
             <th>Acciones</th>
           </tr>
         </thead>
@@ -661,13 +661,14 @@
         const obj = typeof f === 'object';
         const fileName = obj ? f.filename : f;
         const paciente = obj ? f.paciente : '';
+        const idPaciente = obj ? f.id_paciente : '';
         const fileValue = obj ? f.filepath : fileName;
 
         tbody.insertAdjacentHTML('beforeend', `
       <tr>
         <td><input type="checkbox" class="file-checkbox" value="${fileValue}"></td>
         <td><span class="file-name" onclick="viewFile('${fileName}')">${fileName}</span></td>
-        ${currentFolder === 'attachments_consulta' ? `<td>${paciente}</td>` : ''}
+        ${currentFolder === 'attachments_consulta' ? `<td>${idPaciente}</td><td>${paciente}</td>` : ''}
         <td class="actions">
           <button class="renameBtn" data-file="${fileName}">
             <i class="material-icons">edit</i>
