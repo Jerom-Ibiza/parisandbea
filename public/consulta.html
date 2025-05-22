@@ -260,7 +260,7 @@
       padding: 8px 10px;
       border-radius: 8px;
       margin-bottom: 6px;
-      font-size: 14px
+      font-size: 13px !important
     }
 
     .msg-user {
@@ -487,6 +487,87 @@
         z-index: 20;
         background: transparent
       }
+
+      /* dejamos espacio al nuevo “footer” */
+      body {
+        padding-bottom: 60px;
+
+      }
+
+      header,
+      .bottom-bar,
+      .block-selector {
+        height: 60px;
+      }
+
+      /* — logo + profesional/paciente — */
+      header {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        transform: none;
+        /* anulamos el translateX */
+        max-width: none;
+        /* se adapta al contenido */
+        width: auto;
+        padding: 0 24px;
+        border-bottom: none;
+        background: #efefef;
+        z-index: 30;
+      }
+
+      /* — 5 botones de acción — */
+      .bottom-bar {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        /* centrado absoluto */
+        width: auto;
+        max-width: none;
+        padding: 0 24px;
+        background: #efefef;
+        gap: 16px;
+        z-index: 30;
+      }
+
+      /* — chips de bloque — */
+      .block-selector {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        left: auto;
+        transform: none;
+        width: auto;
+        max-width: none;
+        padding: 0 24px;
+        background: #efefef;
+        justify-content: flex-end;
+        gap: 8px;
+        z-index: 30;
+      }
+
+      /* los chips ya no necesitan flex:1 */
+      .block-selector .chip {
+        flex: none;
+      }
+
+      header .info {
+        margin-bottom: 25px;
+      }
+
+      header img {
+        margin-bottom: 25px;
+      }
+
+      .bottom-bar {
+        margin-bottom: 15px;
+      }
+
+      .chip {
+        min-width: 120px;
+        margin-bottom: 25px;
+      }
     }
 
     /* ───────────────────  ANIMACIONES / UTILIDADES ─────────────── */
@@ -539,7 +620,7 @@
 
     /* Estilo fijo para el contenedor de datos */
     #mainData {
-      font-size: 15px;
+      font-size: 13px !important;
       line-height: 1.4;
     }
   </style>
@@ -897,7 +978,7 @@
           chatChanged = true;
           log.scrollTop = log.scrollHeight;
         }
-        if (/operaci[oó]n (?:completada|realizada) correctamente|actualizaci[oó]n.*correctamente|registrad[oa].*correctamente/i.test(j.reply)) {
+        if (confRE.test(j.reply)) {
           await loadSession();
         }
         if (j.audioUrl) playTTS(j.audioUrl);
@@ -1264,7 +1345,7 @@
     };
 
     /* patrón común de confirmación */
-    const confRE = /(registrad[oa]|actualizaci[oó]n|operaci[oó]n) (?:realizada|completada) correctamente/i;
+    const confRE = /(operaci[oó]n|actualizaci[oó]n|registrad[oa]).*correctamente/i;
 
     /* ---------- click HABLAR (voz ↔ assistant) ---------- */
     btnTalk.onclick = async () => {
