@@ -164,7 +164,7 @@ exports.deleteFile = async (req, res) => {
 
     /* 2. si es attachments_consulta -> borrar fila en BD */
     if (folder === 'attachments_consulta') {
-      const relPath = path.join(folder, filename).replace(/\\/g, '/');
+      const relPath = path.posix.join(folder, filename);
       await pool.query(
         'DELETE FROM patient_files WHERE filepath = ? LIMIT 1',
         [relPath]
@@ -197,7 +197,7 @@ exports.deleteMultipleFiles = async (req, res) => {
 
     /* 2. si procede, borrar filas BD */
     if (folder === 'attachments_consulta') {
-      const rels = files.map(f => path.join(folder, f).replace(/\\/g, '/'));
+      const rels = files.map(f => path.posix.join(folder, f));
       await pool.query(
         `DELETE FROM patient_files WHERE filepath IN (${rels.map(() => '?').join(',')})`,
         rels

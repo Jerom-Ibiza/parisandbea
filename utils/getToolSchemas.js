@@ -380,7 +380,7 @@ module.exports = (LOCAL_FUNCTIONS = {}) => {
     tools.push({
       type: 'function',
       name: 'get_active_products',
-      description: 'Lista id, nombre, marca, proposito, imagen y pvp de los productos activos',
+      description: 'Lista id, nombre, marca, proposito, imagen (URL completa) y pvp de los productos activos',
       parameters: { type: 'object', properties: {}, additionalProperties: false }
     });
 
@@ -388,7 +388,7 @@ module.exports = (LOCAL_FUNCTIONS = {}) => {
     tools.push({
       type: 'function',
       name: 'get_product_by_id',
-      description: 'Informaci\xC3\xB3n completa de un producto por id_producto',
+      description: 'Informaci\xC3\xB3n completa de un producto por id_producto (imagen con URL completa)',
       parameters: { type: 'object', required: ['id_producto'], properties: { id_producto: { type: 'integer' } }, additionalProperties: false }
     });
 

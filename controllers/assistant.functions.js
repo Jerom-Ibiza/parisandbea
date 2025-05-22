@@ -517,7 +517,12 @@ const LOCAL_FUNCTIONS = {
         WHERE activo = 1
      ORDER BY orden ASC, id_producto ASC`
     );
-    return rows;               // [{ id_producto, nombre, marca, ... }, …]
+    const base = process.env.PUBLIC_HOST || 'https://parisandbea.es';
+    return rows.map(r => {
+      if (r.imagen)
+        r.imagen = `${base}/${r.imagen.replace(/^\/+/, '')}`;
+      return r;
+    });               // [{ id_producto, nombre, marca, ... }, …]
   },
 
   /**
@@ -542,6 +547,9 @@ const LOCAL_FUNCTIONS = {
     );
 
     if (!rows.length) throw new Error('Producto no encontrado');
+    const base = process.env.PUBLIC_HOST || 'https://parisandbea.es';
+    if (rows[0].imagen)
+      rows[0].imagen = `${base}/${rows[0].imagen.replace(/^\/+/, '')}`;
     return rows[0];
   },
 

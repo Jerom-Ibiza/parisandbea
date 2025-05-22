@@ -126,7 +126,7 @@ exports.saveAttachment = async (req, res) => {
     const base = slugify(path.basename(finalName || tmpName, ext));
     const dstName = `${idPac}-${Date.now()}-${base}${ext}`;
 
-    const dstRel = path.join('attachments_consulta', dstName);
+    const dstRel = path.posix.join('attachments_consulta', dstName);
     const dstAbs = path.join(__dirname, '..', dstRel);
 
     // 4) Mueve el archivo

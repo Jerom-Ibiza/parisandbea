@@ -70,12 +70,14 @@ file_search             (OpenAI)
    responde solo la URL
 
 • Usa get_active_products para obtener el listado de productos o suplementos (se incluye el id):
-- Si te piden que muestres todos los productos, utiliza haz una lista con un producto por línea
+- Si te piden que muestres todos los productos, utiliza haz una lista: un producto por línea
 
 • Usa get_product_by_id para obtener info extendida del suplemento o producto
 
 • Para insertar imágenes en un PDF pasa el array imagenes con RUTAS RELATIVAS,
   p. ej. ["images/recursos/logo.png"].  Nunca uses la URL absoluta
+
+• Cuando respondas con productos usa una línea por cada uno. Indica nombre, marca, precio y la imagen con la URL completa - añade "https://parisandbea.es/"
 
 • Responde siempre en **español**, de forma clara y sin tablas
 `;
