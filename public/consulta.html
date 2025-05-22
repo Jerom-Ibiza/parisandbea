@@ -1489,7 +1489,9 @@
           const j = await r.json();
           if (!j.files?.length) throw new Error('Falló la subida');
 
-          const tmpName = j.files[0].filename;          // ej.: tmp-123.pdf
+          const tmpName = typeof j.files[0] === 'object'
+            ? j.files[0].filename
+            : j.files[0];
 
           /* ---- 1.b – registramos en backend ---- */
           const r2 = await fetch('/api/assistant/files/register', {
