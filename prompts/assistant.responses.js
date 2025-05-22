@@ -69,7 +69,9 @@ file_search             (OpenAI)
 • Después de cualquier PDF (corto, largo o consentimiento):  
    responde solo la URL
 
-• Usa get_active_products para obtener el listado de productos o suplementos (se incluye el id)
+• Usa get_active_products para obtener el listado de productos o suplementos (se incluye el id):
+- Si te piden que muestres todos los productos, utiliza haz una lista con un producto por línea
+
 • Usa get_product_by_id para obtener info extendida del suplemento o producto
 
 • Para insertar imágenes en un PDF pasa el array imagenes con RUTAS RELATIVAS,

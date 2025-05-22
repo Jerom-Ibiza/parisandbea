@@ -781,7 +781,7 @@
           body: JSON.stringify({ filepath: relPath }),
           credentials: 'include'
         });
-        const jj = await rr.json();
+        const jj = await safeJson(rr);
         if (!jj.ok) throw new Error(jj.error || 'Error preparando doc');
 
         // —— Inserta un mensaje en el chat con el resultado de la función ——  
@@ -843,7 +843,10 @@
           body: JSON.stringify(body),
           credentials: 'include'
         });
-        const j = await r.json();
+        const raw = await r.text();
+        let j;
+        try { j = JSON.parse(raw); }
+        catch { throw new Error(raw); }
         await handleAssistantResponse(j);
       } catch (err) {
         safeRemoveLoader();
@@ -918,6 +921,11 @@
       });
 
     /* ------- envía mensaje silencioso ------- */
+    async function safeJson(res) {
+      const txt = await res.text();
+      try { return JSON.parse(txt); }
+      catch { return { ok: false, reply: txt }; }
+    }
     async function sendHidden(msg) {
       try {
         const r = await fetch('/api/assistant/chat', {
@@ -925,7 +933,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(buildAssistantBody(msg))
         });
-        return await r.json();
+        return await safeJson(r);
       } catch (e) {
         console.error('Hidden call error', e);
         return { ok: false, reply: '' };
@@ -945,7 +953,10 @@
           body: JSON.stringify(body),
           credentials: 'include'
         });
-        const j = await r.json();
+        const raw = await r.text();
+        let j;
+        try { j = JSON.parse(raw); }
+        catch { throw new Error(raw); }
         await handleAssistantResponse(j);
       } catch (err) {
         safeRemoveLoader();
@@ -1215,7 +1226,7 @@
           body: JSON.stringify({ tmpName }),
           credentials: 'include'
         });
-        const j = await r.json();
+        const j = await safeJson(r);
         if (!j.ok) throw new Error(j.error || 'Error');
 
         wrapper.classList.remove('success');
@@ -1268,7 +1279,7 @@
 
       try {
         const r = await fetch('/api/blocks/upload', { method: 'POST', body: form });
-        const j = await r.json(); removeLoader();
+        const j = await safeJson(r); removeLoader();
 
         log.insertAdjacentHTML('beforeend',
           `<div class="feedback ${j.ok ? 'success' : 'error'}">${j.ok ? j.message : j.error}</div>`);
@@ -1388,7 +1399,7 @@
               credentials: 'include',
               body: form
             });
-            const j = await r.json();
+            const j = await safeJson(r);
             if (!j.ok) throw new Error(j.error || 'Error desconocido');
 
             // mostrar pregunta transcrita
@@ -1458,7 +1469,8 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(buildAssistantBody(msg))
           });
-          j = await r.json();
+          const raw = await r.text();
+          j = JSON.parse(raw);
           if (!j.ok) throw new Error(j.error || 'Error');
 
           await handleAssistantResponse(j);
@@ -1507,7 +1519,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
         });
-        const j = await r.json();
+        const j = await safeJson(r);
         if (!j.id_chat && !j.ok) throw new Error(j.error || 'Error');
 
         activeChatId = activeChatId || j.id_chat;
