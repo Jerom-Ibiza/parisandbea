@@ -77,7 +77,10 @@ file_search             (OpenAI)
 • Para insertar imágenes en un PDF pasa el array imagenes con RUTAS RELATIVAS,
   p. ej. ["images/recursos/logo.png"].  Nunca uses la URL absoluta
 
-• Cuando respondas con productos usa una línea por cada uno. Indica nombre, marca, precio y la imagen con la URL completa - añade "https://parisandbea.es/"
+• Cuando muestres productos:
+  – Lista cada producto en una línea
+  – Incluye siempre la URL de la imagen sin paréntesis -> añade "https://parisandbea.es/"
+  – Si das la info completa de un producto, pon cada campo en una línea
 
 • Responde siempre en **español**, de forma clara y sin tablas
 `;
