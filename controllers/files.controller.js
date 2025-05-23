@@ -160,7 +160,11 @@ exports.deleteFile = async (req, res) => {
   try {
     /* 1. borrar fichero físico */
     const filePath = path.join(__dirname, '..', folder, filename);
-    await fs.promises.unlink(filePath);
+    try {
+      await fs.promises.unlink(filePath);
+    } catch (err) {
+      if (err.code !== 'ENOENT') throw err; // ignora si no existe
+    }
 
     /* 2. si es attachments_consulta -> borrar fila en BD */
     if (folder === 'attachments_consulta') {
@@ -190,10 +194,14 @@ exports.deleteMultipleFiles = async (req, res) => {
     return res.status(400).json({ error: 'Array "files" vacío' });
 
   try {
-    /* 1. borrar ficheros */
-    await Promise.all(files.map(f => fs.promises.unlink(
-      path.join(__dirname, '..', folder, f)
-    )));
+    /* 1. borrar ficheros (ignorar faltantes) */
+    await Promise.all(files.map(async f => {
+      try {
+        await fs.promises.unlink(path.join(__dirname, '..', folder, f));
+      } catch (err) {
+        if (err.code !== 'ENOENT') throw err;
+      }
+    }));
 
     /* 2. si procede, borrar filas BD */
     if (folder === 'attachments_consulta') {
