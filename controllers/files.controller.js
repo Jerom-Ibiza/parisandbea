@@ -158,21 +158,26 @@ exports.deleteFile = async (req, res) => {
     return res.status(400).json({ error: 'Falta filename' });
 
   try {
-    /* 1. borrar fichero físico */
-    const filePath = path.join(__dirname, '..', folder, filename);
-    try {
-      await fs.promises.unlink(filePath);
-    } catch (err) {
-      if (err.code !== 'ENOENT') throw err; // ignora si no existe
-    }
+    /* 1. borrar ficheros (ignorar faltantes) */
+    await Promise.all(files.map(async f => {
+      try {
+        await fs.promises.unlink(filePath);
+      } catch (err) {
+        if (err.code !== 'ENOENT') throw err; // ignora si no existe
+      }
+    }));
 
     /* 2. si es attachments_consulta -> borrar fila en BD */
     if (folder === 'attachments_consulta') {
       const relPath = path.posix.join(folder, filename);
-      await pool.query(
-        'DELETE FROM patient_files WHERE filepath = ? LIMIT 1',
-        [relPath]
-      );
+      try {
+        await pool.query(
+          'DELETE FROM patient_files WHERE filepath = ? LIMIT 1',
+          [relPath]
+        );
+      } catch (dbErr) {
+        console.error('[deleteFile DB]', dbErr);
+      }
     }
 
     res.json({ message: 'Archivo eliminado correctamente' });
@@ -194,22 +199,24 @@ exports.deleteMultipleFiles = async (req, res) => {
     return res.status(400).json({ error: 'Array "files" vacío' });
 
   try {
-    /* 1. borrar ficheros (ignorar faltantes) */
-    await Promise.all(files.map(async f => {
+    /* 1. borrar ficheros y registros uno a uno */
+    for (const f of files) {
       try {
         await fs.promises.unlink(path.join(__dirname, '..', folder, f));
       } catch (err) {
         if (err.code !== 'ENOENT') throw err;
       }
-    }));
-
-    /* 2. si procede, borrar filas BD */
-    if (folder === 'attachments_consulta') {
-      const rels = files.map(f => path.posix.join(folder, f));
-      await pool.query(
-        `DELETE FROM patient_files WHERE filepath IN (${rels.map(() => '?').join(',')})`,
-        rels
-      );
+      if (folder === 'attachments_consulta') {
+        const rel = path.posix.join(folder, f);
+        try {
+          await pool.query(
+            'DELETE FROM patient_files WHERE filepath = ? LIMIT 1',
+            [rel]
+          );
+        } catch (dbErr) {
+          console.error('[deleteMultipleFiles DB]', dbErr);
+        }
+      }
     }
 
     res.json({ message: 'Archivos eliminados correctamente' });
