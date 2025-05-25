@@ -539,6 +539,9 @@
     <div class="tab" data-folder="images/productos">
       <i class="material-icons">inventory_2</i> Img Productos
     </div>
+    <div class="tab" data-folder="images/muscles">
+      <i class="material-icons">accessibility_new</i> Img Músculos
+    </div>
     <div class="tab" data-folder="password">
       <i class="material-icons">lock</i> Password
     </div>
@@ -585,8 +588,9 @@
     const isServicios = () => currentFolder === 'images/servicios';
     const isProfesionales = () => currentFolder === 'images/profesionales';
     const isProductos = () => currentFolder === 'images/productos';
+    const isMuscles = () => currentFolder === 'images/muscles';
     const isOnlyImagesTab = () =>
-      isServicios() || isProfesionales() || isProductos();
+      isServicios() || isProfesionales() || isProductos() || isMuscles();
 
     /* 2) Pintar tabla / botones */
     function showFileList() {
