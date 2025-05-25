@@ -469,6 +469,7 @@ module.exports = (LOCAL_FUNCTIONS = {}) => {
   - images
   - images/recursos
   - images/servicios
+  - images/muscles
   - documentos
   - documentos/consentimientos`
           }

@@ -15,6 +15,7 @@ const allowedFolders = [
   'images/servicios',
   'images/profesionales',
   'images/productos',
+  'images/muscles',
   'tmp',
   'attachments_consulta'
 ];
