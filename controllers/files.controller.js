@@ -150,6 +150,13 @@ exports.renameFile = (req, res) => {
 };
 
 exports.deleteFile = async (req, res) => {
+  /* ───── Si la petición trae un array "files" → realmente es un borrado múltiple ───── */
+  if (Array.isArray(req.body?.files) && req.body.files.length) {
+    // Reconstruimos el folder completo juntando las dos partes que Express separó
+    req.params.folder = req.params.folder + '/' + req.params.filename;
+    delete req.params.filename;           // ya no lo necesitamos
+    return exports.deleteMultipleFiles(req, res);   // delega y termina aquí
+  }
   const { folder, filename } = req.params;
 
   if (!allowedFolders.includes(folder))
@@ -159,35 +166,42 @@ exports.deleteFile = async (req, res) => {
     return res.status(400).json({ error: 'Falta filename' });
 
   try {
-    /* 1. borrar ficheros (ignorar faltantes) */
-    await Promise.all(files.map(async f => {
-      try {
-        await fs.promises.unlink(filePath);
-      } catch (err) {
-        if (err.code !== 'ENOENT') throw err; // ignora si no existe
-      }
-    }));
+    /* ───── 1. Averiguar la ruta exacta ───── */
+    let absPath = path.join(__dirname, '..', folder, filename);   // por defecto
 
-    /* 2. si es attachments_consulta -> borrar fila en BD */
     if (folder === 'attachments_consulta') {
-      const relPath = path.posix.join(folder, filename);
-      try {
-        await pool.query(
-          'DELETE FROM patient_files WHERE filepath = ? LIMIT 1',
-          [relPath]
-        );
-      } catch (dbErr) {
-        console.error('[deleteFile DB]', dbErr);
+      // buscamos la fila para obtener el filepath completo
+      const [rows] = await pool.query(
+        'SELECT filepath FROM patient_files WHERE filename = ? LIMIT 1',
+        [filename]
+      );
+      if (rows.length) {
+        absPath = path.join(__dirname, '..', rows[0].filepath);
       }
     }
 
-    res.json({ message: 'Archivo eliminado correctamente' });
+    /* ───── 2. Borrar el fichero (ignora si no existe) ───── */
+    try {
+      await fs.promises.unlink(absPath);
+    } catch (err) {
+      if (err.code !== 'ENOENT') throw err;
+    }
 
+    /* ───── 3. Si procede, borrar la fila en la BD ───── */
+    if (folder === 'attachments_consulta') {
+      await pool.query(
+        'DELETE FROM patient_files WHERE filename = ? LIMIT 1',
+        [filename]
+      );
+    }
+
+    res.json({ message: 'Archivo eliminado correctamente' });
   } catch (err) {
-    console.error(err);
+    console.error('[deleteFile]', err);
     res.status(500).json({ error: 'Error al eliminar el archivo' });
   }
 };
+
 
 exports.deleteMultipleFiles = async (req, res) => {
   const folder = req.params.folder;
@@ -196,34 +210,46 @@ exports.deleteMultipleFiles = async (req, res) => {
   if (!allowedFolders.includes(folder))
     return res.status(400).json({ error: 'Carpeta no permitida' });
 
-  if (!files.length)
+  if (!Array.isArray(files) || !files.length)
     return res.status(400).json({ error: 'Array "files" vacío' });
 
   try {
-    /* 1. borrar ficheros y registros uno a uno */
     for (const f of files) {
-      try {
-        await fs.promises.unlink(path.join(__dirname, '..', folder, f));
-      } catch (err) {
-        if (err.code !== 'ENOENT') throw err;
-      }
+
+      /* ────────── 1. Localizar la ruta física ────────── */
+      let absPath = path.join(__dirname, '..', folder, f);   // ruta por defecto
+
       if (folder === 'attachments_consulta') {
-        const rel = path.posix.join(folder, f);
-        try {
-          await pool.query(
-            'DELETE FROM patient_files WHERE filepath = ? LIMIT 1',
-            [rel]
-          );
-        } catch (dbErr) {
-          console.error('[deleteMultipleFiles DB]', dbErr);
+        // En esta carpeta «f» solo contiene el nombre base: buscamos su filepath real
+        const [rows] = await pool.query(
+          'SELECT filepath FROM patient_files WHERE filename = ? LIMIT 1',
+          [f]
+        );
+        if (rows.length) {
+          absPath = path.join(__dirname, '..', rows[0].filepath);
         }
+      }
+
+      /* ────────── 2. Borrar el archivo (ignoramos si no existe) ────────── */
+      try {
+        await fs.promises.unlink(absPath);
+      } catch (err) {
+        if (err.code !== 'ENOENT') throw err; // solo relanzamos si es un error real
+      }
+
+      /* ────────── 3. Eliminar la fila en la BD cuando proceda ────────── */
+      if (folder === 'attachments_consulta') {
+        await pool.query(
+          'DELETE FROM patient_files WHERE filename = ? LIMIT 1',
+          [f]
+        );
       }
     }
 
     res.json({ message: 'Archivos eliminados correctamente' });
 
   } catch (err) {
-    console.error(err);
+    console.error('[deleteMultipleFiles]', err);
     res.status(500).json({ error: 'Error al eliminar uno o más archivos' });
   }
 };
