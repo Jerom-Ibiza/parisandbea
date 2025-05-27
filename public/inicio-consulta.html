@@ -358,7 +358,9 @@
     <a href="/pab-files.html" class="footer-btn">
       <span class="material-icons">folder</span> Archivos
     </a>
-
+    <button id="registerBtn" class="footer-btn">
+      <span class="material-icons">person_add</span> Inscripción
+    </button>
     <button id="logoutBtn" class="footer-btn">
       <span class="material-icons">logout</span> Logout
     </button>
@@ -507,6 +509,47 @@
         Swal.fire({ icon: 'error', title: 'Error', text: 'Error en la solicitud' });
       }
     });
+    /* ===== INSCRIPCIÓN DE PACIENTE =========================== */
+    document.getElementById('registerBtn').addEventListener('click', async () => {
+      const { value: minutes } = await Swal.fire({
+        title: 'Validez del enlace',
+        input: 'select',
+        inputOptions: {
+          60: '60 min',
+          120: '2 h',
+          600: '10 h',
+          1440: '24 h',
+          2880: '48 h'
+        },
+        inputValue: 60,
+        showCancelButton: true,
+        confirmButtonText: 'Generar enlace'
+      });
+      if (!minutes) return;
+
+      try {
+        const r = await fetch('/api/tokens/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ minutes: Number(minutes) })
+        });
+        const res = await r.json();
+        if (!r.ok) throw new Error(res.error || 'Error creando enlace');
+
+        /* abre pestaña + copia al portapapeles */
+        window.open(res.url, '_blank');
+        await navigator.clipboard.writeText(res.url);
+
+        Swal.fire({
+          icon: 'success', title: 'Enlace generado',
+          text: 'Se ha abierto en una nueva pestaña y copiado al portapapeles'
+        });
+      } catch (e) {
+        console.error(e);
+        Swal.fire({ icon: 'error', title: 'Error', text: e.message });
+      }
+    });
+
   </script>
 
 </body>

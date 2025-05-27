@@ -105,6 +105,12 @@ app.use('/api/assistant/files', assistantFilesRoutes);
 const productosRoutes = require('./routes/productos.routes');
 app.use('/api/productos', productosRoutes);
 
+const tokenRoutes = require('./routes/registroTokens.routes');
+app.use('/api/tokens', tokenRoutes);
+
+const publicPacRoutes = require('./routes/pacientesPublic.routes');
+app.use('/api/public/pacientes', publicPacRoutes);
+
 const ONE_HOUR = 60 * 60 * 1000;
 
 /* cada hora: borra MP3/WEBM del tmp >30 min */

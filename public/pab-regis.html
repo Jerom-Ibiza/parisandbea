@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Paciente | Paris & Bea</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- fuentes & sweetalert -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css"><!-- tu hoja global -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        /* ======= look similar a pab-login ======= */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #add1c5;
+            font-family: 'Raleway', sans-serif;
+        }
+
+        .form-box {
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+            max-width: 420px;
+            width: 100%;
+        }
+
+        .form-box img {
+            display: block;
+            margin: 0 auto 24px;
+            max-width: 160px
+        }
+
+        .form-box h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-align: center
+        }
+
+        .form-box label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #555
+        }
+
+        .form-box input,
+        .form-box select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            font-size: 1rem
+        }
+
+        .form-box button {
+            width: 100%;
+            padding: 14px;
+            background: #add1c5;
+            color: #fff;
+            border: none;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background .3s
+        }
+
+        .form-box button:hover {
+            background: #6a9c8c
+        }
+
+        small {
+            display: block;
+            margin-top: -12px;
+            margin-bottom: 18px;
+            color: #888;
+            font-size: .85rem
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-box" id="box" style="display:none">
+        <img src="images/recursos/parisandbealogo.png" alt="Logo">
+        <h1>Registro de paciente</h1>
+
+        <form id="regForm">
+            <label for="nombre">Nombre*</label>
+            <input id="nombre" name="nombre" required>
+
+            <label for="apellidos">Apellidos*</label>
+            <input id="apellidos" name="apellidos" required>
+
+            <label for="fecha_nacimiento">Fecha nacimiento*</label>
+            <input id="fecha_nacimiento" name="fecha_nacimiento" type="date" required>
+
+            <label for="genero">Género*</label>
+            <select id="genero" name="genero" required>
+                <option value="">-- selecciona --</option>
+                <option>Femenino</option>
+                <option>Masculino</option>
+                <option>Otro</option>
+            </select>
+
+            <label for="dni">DNI / Pasaporte</label>
+            <input id="dni" name="dni">
+
+            <label for="direccion">Dirección</label>
+            <input id="direccion" name="direccion">
+
+            <!-- PREFIJO + TELÉFONO -->
+            <label for="prefijo">Teléfono</label>
+            <div style="display:flex;gap:8px">
+                <input id="prefijo" name="prefijo" value="+34" style="max-width:90px" pattern="\+\d{1,4}"
+                    title="Empieza por + seguido de 1-4 dígitos" inputmode="numeric" autocomplete="tel-country-code"
+                    required>
+
+                <input id="telefono" name="telefono" placeholder="600200300" pattern="\d{6,15}"
+                    title="Solo dígitos (6-15)" inputmode="numeric" autocomplete="tel-national" required style="flex:1">
+            </div>
+
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email">
+
+            <button type="submit">Enviar inscripción</button>
+        </form>
+    </div>
+
+
+    <script>
+        /* -------- extracción token -------- */
+        const params = new URLSearchParams(location.search);
+        const token = params.get('token');
+
+        /* si no hay token => error */
+        if (!token) { Swal.fire('Enlace incorrecto', 'No se proporcionó token', 'error'); }
+        else validateToken();
+
+        /* -------- validación en servidor -------- */
+        async function validateToken() {
+            try {
+                const r = await fetch('/api/tokens/validate/' + token);
+                const res = await r.json();
+                if (!r.ok || !res.valid) {
+                    const motivo = res.reason === 'caducado' ? 'El enlace ha caducado' :
+                        res.reason === 'usado' ? 'El enlace ya se utilizó' :
+                            'Enlace inválido';
+                    await Swal.fire('Enlace no válido', motivo, 'error');
+                    return;
+                }
+                document.getElementById('box').style.display = 'block';
+            } catch (e) {
+                console.error(e);
+                Swal.fire('Error', 'No se pudo validar el enlace', 'error');
+            }
+        }
+
+        /* -------- envío de formulario -------- */
+        document.getElementById('regForm').addEventListener('submit', async e => {
+            e.preventDefault();
+
+            /* --- tomamos los valores del formulario --- */
+            const fd = new FormData(e.target);
+            let pref = fd.get('prefijo').trim();
+            let tel = fd.get('telefono').trim();
+
+            /* si el prefijo no empieza por + lo añadimos */
+            if (!pref.startsWith('+')) pref = '+' + pref;
+
+            /* concatenamos y limpiamos */
+            fd.set('telefono', pref + tel);
+            fd.delete('prefijo');                   // ya no se envía al back - sólo “telefono”
+
+            /* convertimos a objeto para fetch */
+            const data = Object.fromEntries(fd.entries());
+
+            try {
+                const r = await fetch('/api/public/pacientes/register?token=' + token, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const res = await r.json();
+                if (!r.ok) throw new Error(res.error || 'Error en registro');
+
+                await Swal.fire('¡Bienvenido/a!', 'Registro completado con éxito', 'success');
+                window.close();
+            } catch (e) {
+                console.error(e);
+                Swal.fire('Error', e.message, 'error');
+            }
+        });
+    </script>
+</body>
+
+</html>
