@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Kiosco · Registro</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="manifest" href="/kiosk.webmanifest">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #add1c5;
+            font-family: sans-serif;
+            color: #fff
+        }
+
+        .lds {
+            width: 80px;
+            height: 80px;
+            display: inline-block
+        }
+
+        .lds:after {
+            content: " ";
+            display: block;
+            width: 64px;
+            height: 64px;
+            margin: 8px;
+            border-radius: 50%;
+            border: 6px solid #fff;
+            border-color: #fff transparent #fff transparent;
+            animation: spin 1.2s linear infinite
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lds"></div>
+
+    <script>
+        /* ========== CONFIG ========== */
+        const KEY_PARAM = '4550918344755092q34lkadjgADRYQ3';   // ← TU KIOSK_KEY (sin ñ, sin +)
+        const PIN_KEY = 'kioskPin';                          // nombre en localStorage
+        /* ============================ */
+
+        (async () => {
+            try {
+                /* ——— 1 · PIN local ——— */
+                let pin = localStorage.getItem(PIN_KEY);
+
+                while (!pin) {                                      // pide hasta que introduzca algo
+                    pin = prompt('Introduce el PIN del kiosco:')?.trim();
+                    if (pin) localStorage.setItem(PIN_KEY, pin);
+                    else alert('Se necesita un PIN para continuar');
+                }
+
+                /* ——— 2 · petición al servidor ——— */
+                const url = `/api/tokens/kiosk?key=${KEY_PARAM}&pin=${encodeURIComponent(pin)}&t=${Date.now()}`;
+                const r = await fetch(url, { cache: 'no-store' });
+                const res = await r.json();
+
+                /* ——— 3 · PIN incorrecto → pedir de nuevo ——— */
+                if (r.status === 403 && res.error === 'PIN incorrecto') {
+                    localStorage.removeItem(PIN_KEY);               // lo borramos y volvemos a pedir
+                    alert('PIN incorrecto. Vuelve a intentarlo.');
+                    location.reload();
+                    return;
+                }
+                if (!r.ok) throw new Error(res.error || 'Error token');
+
+                /* ——— 4 · éxito → abre formulario ——— */
+                location.href = `/pab-regis.html?token=${res.token}`;
+
+            } catch (e) {
+                console.error(e);
+                document.body.innerHTML =
+                    '<h2 style="color:#fff;text-align:center">Error. Consulta al personal.</h2>';
+            }
+        })();
+    </script>
+</body>
+
+</html>

@@ -313,6 +313,23 @@
     .footer-btn .material-icons {
       font-size: 22px;
     }
+
+    /* ===== móvil ≤ 480 px ===== */
+    @media (max-width:480px) {
+      .page-footer {
+        flex-wrap: wrap;
+        /* permite que los tres botones salten de línea */
+        gap: 12px;
+        padding: 24px 16px;
+      }
+
+      .footer-btn {
+        flex: 1 1 100%;
+        /* cada botón ocupa el ancho completo */
+        justify-content: center;
+        /* centra icono + texto */
+      }
+    }
   </style>
 </head>
 

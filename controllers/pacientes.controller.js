@@ -62,7 +62,7 @@ exports.addHistorial = async (req, res) => {
       medicacion_actual,
       alergias,
       habitos_vida,
-      profesion  
+      profesion
     } = req.body;
 
     if (!motivo_consulta) {
@@ -155,14 +155,14 @@ exports.updatePatient = async (req, res) => {
          email             = ?
        WHERE id_paciente = ?`,
       [
-        nombre           ?? p.nombre,
-        apellidos        ?? p.apellidos,
+        nombre ?? p.nombre,
+        apellidos ?? p.apellidos,
         fecha_nacimiento ?? p.fecha_nacimiento,
-        genero           ?? p.genero,
-        dni              ?? p.dni,
-        direccion        ?? p.direccion,
-        telefono         ?? p.telefono,
-        email            ?? p.email,
+        genero ?? p.genero,
+        dni ?? p.dni,
+        direccion ?? p.direccion,
+        telefono ?? p.telefono,
+        email ?? p.email,
         id
       ]
     );
@@ -194,15 +194,15 @@ exports.updateHistorial = async (req, res) => {
     const h = rows[0];
 
     const merged = {
-      motivo_consulta:        body.motivo_consulta        ?? h.motivo_consulta,
-      fecha_inicio_problema:  body.fecha_inicio_problema  ?? h.fecha_inicio_problema,
-      antecedentes_personales:body.antecedentes_personales?? h.antecedentes_personales,
-      antecedentes_familiares:body.antecedentes_familiares?? h.antecedentes_familiares,
-      tratamientos_previos:   body.tratamientos_previos   ?? h.tratamientos_previos,
-      medicacion_actual:      body.medicacion_actual      ?? h.medicacion_actual,
-      alergias:               body.alergias               ?? h.alergias,
-      habitos_vida:           body.habitos_vida           ?? h.habitos_vida,
-      profesion:              body.profesion              ?? h.profesion
+      motivo_consulta: body.motivo_consulta ?? h.motivo_consulta,
+      fecha_inicio_problema: body.fecha_inicio_problema ?? h.fecha_inicio_problema,
+      antecedentes_personales: body.antecedentes_personales ?? h.antecedentes_personales,
+      antecedentes_familiares: body.antecedentes_familiares ?? h.antecedentes_familiares,
+      tratamientos_previos: body.tratamientos_previos ?? h.tratamientos_previos,
+      medicacion_actual: body.medicacion_actual ?? h.medicacion_actual,
+      alergias: body.alergias ?? h.alergias,
+      habitos_vida: body.habitos_vida ?? h.habitos_vida,
+      profesion: body.profesion ?? h.profesion
     };
 
     await pool.query(
@@ -258,10 +258,10 @@ exports.searchPatients = async (req, res) => {
       WHERE 1 = 1`;
     const params = [];
 
-    if (nombre)     { query += ' AND p.nombre LIKE ?';    params.push(`%${nombre}%`); }
-    if (apellidos)  { query += ' AND p.apellidos LIKE ?'; params.push(`%${apellidos}%`); }
-    if (telefono)   { query += ' AND p.telefono LIKE ?';  params.push(`%${telefono}%`); }
-    if (dni)        { query += ' AND p.dni LIKE ?';       params.push(`%${dni}%`); }
+    if (nombre) { query += ' AND p.nombre LIKE ?'; params.push(`%${nombre}%`); }
+    if (apellidos) { query += ' AND p.apellidos LIKE ?'; params.push(`%${apellidos}%`); }
+    if (telefono) { query += ' AND p.telefono LIKE ?'; params.push(`%${telefono}%`); }
+    if (dni) { query += ' AND p.dni LIKE ?'; params.push(`%${dni}%`); }
 
     if (startDate && endDate) {
       query += ' AND p.fecha_registro BETWEEN ? AND ?';
@@ -277,27 +277,27 @@ exports.searchPatients = async (req, res) => {
     const [rows] = await pool.query(query, params);
 
     const results = rows.map(r => ({
-      id_paciente:     r.id_paciente,
-      nombre:          r.nombre,
-      apellidos:       r.apellidos,
-      fecha_nacimiento:r.fecha_nacimiento,
-      genero:          r.genero,
-      dni:             r.dni,
-      direccion:       r.direccion,
-      telefono:        r.telefono,
-      email:           r.email,
-      fecha_registro:  r.fecha_registro,
+      id_paciente: r.id_paciente,
+      nombre: r.nombre,
+      apellidos: r.apellidos,
+      fecha_nacimiento: r.fecha_nacimiento,
+      genero: r.genero,
+      dni: r.dni,
+      direccion: r.direccion,
+      telefono: r.telefono,
+      email: r.email,
+      fecha_registro: r.fecha_registro,
       historial: r.id_historial ? {
-        id_historial:            r.id_historial,
-        motivo_consulta:         r.motivo_consulta,
-        fecha_inicio_problema:   r.fecha_inicio_problema,
+        id_historial: r.id_historial,
+        motivo_consulta: r.motivo_consulta,
+        fecha_inicio_problema: r.fecha_inicio_problema,
         antecedentes_personales: r.antecedentes_personales,
         antecedentes_familiares: r.antecedentes_familiares,
-        tratamientos_previos:    r.tratamientos_previos,
-        medicacion_actual:       r.medicacion_actual,
-        alergias:                r.alergias,
-        habitos_vida:            r.habitos_vida,
-        profesion:               r.profesion_historial
+        tratamientos_previos: r.tratamientos_previos,
+        medicacion_actual: r.medicacion_actual,
+        alergias: r.alergias,
+        habitos_vida: r.habitos_vida,
+        profesion: r.profesion_historial
       } : null
     }));
 
@@ -334,27 +334,27 @@ exports.getPatientById = async (req, res) => {
     const r = rows[0];
 
     res.json({
-      id_paciente:     r.id_paciente,
-      nombre:          r.nombre,
-      apellidos:       r.apellidos,
-      fecha_nacimiento:r.fecha_nacimiento,
-      genero:          r.genero,
-      dni:             r.dni,
-      direccion:       r.direccion,
-      telefono:        r.telefono,
-      email:           r.email,
-      fecha_registro:  r.fecha_registro,
+      id_paciente: r.id_paciente,
+      nombre: r.nombre,
+      apellidos: r.apellidos,
+      fecha_nacimiento: r.fecha_nacimiento,
+      genero: r.genero,
+      dni: r.dni,
+      direccion: r.direccion,
+      telefono: r.telefono,
+      email: r.email,
+      fecha_registro: r.fecha_registro,
       historial: r.id_historial ? {
-        id_historial:            r.id_historial,
-        motivo_consulta:         r.motivo_consulta,
-        fecha_inicio_problema:   r.fecha_inicio_problema,
+        id_historial: r.id_historial,
+        motivo_consulta: r.motivo_consulta,
+        fecha_inicio_problema: r.fecha_inicio_problema,
         antecedentes_personales: r.antecedentes_personales,
         antecedentes_familiares: r.antecedentes_familiares,
-        tratamientos_previos:    r.tratamientos_previos,
-        medicacion_actual:       r.medicacion_actual,
-        alergias:                r.alergias,
-        habitos_vida:            r.habitos_vida,
-        profesion:               r.profesion_historial
+        tratamientos_previos: r.tratamientos_previos,
+        medicacion_actual: r.medicacion_actual,
+        alergias: r.alergias,
+        habitos_vida: r.habitos_vida,
+        profesion: r.profesion_historial
       } : null
     });
   } catch (error) {

@@ -55,4 +55,32 @@ exports.isUsable = async tk => {
     if (!row || row.used || row.expires_at < new Date()) return null;
     return row;
 };
+
+/* ============================================================
+ * Token para kiosco (60 min, clave en query ?key=xxx)
+ * ========================================================== */
+exports.createKiosk = async (req, res) => {
+    try {
+        /* 1 · clave compartida en query (?key=…) */
+        if (req.query.key !== process.env.KIOSK_KEY)
+            return res.status(403).json({ error: 'Clave incorrecta' });
+
+        /* 2 · PIN privado en query (?pin=…) */
+        if (req.query.pin !== process.env.KIOSK_PIN)
+            return res.status(403).json({ error: 'PIN incorrecto' });
+
+        /* 3 · token de 60 min */
+        const token = crypto.randomBytes(32).toString('hex');
+        await pool.query(
+            `INSERT INTO registro_tokens (token, expires_at)
+       VALUES (?, DATE_ADD(NOW(), INTERVAL 60 MINUTE))`,
+            [token]);
+
+        res.json({ token });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Error generando token' });
+    }
+};
+
 exports.consume = markUsed;

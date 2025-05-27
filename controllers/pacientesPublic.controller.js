@@ -1,5 +1,6 @@
 const pool = require('../database');
 const tokensCtrl = require('./registroTokens.controller');
+const { generateConsentDocument } = require('./documentos.controller');
 
 /* ============================================================
  * Registro público de paciente  —  /api/public/pacientes/register
@@ -69,6 +70,21 @@ exports.register = async (req, res) => {
                 email || null
             ]
         );
+
+        /* ---------------- Generar el consentimiento LOPD ---------------- */
+        try {
+            const mockReq = { body: { id_paciente: result.insertId } };
+            const mockRes = {
+                status(c) { this.statusCode = c; return this; },
+                json(obj) { /* nada */ }
+            };
+            // se ejecuta en “fire-and-forget”; no esperamos a que termine
+            generateConsentDocument(mockReq, mockRes)
+                .then(() => console.log('[auto-LOPD] PDF generado para PAC', result.insertId))
+                .catch(e => console.error('[auto-LOPD] error:', e?.message || e));
+        } catch (e) {
+            console.error('[auto-LOPD] error inesperado:', e);
+        }
 
         /* -------- consumimos el token (un solo uso) -------- */
         await tokensCtrl.consume(token);

@@ -9,23 +9,24 @@
     <!-- fuentes & sweetalert -->
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css"><!-- tu hoja global -->
+    <link rel="stylesheet" href="css/style.css"> <!-- tu hoja global -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* ======= look similar a pab-login ======= */
+        /* ============ estilos base ============ */
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: #add1c5;
             font-family: 'Raleway', sans-serif;
+            background: #add1c5 url('images/recursos/wallpaper.jpg') center/cover fixed no-repeat;
         }
 
         .form-box {
             background: #fff;
+            opacity: 1;
             padding: 40px 30px;
             border-radius: 18px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
@@ -80,12 +81,118 @@
             background: #6a9c8c
         }
 
-        small {
-            display: block;
-            margin-top: -12px;
-            margin-bottom: 18px;
-            color: #888;
-            font-size: .85rem
+        .policy-link {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: .9rem;
+            color: #0076b6;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* --- estilos base del contenedor --- */
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        /* botón ya tiene estilo; solo retocamos el enlace */
+        .policy-link {
+            font-size: .9rem;
+            color: #0076b6;
+            text-decoration: underline;
+        }
+
+        /* opcional: la tarjeta algo translúcida para ver sutilmente el fondo */
+        .form-box {
+            background: rgba(255, 255, 255, 0.92);
+        }
+
+        /* ---------- estilizado del enlace ---------- */
+        .policy-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border: 2px solid #0076b6;
+            border-radius: 20px;
+            font-size: .9rem;
+            font-weight: 600;
+            color: #0076b6;
+            text-decoration: none;
+            transition: background .25s, color .25s, border-color .25s;
+        }
+
+        .policy-link:hover {
+            background: #0076b6;
+            color: #fff;
+        }
+
+        .policy-link .material-icons {
+            font-size: 18px;
+        }
+
+        /* ============ 2 columnas para 1200-1500 px ============ */
+        @media (min-width:1200px) and (max-width:1500px) {
+            .form-box {
+                max-width: 1200px;
+                padding: 48px 60px;
+            }
+
+            /* contenedor del formulario -> grid 2 cols */
+            #regForm {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                column-gap: 48px;
+                row-gap: 18px;
+            }
+
+            /* columnas explícitas: left / right */
+            .left-col label,
+            .right-col label {
+                margin-bottom: 4px;
+            }
+
+            /* hace que los inputs ocupen toda su columna */
+            .left-col input,
+            .left-col select,
+            .right-col input,
+            .right-col select {
+                margin-bottom: 18px;
+            }
+
+            /* Dirección y contenedor teléfono dentro de la derecha
+         ya van bien — no toques nada */
+
+            /* botón -> debajo de las 2 columnas */
+            #regForm button {
+                grid-column: 1 / -1;
+                margin-top: 8px;
+                max-width: 280px;
+                justify-self: center;
+                /* centrado */
+            }
+
+            .policy-link {
+                grid-column: 1 / -1;
+                text-align: center;
+            }
+
+            .form-actions {
+                grid-column: 1 / -1;
+                /* ocupa ancho completo del grid */
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            /* para que botón y enlace queden a la misma altura visual */
+            .policy-link {
+                margin-left: auto;
+            }
         }
     </style>
 </head>
@@ -96,59 +203,74 @@
         <img src="images/recursos/parisandbealogo.png" alt="Logo">
         <h1>Registro de paciente</h1>
 
+        <!-- ▸ dos columnas: left-col y right-col  -->
         <form id="regForm">
-            <label for="nombre">Nombre*</label>
-            <input id="nombre" name="nombre" required>
+            <div class="left-col">
+                <label for="nombre">Nombre*</label>
+                <input id="nombre" name="nombre" required>
 
-            <label for="apellidos">Apellidos*</label>
-            <input id="apellidos" name="apellidos" required>
+                <label for="apellidos">Apellidos*</label>
+                <input id="apellidos" name="apellidos" required>
 
-            <label for="fecha_nacimiento">Fecha nacimiento*</label>
-            <input id="fecha_nacimiento" name="fecha_nacimiento" type="date" required>
+                <label for="fecha_nacimiento">Fecha nacimiento* (dd/mm/aaaa)</label>
+                <input id="fecha_nacimiento" name="fecha_nacimiento" placeholder="dd/mm/aaaa"
+                    pattern="\d{2}[-/]\d{2}[-/]\d{4}" autocomplete="bday" required>
 
-            <label for="genero">Género*</label>
-            <select id="genero" name="genero" required>
-                <option value="">-- selecciona --</option>
-                <option>Femenino</option>
-                <option>Masculino</option>
-                <option>Otro</option>
-            </select>
-
-            <label for="dni">DNI / Pasaporte</label>
-            <input id="dni" name="dni">
-
-            <label for="direccion">Dirección</label>
-            <input id="direccion" name="direccion">
-
-            <!-- PREFIJO + TELÉFONO -->
-            <label for="prefijo">Teléfono</label>
-            <div style="display:flex;gap:8px">
-                <input id="prefijo" name="prefijo" value="+34" style="max-width:90px" pattern="\+\d{1,4}"
-                    title="Empieza por + seguido de 1-4 dígitos" inputmode="numeric" autocomplete="tel-country-code"
-                    required>
-
-                <input id="telefono" name="telefono" placeholder="600200300" pattern="\d{6,15}"
-                    title="Solo dígitos (6-15)" inputmode="numeric" autocomplete="tel-national" required style="flex:1">
+                <label for="genero">Género*</label>
+                <select id="genero" name="genero" required>
+                    <option value="">-- selecciona --</option>
+                    <option>Femenino</option>
+                    <option>Masculino</option>
+                    <option>Otro</option>
+                </select>
             </div>
 
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" autocomplete="email">
+            <div class="right-col">
+                <label for="dni">DNI / Pasaporte</label>
+                <input id="dni" name="dni">
 
-            <button type="submit">Enviar inscripción</button>
+                <label for="direccion">Dirección</label>
+                <input id="direccion" name="direccion">
+
+                <!-- PREFIJO + TELÉFONO -->
+                <label for="prefijo">Teléfono</label>
+                <div style="display:flex;gap:8px">
+                    <input id="prefijo" name="prefijo" value="+34" style="max-width:90px" pattern="\+\d{1,4}"
+                        title="Empieza por + seguido de 1-4 dígitos" inputmode="numeric" autocomplete="tel-country-code"
+                        required>
+
+                    <input id="telefono" name="telefono" placeholder="600200300" pattern="\d{6,15}"
+                        title="Solo dígitos (6-15)" inputmode="numeric" autocomplete="tel-national" required
+                        style="flex:1">
+                </div>
+
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email">
+            </div>
+
+            <!-- acciones -->
+            <div class="form-actions">
+                <button type="submit">Enviar inscripción</button>
+
+                <a href="/politica-privacidad.html?embed=1" target="_blank" class="policy-link">
+                    <span class="material-icons">privacy_tip</span>
+                    Política de privacidad
+                </a>
+            </div>
         </form>
     </div>
 
-
     <script>
-        /* -------- extracción token -------- */
+        /* ========= token y validación ========= */
         const params = new URLSearchParams(location.search);
         const token = params.get('token');
 
-        /* si no hay token => error */
-        if (!token) { Swal.fire('Enlace incorrecto', 'No se proporcionó token', 'error'); }
-        else validateToken();
+        if (!token) {
+            Swal.fire('Enlace incorrecto', 'No se proporcionó token', 'error');
+        } else {
+            validateToken();
+        }
 
-        /* -------- validación en servidor -------- */
         async function validateToken() {
             try {
                 const r = await fetch('/api/tokens/validate/' + token);
@@ -167,23 +289,26 @@
             }
         }
 
-        /* -------- envío de formulario -------- */
+        /* ========= envío ========= */
         document.getElementById('regForm').addEventListener('submit', async e => {
             e.preventDefault();
-
-            /* --- tomamos los valores del formulario --- */
             const fd = new FormData(e.target);
+
+            /* normalizar fecha dd/mm/aaaa o dd-mm-aaaa -> aaaa-mm-dd */
+            let fecha = fd.get('fecha_nacimiento').trim();
+            const p = fecha.split(/[-\/]/);
+            if (p.length === 3) {
+                fecha = `${p[2]}-${p[1].padStart(2, '0')}-${p[0].padStart(2, '0')}`;
+                fd.set('fecha_nacimiento', fecha);
+            }
+
+            /* prefijo + teléfono  */
             let pref = fd.get('prefijo').trim();
             let tel = fd.get('telefono').trim();
-
-            /* si el prefijo no empieza por + lo añadimos */
             if (!pref.startsWith('+')) pref = '+' + pref;
-
-            /* concatenamos y limpiamos */
             fd.set('telefono', pref + tel);
-            fd.delete('prefijo');                   // ya no se envía al back - sólo “telefono”
+            fd.delete('prefijo');
 
-            /* convertimos a objeto para fetch */
             const data = Object.fromEntries(fd.entries());
 
             try {
@@ -195,14 +320,31 @@
                 const res = await r.json();
                 if (!r.ok) throw new Error(res.error || 'Error en registro');
 
-                await Swal.fire('¡Bienvenido/a!', 'Registro completado con éxito', 'success');
+                /* —— ÉXITO —— */
+                await Swal.fire({
+                    icon: 'success',
+                    title: '¡Bienvenido/a!',
+                    text: 'Registro completado con éxito',
+                    timer: 2800,
+                    timerProgressBar: true,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false
+                });
+
+                /* intentar cerrar si fue abierta con window.open() */
                 window.close();
+
+                /* …y, pasados 0,5 s, volver siempre al kiosco */
+                setTimeout(() => location.replace('/kiosk.html'), 500);
+
             } catch (e) {
                 console.error(e);
                 Swal.fire('Error', e.message, 'error');
             }
         });
     </script>
+
 </body>
 
 </html>

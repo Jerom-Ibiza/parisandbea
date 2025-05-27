@@ -6,6 +6,7 @@ const app = express();
 const cron = require('node-cron');
 const { revisarAyer } = require('./cron/incidenciasCron');
 const { limpiarDrafts } = require('./cron/cleanDraftsCron');
+const { cleanTokens } = require('./cron/cleanTokensCron');
 const cors = require('cors');
 const TMP = path.join(__dirname, 'tmp');
 
@@ -140,6 +141,13 @@ app.delete('/tmp/:file', (req, res) => {
     res.json({ deleted: true });
   });
 });
+
+/* ───── limpiar tokens antiguos (>2 días) ─────
+   todos los lunes a las 04:15 hora de Madrid     */
+cron.schedule('15 4 * * 1', () => {
+  console.log('[cron] Limpiando tokens antiguos…');
+  cleanTokens(2);                    // 2 días de antigüedad
+}, { timezone: 'Europe/Madrid' });
 
 // ---- CRON diario para olvidos y ausencias -----------------
 
