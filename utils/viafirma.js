@@ -1,7 +1,7 @@
 // utils/viafirma.js
 const axios = require('axios');
-const path  = require('path');
-const fs    = require('fs');
+const path = require('path');
+const fs = require('fs');
 
 const API = axios.create({
   baseURL: process.env.VIAFIRMA_BASE,
@@ -21,6 +21,7 @@ async function enviarConsentimiento(pdfUrl, paciente) {
   const body = {
     groupCode: process.env.VIAFIRMA_GROUP,
     title: `Consentimiento LOPD – ${paciente.nombre}`,
+    callbackMails: 'info@parisandbea.es',
     recipients: [
       { key: 'signer1', name: paciente.nombre, mail: paciente.mail, presential: false }
     ],

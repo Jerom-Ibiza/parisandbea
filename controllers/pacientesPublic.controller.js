@@ -1,9 +1,10 @@
+// controllers/pacientesPublic.controller.js
 const pool = require('../database');
 const tokensCtrl = require('./registroTokens.controller');
 const { generateConsentDocument } = require('./documentos.controller');
 
 /* ============================================================
- * Registro público de paciente  —  /api/public/pacientes/register
+ * Registro público de paciente  —  POST /api/public/pacientes/register?token=xxx
  * ========================================================== */
 exports.register = async (req, res) => {
     try {
@@ -23,13 +24,13 @@ exports.register = async (req, res) => {
             dni, direccion, telefono, email, prefijo   // <— prefijo opcional
         } = req.body;
 
-        if (!nombre || !apellidos || !fecha_nacimiento || !genero)
+        if (!nombre || !apellidos || !fecha_nacimiento || !genero || !email)
             return res.status(400).json({ error: 'Faltan datos' });
 
         /* -------- normalizar teléfono --------
            Aceptamos dos variantes:
-           1)  Front-end nuevo  →  llega ya unido en “telefono” («+34600900123»)
-           2)  Front-end antiguo →  llegan “prefijo” y “telefono” separados        */
+           1) Front-end nuevo  → llega ya unido en “telefono” («+34600900123»)
+           2) Front-end antiguo → llegan “prefijo” y “telefono” separados     */
         let telefonoFull = null;
 
         if (telefono) {
@@ -67,23 +68,27 @@ exports.register = async (req, res) => {
                 dni || null,
                 direccion || null,
                 telefonoFull,
-                email || null
+                email
             ]
         );
 
-        /* ---------------- Generar el consentimiento LOPD ---------------- */
+        /* -------- Generar el consentimiento LOPD y enviarlo a Viafirma -------- */
+        let consentInfo = null;
         try {
-            const mockReq = { body: { id_paciente: result.insertId } };
-            const mockRes = {
-                status(c) { this.statusCode = c; return this; },
-                json(obj) { /* nada */ }
-            };
-            // se ejecuta en “fire-and-forget”; no esperamos a que termine
-            generateConsentDocument(mockReq, mockRes)
-                .then(() => console.log('[auto-LOPD] PDF generado para PAC', result.insertId))
-                .catch(e => console.error('[auto-LOPD] error:', e?.message || e));
+            consentInfo = await new Promise((resolve, reject) => {
+                const mockReq = { body: { id_paciente: result.insertId } };
+                const mockRes = {
+                    status(c) { this.statusCode = c; return this; },
+                    json(obj) {
+                        if (this.statusCode >= 400) return reject(new Error(obj?.error || 'Error en LOPD'));
+                        resolve(obj);              // { message, pdfURL, setCode }
+                    }
+                };
+                generateConsentDocument(mockReq, mockRes).catch(reject);
+            });
+            console.log('[auto-LOPD] Viafirma setCode:', consentInfo.setCode);
         } catch (e) {
-            console.error('[auto-LOPD] error inesperado:', e);
+            console.error('[auto-LOPD] error:', e?.message || e);
         }
 
         /* -------- consumimos el token (un solo uso) -------- */
@@ -92,7 +97,8 @@ exports.register = async (req, res) => {
         /* -------- respuesta -------- */
         res.status(201).json({
             message: 'Paciente registrado',
-            id_paciente: result.insertId
+            id_paciente: result.insertId,
+            lopd: consentInfo ? { pdfURL: consentInfo.pdfURL, setCode: consentInfo.setCode } : null
         });
 
     } catch (e) {
