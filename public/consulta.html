@@ -392,7 +392,7 @@
 
     #modalGuide .panel {
       width: 90%;
-      max-width: 300px;
+      max-width: 400px;
       background: #fff;
       border-radius: 14px;
       padding: 20px;
@@ -411,8 +411,8 @@
     #modalGuide ul {
       margin: 0;
       padding-left: 26px;
-      font-size: 20px;
-      line-height: 1.5
+      font-size: 29px;
+      line-height: 1.3
     }
 
     @keyframes pop {
@@ -567,6 +567,38 @@
       .chip {
         min-width: 90px;
         margin-bottom: 25px;
+      }
+
+      /* 1 · El modal crece y se ensancha */
+      #modalGuide .panel {
+        width: 95%;
+        max-width: none;
+        /* sin tope fijo */
+        padding: 30px 40px;
+        /* respira un poco más */
+      }
+
+      /* 2 · El título del modal algo mayor */
+      #modalGuide h3 {
+        font-size: 32px;
+      }
+
+      /* 3 · Lista en dos columnas, con texto grande */
+      #modalGuide ul {
+        column-count: 2;
+        /* ¡dos columnas!  */
+        column-gap: 60px;
+        /* separación amplia */
+        font-size: 40px;
+        /* ↑ tamaño de texto */
+        line-height: 1.55;
+        padding-left: 82px;
+        /* ajusta la sangría del bullet */
+      }
+
+      /* 4 · Evita que un ítem se parta entre columnas */
+      #modalGuide ul li {
+        break-inside: avoid;
       }
     }
 
