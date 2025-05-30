@@ -138,8 +138,8 @@
     }
 
     .btn-small {
-      width: 45px;
-      height: 45px
+      width: 60px;
+      height: 60px
     }
 
     .btn-round .material-icons-outlined {
@@ -427,6 +427,12 @@
       }
     }
 
+    /* ---------- Modal escribir al asistente ---------- */
+    #modalAsk .panel textarea {
+      font-size: 18px;
+      line-height: 1.45;
+    }
+
     /* ───────────────────  MEDIA QUERY DESKTOP ≥ 1200px ───────────── */
     @media (min-width:1200px) {
 
@@ -600,6 +606,12 @@
       #modalGuide ul li {
         break-inside: avoid;
       }
+
+      #modalAsk .panel {
+        max-width: 700px;
+        width: 60%;
+      }
+
     }
 
     /* ───────────────────  ANIMACIONES / UTILIDADES ─────────────── */
@@ -654,6 +666,43 @@
     #mainData {
       font-size: 22px !important;
       line-height: 1.4;
+    }
+
+    /* ---------- asistente “escuchando” ---------- */
+    .assistant-img {
+      max-width: 300px;
+      display: block;
+      margin: 12px auto;
+      opacity: 0;
+      /* punto de partida invisible  */
+      transition: opacity 1s ease;
+    }
+
+    .assistant-img.show {
+      /* se añade por JS */
+      opacity: 1;
+      /* hace el fundido */
+    }
+
+    /* ---------- overlay asistente “escuchando” ---------- */
+    .assistant-overlay {
+      position: fixed;
+      /* flotante respecto a la ventana */
+      bottom: 100px;
+      /* ≈ por encima de la botonera    */
+      right: 20px;
+      max-width: 300px;
+      opacity: 0;
+      transition: opacity 1s ease;
+      pointer-events: none;
+      /* ignorar clics                  */
+      z-index: 1200;
+      /* por encima de todo tu UI       */
+    }
+
+    .assistant-overlay.show {
+      opacity: 1;
+      /* fundido al mostrarse           */
     }
   </style>
 
@@ -713,6 +762,27 @@
     </div>
   </div>
 
+  <!-- Modal “escribir al asistente” -->
+  <div id="modalAsk" style="display:none;position:fixed;inset:0;
+            background:rgba(0,0,0,.55);z-index:1000;
+            align-items:center;justify-content:center">
+    <div class="panel" style="background:#fff;padding:26px 30px;
+         border-radius:14px;max-width:620px;width:90%;
+         display:flex;flex-direction:column;gap:18px;
+         pointer-events:auto; margin-bottom: 250px;">
+
+      <!-- textarea que ya tenías -->
+      <textarea id="txtMessage" placeholder="Escribe…" style="width:100%;min-height:120px;max-height:360px;
+             padding:10px;border:2px solid #aed3c1;border-radius:10px;
+             font-size:16px;resize:vertical;overflow:auto"></textarea>
+
+      <!-- botón enviar -->
+      <button id="btnAskSend" class="btn-round btn-small" title="Enviar" style="align-self:flex-end">
+        <span class="material-icons-outlined">send</span>
+      </button>
+    </div>
+  </div>
+
   <!-- SELECTOR DE BLOQUE -->
   <div class="block-selector">
     <button class="chip active" data-block="historial" id="chipHist">Historial</button>
@@ -741,17 +811,41 @@
     <button id="btnTalk" class="btn-round" title="Hablar con el asistente">
       <img src="images/recursos/voice_icon.png" style="max-width:30px" alt="Logo" /></button>
   </div>
-  <div id="textPanel"
-    style="display:none;padding:8px;max-width:620px;margin:auto;text-align:center;margin-bottom: 20px;">
-    <!-- de input → textarea -->
-    <textarea id="txtMessage" placeholder="Escribe…" style="width:100%;min-height:48px;max-height:260px;
-                   padding:10px;border:2px solid #aed3c1;border-radius:10px;
-                   font-size:15px;resize:vertical;overflow:auto"></textarea>
-  </div>
 
   <script>
     /* ------------------------------------------------ utilidades básicas ------------------------------------------------ */
     const $id = id => document.getElementById(id);
+
+    /* ---------- overlay asistente: mostrar / ocultar ---------- */
+    function showAssistantImg() {
+      if ($id('assistantOverlay')) return;          // ya existe
+
+      const img = new Image();                     // atajo para crear <img>
+      img.id = 'assistantOverlay';
+      img.src = 'images/recursos/assistant.png';
+      img.className = 'assistant-overlay';
+      document.body.appendChild(img);
+
+      /* ── cuando la imagen esté lista, dispara el fundido ── */
+      const reveal = () => requestAnimationFrame(() => img.classList.add('show'));
+
+      if (img.complete) {        // ya en caché
+        reveal();
+      } else {
+        img.onload = reveal;   // esperar a que cargue
+      }
+    }
+
+    function hideAssistantImg() {
+      const img = $id('assistantOverlay');
+      if (!img) return;
+      img.classList.remove('show');                    // inicia fundido
+      img.addEventListener('transitionend', () => img.remove(), { once: true });
+    }
+
+    // ---------- modal de texto ----------
+    const modalAsk = $id('modalAsk');     // <div id="modalAsk">…
+    const btnSendTxt = $id('btnAskSend');   // botón con el icono “send”
     /* ---------- manejo de chat persistente ---------- */
     let activeChatId = null;          // se rellenará al primer guardado
     let chatChanged = false;         // true cuando hay algo nuevo sin salvar
@@ -1139,7 +1233,7 @@
         if (data.evaluacion) {
           const e = data.evaluacion;
           html += title('fact_check', 'Última evaluación');
-          html += `<dl>${row('Profesional', e.prof_nombre)}${row('Fecha', fDate(e.fecha_evaluacion))}
+          html += `<dl>${row('<span class="material-icons-outlined">person</span>', e.prof_nombre)}${row('Fecha', fDate(e.fecha_evaluacion))}
                ${row('Localiz. dolor', e.dolor_localizacion)}${row('Intensidad', e.dolor_intensidad)}
                ${row('Tipo dolor', e.dolor_tipo)}${row('Irradia', e.dolor_irradia ? 'Sí' : 'No')}
                ${row('Descripción', e.dolor_descripcion)}${row('Insp. visual', e.inspeccion_visual)}
@@ -1152,7 +1246,7 @@
         if (data.tratamiento) {
           const t = data.tratamiento;
           html += title('local_hospital', 'Último tratamiento');
-          html += `<dl>${row('Profesional', t.prof_nombre)}${row('Inicio', fDate(t.fecha_inicio))}
+          html += `<dl>${row('<span class="material-icons-outlined">person</span>', t.prof_nombre)}${row('Inicio', fDate(t.fecha_inicio))}
                ${row('Fin', fDate(t.fecha_fin))}${row('Tec. aplic.', t.tecnicas_aplicadas)}
                ${row('Frec. sesión', t.frecuencia_sesiones)}${row('Dur. sesión', t.duracion_sesion)}
                ${row('Recomend.', t.recomendaciones)}${row('Estado', t.estado)}
@@ -1165,7 +1259,7 @@
         if (data.sesion) {
           const s = data.sesion;
           html += title('event', 'Última sesión');
-          html += `<dl>${row('Profesional', s.prof_nombre)}
+          html += `<dl>${row('<span class="material-icons-outlined">person</span>', s.prof_nombre)}
                ${row('Fecha', fDate(s.fecha_sesion) + ' ' + fTime(s.hora_sesion))}
                ${row('Técnicas', s.tecnicas_utilizadas)}${row('Evolución', s.evolucion)}
                ${row('Mod. trat.', s.modificaciones_tratamiento)}${row('Observac.', s.observaciones)}
@@ -1374,6 +1468,7 @@
       talking = false;
       btnTalk.classList.remove('talking');
       btnStop.style.display = 'none';
+      hideAssistantImg();
 
       log.insertAdjacentHTML(
         'beforeend',
@@ -1390,6 +1485,7 @@
       } else {                   // estamos grabando            → cancelar
         cancelRecording();
       }
+      hideAssistantImg();
     };
 
     /* patrón común de confirmación */
@@ -1414,12 +1510,14 @@
         recVoice.start(1000);            // 2. timeslice 1s
 
         talking = true;
+        showAssistantImg();
         btnTalk.classList.add('talking');
         btnStop.style.display = 'flex';
       } else {       // ─ DETENER ─
         recVoice.stop();
         talking = false;
         btnTalk.classList.remove('talking');
+        hideAssistantImg();
 
         recVoice.onstop = async () => {
           // 3. determinar extensión según mimeType
@@ -1466,13 +1564,57 @@
 
     $id('btnHome').onclick = () => location.href = '/inicio-consulta.html';
 
-    const panelTxt = $id('textPanel');
     const inpMsg = $id('txtMessage');
 
     $id('btnKeyboard').onclick = () => {
-      panelTxt.style.display = panelTxt.style.display === 'none' ? 'block' : 'none';
-      if (panelTxt.style.display === 'block') { inpMsg.focus(); }
+      modalAsk.style.display = 'flex';  // abre modal
+      inpMsg.focus();                   // cursor en el textarea
     };
+
+    modalAsk.addEventListener('click', e => {
+      if (e.target.id === 'modalAsk') modalAsk.style.display = 'none';
+    });
+
+    // ---------- enviar texto al asistente ----------
+    async function sendText(msg) {
+      msg = msg.trim();
+      if (!msg) return;
+
+      inpMsg.value = '';
+      autoGrow(inpMsg);
+      modalAsk.style.display = 'none';
+
+      log.insertAdjacentHTML(
+        'beforeend',
+        `<div class="feedback msg-user">${linkify(msg)}</div>`
+      );
+      chatChanged = true;
+      log.scrollTop = log.scrollHeight;
+
+      ensureLoader();
+      try {
+        const r = await fetch('/api/assistant/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(buildAssistantBody(msg))
+        });
+        const raw = await r.text();
+        const j = JSON.parse(raw);
+        if (!j.ok) throw new Error(j.error || 'Error');
+
+        await handleAssistantResponse(j);
+      } catch (err) {
+        safeRemoveLoader();
+        log.insertAdjacentHTML(
+          'beforeend',
+          `<div class="feedback error">${linkify(err.message)}</div>`
+        );
+        chatChanged = true;
+        log.scrollTop = log.scrollHeight;
+      } finally {
+        if (!currentAudio) btnStop.style.display = 'none';
+      }
+    }
 
     /* ---------- auto-grow del <textarea> (sin scroll interno) ---------- */
     const autoGrow = el => {
@@ -1481,56 +1623,16 @@
     };
 
     /* ---------- entrada por teclado ---------- */
-    inpMsg.addEventListener('keydown', async e => {
+    inpMsg.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        const msg = inpMsg.value.trim();
-        if (!msg) return;
-
-        inpMsg.value = '';
-        autoGrow(inpMsg);
-        panelTxt.style.display = 'none';
-
-        log.insertAdjacentHTML(
-          'beforeend',
-          `<div class="feedback msg-user">${linkify(msg)}</div>`
-        );
-        chatChanged = true;
-        log.scrollTop = log.scrollHeight;
-
-        ensureLoader();                 // spinner
-        let j = null;
-        try {
-          const r = await fetch('/api/assistant/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(buildAssistantBody(msg))
-          });
-          const raw = await r.text();
-          j = JSON.parse(raw);
-          if (!j.ok) throw new Error(j.error || 'Error');
-
-          await handleAssistantResponse(j);
-
-        } catch (err) {
-          safeRemoveLoader();
-          log.insertAdjacentHTML(
-            'beforeend',
-            `<div class="feedback error">${linkify(err.message)}</div>`
-          );
-          chatChanged = true;
-          log.scrollTop = log.scrollHeight;
-
-          if (j?.audioUrl) playTTS(j.audioUrl);
-        } finally {
-          if (!currentAudio) btnStop.style.display = 'none';
-        }
-
+        sendText(inpMsg.value);
       } else {
         setTimeout(() => autoGrow(inpMsg), 0);
       }
     });
 
+    btnSendTxt.onclick = () => sendText(inpMsg.value);
 
     /* ---------- GUARDAR / ACTUALIZAR EL CHAT ---------- */
     $id('btnSaveChat').onclick = async () => {
