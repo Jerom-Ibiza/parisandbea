@@ -112,6 +112,9 @@ app.use('/api/tokens', tokenRoutes);
 const publicPacRoutes = require('./routes/pacientesPublic.routes');
 app.use('/api/public/pacientes', publicPacRoutes);
 
+const viafirmaRoutes = require('./routes/viafirma.routes');
+app.use('/api/viafirma', viafirmaRoutes);
+
 const ONE_HOUR = 60 * 60 * 1000;
 
 /* cada hora: borra MP3/WEBM del tmp >30 min */

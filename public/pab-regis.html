@@ -36,14 +36,14 @@
 
         .form-box img {
             display: block;
-            margin: 0 auto 24px;
+            margin: 0 auto 14px;
             max-width: 160px
         }
 
         .form-box h1 {
-            font-size: 1.4rem;
+            font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 24px;
+            margin-bottom: 14px;
             text-align: center
         }
 
@@ -60,7 +60,7 @@
             padding: 12px;
             border: 1px solid #ccc;
             border-radius: 10px;
-            margin-bottom: 18px;
+            margin-bottom: 15px;
             font-size: 1rem
         }
 
@@ -209,15 +209,15 @@
                 <label for="nombre">Nombre*</label>
                 <input id="nombre" name="nombre" required>
 
-                <label for="apellidos">Apellidos*</label>
+                <label for="apellidos">Apellidos</label>
                 <input id="apellidos" name="apellidos" required>
 
-                <label for="fecha_nacimiento">Fecha nacimiento* (dd/mm/aaaa)</label>
+                <label for="fecha_nacimiento">Fecha nacimiento (dd/mm/aaaa)</label>
                 <input id="fecha_nacimiento" name="fecha_nacimiento" placeholder="dd/mm/aaaa"
-                    pattern="\d{2}[-/]\d{2}[-/]\d{4}" autocomplete="bday" required>
+                    pattern="\d{2}[-/]\d{2}[-/]\d{4}" autocomplete="bday">
 
-                <label for="genero">Género*</label>
-                <select id="genero" name="genero" required>
+                <label for="genero">Género</label>
+                <select id="genero" name="genero">
                     <option value="">-- selecciona --</option>
                     <option>Femenino</option>
                     <option>Masculino</option>
@@ -233,7 +233,7 @@
                 <input id="direccion" name="direccion">
 
                 <!-- PREFIJO + TELÉFONO -->
-                <label for="prefijo">Teléfono</label>
+                <label for="prefijo">Teléfono*</label>
                 <div style="display:flex;gap:8px">
                     <input id="prefijo" name="prefijo" value="+34" style="max-width:90px" pattern="\+\d{1,4}"
                         title="Empieza por + seguido de 1-4 dígitos" inputmode="numeric" autocomplete="tel-country-code"
@@ -244,9 +244,15 @@
                         style="flex:1">
                 </div>
 
-                <label for="email">Email*</label>
-                <input id="email" name="email" type="email" autocomplete="email" required>
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email">
             </div>
+
+            <label style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
+                <input type="checkbox" id="sendViafirma" name="sendViafirma" checked
+                    style="width:18px;height:18px;accent-color:#0076b6">
+                Firma digital consentimiento informado (recomendado)
+            </label>
 
             <!-- acciones -->
             <div class="form-actions">
@@ -309,7 +315,18 @@
             fd.set('telefono', pref + tel);
             fd.delete('prefijo');
 
+            /* ---------- defaults si vienen vacíos ---------- */
+            if (!fd.get('apellidos')) fd.set('apellidos', 'Pendiente');
+            if (!fd.get('fecha_nacimiento')) fd.set('fecha_nacimiento', '2000-01-01');
+            if (!fd.get('genero')) fd.set('genero', 'Otro');
+            if (!fd.get('direccion')) fd.set('direccion', 'Pendiente');
+            if (!fd.get('email')) fd.set('email', 'Pendiente');
+
+
             const data = Object.fromEntries(fd.entries());
+
+            const sendViafirma = document.getElementById('sendViafirma').checked;
+            data.sendViafirma = sendViafirma;          // ← nuevo flag
 
             try {
                 const r = await fetch('/api/public/pacientes/register?token=' + token, {
