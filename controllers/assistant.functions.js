@@ -6,7 +6,6 @@ const { generateDocument } = require('./documentos.controller');
 const { generateConsentimientoPuncionSeca } = require('./documentos.controller');
 const { generateConsentimientoSueloPelvico } = require('./documentos.controller');
 const { generateConsentDocument } = require('./documentos.controller');
-const { searchPatients, updatePatient } = require('./pacientes.controller');
 const { sendMail, getEmailTemplate } = require('./mail.controller');
 const { getAllProfesionales } = require('./profesionales.controller');
 const { getCurrentDateTime } = require('./home.controller');

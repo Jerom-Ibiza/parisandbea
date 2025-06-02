@@ -557,13 +557,8 @@
         window.open(res.url, '_blank');
         await navigator.clipboard.writeText(res.url);
 
-        Swal.fire({
-          icon: 'success', title: 'Enlace generado',
-          text: 'Se ha abierto en una nueva pestaña y copiado al portapapeles'
-        });
       } catch (e) {
         console.error(e);
-        Swal.fire({ icon: 'error', title: 'Error', text: e.message });
       }
     });
 

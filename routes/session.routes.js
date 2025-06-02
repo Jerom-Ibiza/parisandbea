@@ -1,7 +1,7 @@
 /* routes/session.routes.js */
 const express = require('express');
-const router  = express.Router();
-const pool    = require('../database');
+const router = express.Router();
+const pool = require('../database');
 
 /**
  * Devuelve:
@@ -14,15 +14,15 @@ const pool    = require('../database');
  */
 router.get('/info', async (req, res) => {
   try {
-    const user    = req.session.user    || null;
+    const user = req.session.user || null;
     const patient = req.session.patient || null;
 
-    if (!patient) return res.json({ user, patient:null });
+    if (!patient) return res.json({ user, patient: null });
 
     /* ---------- paciente + historial ---------- */
     const [pRows] = await pool.query(
       `SELECT id_paciente, fecha_nacimiento, fecha_registro,
-              nombre, apellidos, telefono, email
+              nombre, apellidos, telefono, email, lopd_estado
        FROM pacientes
        WHERE id_paciente = ? LIMIT 1`,
       [patient.id_paciente]
@@ -73,15 +73,15 @@ router.get('/info', async (req, res) => {
 
     res.json({
       user,
-      patient : pRows[0]   || patient,
-      historial   : hRows.length  ? hRows[0] : null,
-      evaluacion  : evRows.length ? evRows[0] : null,
-      tratamiento : trRows.length ? trRows[0] : null,
-      sesion      : seRows.length ? seRows[0] : null
+      patient: pRows[0] || patient,
+      historial: hRows.length ? hRows[0] : null,
+      evaluacion: evRows.length ? evRows[0] : null,
+      tratamiento: trRows.length ? trRows[0] : null,
+      sesion: seRows.length ? seRows[0] : null
     });
   } catch (err) {
     console.error('[session/info]', err);
-    res.status(500).json({ error:'Error obteniendo la sesión' });
+    res.status(500).json({ error: 'Error obteniendo la sesión' });
   }
 });
 

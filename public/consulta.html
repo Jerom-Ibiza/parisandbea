@@ -704,6 +704,33 @@
       opacity: 1;
       /* fundido al mostrarse           */
     }
+
+    /* ───────────────────  MEDIA QUERY DESKTOP ≥ 1200px ───────────── */
+    @media (max-width:1200px) {
+
+      .btn-round,
+      .btn-small {
+        width: 45px;
+        height: 45px;
+      }
+
+      #mainData,
+      .feedback {
+        font-size: 16px !important;
+      }
+
+      .info-panel dt {
+        width: 100px;
+      }
+
+      .info-panel dd {
+        margin: 0 0 6px 110px;
+      }
+
+      .info-panel {
+        padding: 1px 10px;
+      }
+    }
   </style>
 
 </head>
@@ -1224,7 +1251,7 @@
         /* ---- construir HTML de detalles ---- */
         let html = '', p = data.patient, h = data.historial;
         html += title('account_circle', 'Historial clínico');
-        html += `<dl>${row('Alta', fDate(p.fecha_registro))}${row('Nacimiento', fDate(p.fecha_nacimiento))}
+        html += `<dl>${row('Alta', fDate(p.fecha_registro))}${row('LOPD', p.lopd_estado === 'firmado' ? '✅' : '❌')}${row('Nacimiento', fDate(p.fecha_nacimiento))}
              ${h ? `${row('Motivo', h.motivo_consulta)}${row('Inicio', fDate(h.fecha_inicio_problema))}
                     ${row('Anteced.', h.antecedentes_personales)}${row('Ant. fam.', h.antecedentes_familiares)}${row('Trat. prev.', h.tratamientos_previos)}
                     ${row('Medicación', h.medicacion_actual)}${row('Alergias', h.alergias)}
@@ -1233,7 +1260,7 @@
         if (data.evaluacion) {
           const e = data.evaluacion;
           html += title('fact_check', 'Última evaluación');
-          html += `<dl>${row('<span class="material-icons-outlined">person</span>', e.prof_nombre)}${row('Fecha', fDate(e.fecha_evaluacion))}
+          html += `<dl>${row('<span class="material-icons-outlined">badge</span>', e.prof_nombre)}${row('Fecha', fDate(e.fecha_evaluacion))}
                ${row('Localiz. dolor', e.dolor_localizacion)}${row('Intensidad', e.dolor_intensidad)}
                ${row('Tipo dolor', e.dolor_tipo)}${row('Irradia', e.dolor_irradia ? 'Sí' : 'No')}
                ${row('Descripción', e.dolor_descripcion)}${row('Insp. visual', e.inspeccion_visual)}
@@ -1246,7 +1273,7 @@
         if (data.tratamiento) {
           const t = data.tratamiento;
           html += title('local_hospital', 'Último tratamiento');
-          html += `<dl>${row('<span class="material-icons-outlined">person</span>', t.prof_nombre)}${row('Inicio', fDate(t.fecha_inicio))}
+          html += `<dl>${row('<span class="material-icons-outlined">badge</span>', t.prof_nombre)}${row('Inicio', fDate(t.fecha_inicio))}
                ${row('Fin', fDate(t.fecha_fin))}${row('Tec. aplic.', t.tecnicas_aplicadas)}
                ${row('Frec. sesión', t.frecuencia_sesiones)}${row('Dur. sesión', t.duracion_sesion)}
                ${row('Recomend.', t.recomendaciones)}${row('Estado', t.estado)}
@@ -1259,7 +1286,7 @@
         if (data.sesion) {
           const s = data.sesion;
           html += title('event', 'Última sesión');
-          html += `<dl>${row('<span class="material-icons-outlined">person</span>', s.prof_nombre)}
+          html += `<dl>${row('<span class="material-icons-outlined">badge</span>', s.prof_nombre)}
                ${row('Fecha', fDate(s.fecha_sesion) + ' ' + fTime(s.hora_sesion))}
                ${row('Técnicas', s.tecnicas_utilizadas)}${row('Evolución', s.evolucion)}
                ${row('Mod. trat.', s.modificaciones_tratamiento)}${row('Observac.', s.observaciones)}
