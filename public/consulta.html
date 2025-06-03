@@ -1318,9 +1318,10 @@
 
         /* ---- construir HTML de detalles ---- */
         let html = '', p = data.patient, h = data.historial;
-        html += title('account_circle', 'Historial clínico');
-        html += `<dl>${row('Alta', fDate(p.fecha_registro))}${row('LOPD', p.lopd_estado === 'firmado' ? '✅' : '❌')}${row('Nacimiento', fDate(p.fecha_nacimiento))}
-             ${h ? `${row('Motivo', h.motivo_consulta)}${row('Inicio', fDate(h.fecha_inicio_problema))}
+        html += title('account_circle', 'Datos personales');
+        html += `<dl>${row('Alta', fDate(p.fecha_registro))}${row('LOPD', p.lopd_estado === 'firmado' ? '✅' : '❌')}${row('Nacimiento', fDate(p.fecha_nacimiento))}${row('DNI', p.dni)}${row('Email', p.email)}${row('Teléfono', p.telefono)}${row('Género', p.genero)}${row('Dirección', p.direccion)}</dl>`;
+        html += title('medical_services', 'Historial clínico');
+        html += `<dl>${h ? `${row('Motivo', h.motivo_consulta)}${row('Inicio', fDate(h.fecha_inicio_problema))}
                     ${row('Anteced.', h.antecedentes_personales)}${row('Ant. fam.', h.antecedentes_familiares)}${row('Trat. prev.', h.tratamientos_previos)}
                     ${row('Medicación', h.medicacion_actual)}${row('Alergias', h.alergias)}
                     ${row('Hábitos', h.habitos_vida)}${row('Profesión', h.profesion)}` : ''}</dl>`;
@@ -1340,7 +1341,7 @@
 
         if (data.tratamiento) {
           const t = data.tratamiento;
-          html += title('local_hospital', 'Último tratamiento');
+          html += title('sign_language', 'Último tratamiento');
           html += `<dl>${row('<span class="material-icons-outlined">badge</span>', t.prof_nombre)}${row('Inicio', fDate(t.fecha_inicio))}
                ${row('Fin', fDate(t.fecha_fin))}${row('Tec. aplic.', t.tecnicas_aplicadas)}
                ${row('Frec. sesión', t.frecuencia_sesiones)}${row('Dur. sesión', t.duracion_sesion)}
