@@ -69,7 +69,7 @@
     }
 
     .mic-btn.recording {
-      background: #e04141;
+      background: #4482ff;
       border-color: #e04141;
       animation: pulse 1s infinite
     }
@@ -86,8 +86,10 @@
 
     /* ——— botón STOP (cancelar grabación) ——— */
     .stop-btn {
+      /* sigue OCULTO por defecto */
       display: none;
-      /* solo durante grabación              */
+
+      /* …propiedades que ya tenías… */
       width: 60px;
       height: 60px;
       border: none;
@@ -96,7 +98,13 @@
       cursor: pointer;
       color: #fff;
       box-shadow: 0 4px 10px rgba(0, 0, 0, .15);
-      transition: transform .15s
+      transition: transform .15s;
+
+      /* NUEVO: cuando el JS lo haga "flex", se centrará el texto */
+      align-items: center;
+      justify-content: center;
+      /* blanco y en negrita */
+      font-size: 14px;
     }
 
     .stop-btn:active {
@@ -354,7 +362,7 @@
     <!-- fila mic + stop -->
     <div class="mic-row">
       <button id="btnStopRec" class="stop-btn" title="Cancelar grabación">
-        <span class="material-icons-outlined">stop</span>
+        Cancel
       </button>
       <button id="btnStartIdentification" class="mic-btn" title="Identificar paciente por voz">
         <svg viewBox="0 0 24 24">
