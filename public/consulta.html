@@ -1331,46 +1331,46 @@
           ${row('<span class="material-symbols-outlined">home_pin</span> Dirección', p.direccion)}</dl>`;
         if (h) {
           html += title('medical_services', 'Historial clínico');
-          html += `<dl>${row('Motivo', h.motivo_consulta)}${row('Inicio', fDate(h.fecha_inicio_problema))}
-                    ${row('Anteced.', h.antecedentes_personales)}${row('Ant. fam.', h.antecedentes_familiares)}${row('Trat. prev.', h.tratamientos_previos)}
-                    ${row('Medicación', h.medicacion_actual)}${row('Alergias', h.alergias)}
-                    ${row('Hábitos', h.habitos_vida)}${row('Profesión', h.profesion)}</dl>`;
+          html += `<dl>${row('<span class="material-symbols-outlined">psychology</span> Motivo', h.motivo_consulta)}${row('<span class="material-symbols-outlined">event</span> Inicio', fDate(h.fecha_inicio_problema))}
+                    ${row('<span class="material-symbols-outlined">history</span> Anteced.', h.antecedentes_personales)}${row('<span class="material-symbols-outlined">family_restroom</span> Ant. fam.', h.antecedentes_familiares)}${row('<span class="material-symbols-outlined">healing</span> Trat. prev.', h.tratamientos_previos)}
+                    ${row('<span class="material-symbols-outlined">medication</span> Medicación', h.medicacion_actual)}${row('<span class="material-symbols-outlined">coronavirus</span> Alergias', h.alergias)}
+                    ${row('<span class="material-symbols-outlined">fitness_center</span> Hábitos', h.habitos_vida)}${row('<span class="material-symbols-outlined">work</span> Profesión', h.profesion)}</dl>`;
         }
 
         if (data.evaluacion) {
           const e = data.evaluacion;
           html += title('fact_check', 'Última evaluación');
-          html += `<dl>${row('<span class="material-icons-outlined">badge</span>', e.prof_nombre)}${row('Fecha', fDate(e.fecha_evaluacion))}
-               ${row('Localiz. dolor', e.dolor_localizacion)}${row('Intensidad', e.dolor_intensidad)}
-               ${row('Tipo dolor', e.dolor_tipo)}${row('Irradia', e.dolor_irradia ? 'Sí' : 'No')}
-               ${row('Descripción', e.dolor_descripcion)}${row('Insp. visual', e.inspeccion_visual)}
-               ${row('Palpación', e.palpacion)}${row('Mov. artic.', e.movilidad_articular)}
-               ${row('Pruebas fun.', e.pruebas_funcionales)}${row('Val. neuro.', e.valoracion_neurologica)}
-               ${row('Val. post.', e.valoracion_postural)}${row('Val. func.', e.evaluacion_funcional)}
-               ${row('Diagnóstico', e.diagnostico)}${row('Obj. terap.', e.objetivos_terapeuticos)}</dl>`;
+          html += `<dl>${row('<span class="material-icons-outlined">badge</span>', e.prof_nombre)}${row('<span class="material-symbols-outlined">event</span> Fecha', fDate(e.fecha_evaluacion))}
+               ${row('<span class="material-symbols-outlined">location_on</span> Localiz. dolor', e.dolor_localizacion)}${row('<span class="material-symbols-outlined">speed</span> Intensidad', e.dolor_intensidad)}
+               ${row('<span class="material-symbols-outlined">psychology</span> Tipo dolor', e.dolor_tipo)}${row('<span class="material-symbols-outlined">wifi_tethering</span> Irradia', e.dolor_irradia ? 'Sí' : 'No')}
+               ${row('<span class="material-symbols-outlined">description</span> Descripción', e.dolor_descripcion)}${row('<span class="material-symbols-outlined">visibility</span> Insp. visual', e.inspeccion_visual)}
+               ${row('<span class="material-symbols-outlined">touch_app</span> Palpación', e.palpacion)}${row('<span class="material-symbols-outlined">directions_run</span> Mov. artic.', e.movilidad_articular)}
+               ${row('<span class="material-symbols-outlined">science</span> Pruebas fun.', e.pruebas_funcionales)}${row('<span class="material-symbols-outlined">psychology_alt</span> Val. neuro.', e.valoracion_neurologica)}
+               ${row('<span class="material-symbols-outlined">straighten</span> Val. post.', e.valoracion_postural)}${row('<span class="material-symbols-outlined">rule</span> Val. func.', e.evaluacion_funcional)}
+               ${row('<span class="material-symbols-outlined">medical_information</span> Diagnóstico', e.diagnostico)}${row('<span class="material-symbols-outlined">flag</span> Obj. terap.', e.objetivos_terapeuticos)}</dl>`;
         }
 
         if (data.tratamiento) {
           const t = data.tratamiento;
           html += title('sign_language', 'Último tratamiento');
-          html += `<dl>${row('<span class="material-icons-outlined">badge</span>', t.prof_nombre)}${row('Inicio', fDate(t.fecha_inicio))}
-               ${row('Fin', fDate(t.fecha_fin))}${row('Tec. aplic.', t.tecnicas_aplicadas)}
-               ${row('Frec. sesión', t.frecuencia_sesiones)}${row('Dur. sesión', t.duracion_sesion)}
-               ${row('Recomend.', t.recomendaciones)}${row('Estado', t.estado)}
-               ${row('Suplemento', t.suplemento_prescrito || 'No')}
-               ${row('Caps. x bote', t.capsulas_por_bote)}${row('Dosis diaria', t.dosis_diaria)}
-               ${row('Ini. suplem.', fDate(t.fecha_inicio_suplementacion))}
-               ${row('Alert. suplem.', t.dias_alerta)}</dl>`;
+          html += `<dl>${row('<span class="material-icons-outlined">badge</span>', t.prof_nombre)}${row('<span class="material-symbols-outlined">event</span> Inicio', fDate(t.fecha_inicio))}
+               ${row('<span class="material-symbols-outlined">event_busy</span> Fin', fDate(t.fecha_fin))}${row('<span class="material-symbols-outlined">healing</span> Tec. aplic.', t.tecnicas_aplicadas)}
+               ${row('<span class="material-symbols-outlined">schedule</span> Frec. sesión', t.frecuencia_sesiones)}${row('<span class="material-symbols-outlined">timer</span> Dur. sesión', t.duracion_sesion)}
+               ${row('<span class="material-symbols-outlined">thumb_up</span> Recomend.', t.recomendaciones)}${row('<span class="material-symbols-outlined">fact_check</span> Estado', t.estado)}
+               ${row('<span class="material-symbols-outlined">vaccines</span> Suplemento', t.suplemento_prescrito || 'No')}
+               ${row('<span class="material-symbols-outlined">inventory_2</span> Caps. x bote', t.capsulas_por_bote)}${row('<span class="material-symbols-outlined">format_list_numbered</span> Dosis diaria', t.dosis_diaria)}
+               ${row('<span class="material-symbols-outlined">event</span> Ini. suplem.', fDate(t.fecha_inicio_suplementacion))}
+               ${row('<span class="material-symbols-outlined">notification_important</span> Alert. suplem.', t.dias_alerta)}</dl>`;
         }
 
         if (data.sesion) {
           const s = data.sesion;
           html += title('event', 'Última sesión');
           html += `<dl>${row('<span class="material-icons-outlined">badge</span>', s.prof_nombre)}
-               ${row('Fecha', fDate(s.fecha_sesion) + ' ' + fTime(s.hora_sesion))}
-               ${row('Técnicas', s.tecnicas_utilizadas)}${row('Evolución', s.evolucion)}
-               ${row('Mod. trat.', s.modificaciones_tratamiento)}${row('Observac.', s.observaciones)}
-               ${row('Bono', s.id_bono)}</dl>`;
+               ${row('<span class="material-symbols-outlined">event</span> Fecha', fDate(s.fecha_sesion) + ' ' + fTime(s.hora_sesion))}
+               ${row('<span class="material-symbols-outlined">science</span> Técnicas', s.tecnicas_utilizadas)}${row('<span class="material-symbols-outlined">insights</span> Evolución', s.evolucion)}
+               ${row('<span class="material-symbols-outlined">autorenew</span> Mod. trat.', s.modificaciones_tratamiento)}${row('<span class="material-symbols-outlined">comment</span> Observac.', s.observaciones)}
+               ${row('<span class="material-symbols-outlined">redeem</span> Bono', s.id_bono)}</dl>`;
         }
 
         main.innerHTML = html;
