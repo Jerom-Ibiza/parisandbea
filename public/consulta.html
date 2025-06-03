@@ -1878,7 +1878,7 @@
     });
 
     /* ─── Screensaver por inactividad ─── */
-    const screensaverDelay = 10000; // 2 minutos
+    const screensaverDelay = 60000; // 1 minuto
     const screensaver = document.getElementById('screensaver');
     const ssImages = [
       'images/wall01.jpg',
@@ -1889,7 +1889,7 @@
       'images/wall06.jpg',
       'images/wall07.jpg',
       'images/wall08.jpg',
-      'images/wall09.jpg'
+      'images/wallpaper.jpg'
     ];
     const ssElems = ssImages.map(src => {
       const img = new Image();
@@ -1901,9 +1901,12 @@
 
     function showScreensaver() {
       screensaver.style.display = 'block';
+      ssIndex = Math.floor(Math.random() * ssElems.length);
       ssElems.forEach((img, i) => img.classList.toggle('active', i === ssIndex));
       ssInterval = setInterval(() => {
-        ssIndex = (ssIndex + 1) % ssElems.length;
+        let next;
+        do { next = Math.floor(Math.random() * ssElems.length); } while (next === ssIndex);
+        ssIndex = next;
         ssElems.forEach((img, i) => img.classList.toggle('active', i === ssIndex));
       }, 5000);
     }
