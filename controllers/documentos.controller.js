@@ -303,7 +303,7 @@ exports.generateConsentDocument = async (req, res) => {
     let paciente = {};
     if (id_paciente) {
       const [rows] = await db.query(
-        `SELECT id_paciente, nombre, apellidos, dni, email
+        `SELECT id_paciente, nombre, apellidos, dni, email, telefono
            FROM pacientes
           WHERE id_paciente = ? LIMIT 1`,
         [id_paciente]
@@ -457,7 +457,7 @@ exports.generateConsentDocument = async (req, res) => {
 
         let setCode = null;
         if (sendViafirma) {
-          setCode = await enviarConsentimiento(pdfURL, { nombre: nombrePaciente, mail: emailPaciente });
+          setCode = await enviarConsentimiento(pdfURL, { nombre: nombrePaciente, phone: paciente.telefono });
 
           // guarda estado en BD si hace falta
           if (id_paciente)

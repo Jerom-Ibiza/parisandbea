@@ -1185,7 +1185,7 @@
     function hideGuide() { $id('modalGuide').style.display = 'none'; }
 
     /* ------------------------------------------------ control de tiempo de grabación ------------------------------------ */
-    const maxBlockMs = 25 * 60 * 1000;   /* 25 minutos en milisegundos           */
+    const maxBlockMs = 80 * 60 * 1000;   /* 80 minutos en milisegundos           */
     let blockTimer = null;             /* id devuelto por setTimeout           */
     let exceeded = false;            /* true si se superó el tiempo          */
     let manualCancel = false;            /* true si el usuario pulsa “Cancelar”  */
@@ -1199,11 +1199,11 @@
       if (e.target.id === 'modalTimeout') hideTimeoutModal();
     });
 
-    /* botones dentro del modal (tope 25 min) */
+    /* botones dentro del modal (tope 80 min) */
     $id('btnCancel').onclick = () => {
       hideTimeoutModal();
       log.insertAdjacentHTML('beforeend',
-        '<div class="feedback error">❌ Grabación cancelada (excedía 25&nbsp;min)</div>');
+        '<div class="feedback error">❌ Grabación cancelada (excedía 80&nbsp;min)</div>');
       chatChanged = true;
       log.scrollTop = log.scrollHeight;
     };

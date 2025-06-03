@@ -26,12 +26,11 @@ async function enviarConsentimiento(pdfUrl, paciente) {
     callbackType: 'JSON',
 
     recipients: [
-      { key: 'signer1', name: paciente.nombre, mail: paciente.mail, presential: false }
+      { key: 'signer1', name: paciente.nombre, phone: paciente.phone, notificationType: 'SMS', presential: false }
     ],
 
     customization: {
-      requestMailSubject: 'Consentimiento pendiente de firma',
-      requestMailBody: `Hola {{recipient.name}},<br>Por favor revisa y firma tu consentimiento.`
+      requestSmsBody: 'Hola {{recipient.name}}, revisa y firma tu consentimiento en el siguiente enlace:'
     },
 
     messages: [{
