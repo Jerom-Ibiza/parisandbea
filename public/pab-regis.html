@@ -233,7 +233,7 @@
 
                 <label for="fecha_nacimiento">Fecha nacimiento (dd/mm/aaaa)</label>
                 <input id="fecha_nacimiento" name="fecha_nacimiento" placeholder="dd/mm/aaaa"
-                    pattern="\d{2}[-/]\d{2}[-/]\d{4}" autocomplete="bday">
+                    pattern="\d{2}[-/]\d{2}[-/]\d{4}" autocomplete="bday" inputmode="numeric">
 
                 <label for="genero">Género</label>
                 <select id="genero" name="genero">
@@ -286,6 +286,18 @@
     </div>
 
     <script>
+        /* ========= máscara de fecha ========= */
+        const fechaInput = document.getElementById('fecha_nacimiento');
+        fechaInput.addEventListener('input', () => {
+            let digits = fechaInput.value.replace(/\D/g, '').slice(0, 8);
+            if (digits.length >= 5) {
+                fechaInput.value = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+            } else if (digits.length >= 3) {
+                fechaInput.value = `${digits.slice(0, 2)}/${digits.slice(2)}`;
+            } else {
+                fechaInput.value = digits;
+            }
+        });
         /* ========= token y validación ========= */
         const params = new URLSearchParams(location.search);
         const token = params.get('token');

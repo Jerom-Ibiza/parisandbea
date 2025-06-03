@@ -768,10 +768,18 @@
     <div class="panel">
       <h3 id="modalTitle"></h3>
       <ul id="modalList"></ul>
-      <button id="btnGuideCancel" style="margin-top:18px;padding:8px 22px;background:#a12525;
-                 border:none;border-radius:10px;color:#fff;font-weight:700;
-                 cursor:pointer">
-        Cancelar
+      <div style="display:flex;justify-content:space-between;margin-top:18px">
+        <button id="btnGuideCancel" style="padding:8px 22px;background:#a12525;
+                   border:none;border-radius:10px;color:#fff;font-weight:700;
+                   cursor:pointer">
+          Cancelar
+        </button>
+        <button id="btnGuideSave" style="padding:8px 22px;background:#4482ff;
+                   border:none;border-radius:10px;color:#fff;font-weight:700;
+                   cursor:pointer">
+          Guardar
+        </button>
+      </div>
       </button>
     </div>
   </div>
@@ -820,6 +828,9 @@
 
   <!-- BOTONES -->
   <div class="bottom-bar">
+    <button id="btnStopTTS" class="btn-round btn-small" title="Parar voz" style="display:none; color: white">
+      Cancel
+    </button>
     <button id="btnRecord" class="btn-round" title="Grabar bloque">
       <span class="material-icons-outlined">mic</span></button>
     <button id="btnHome" class="btn-round btn-small" title="Cambiar de paciente">
@@ -832,9 +843,6 @@
     </button>
     <input id="filePicker" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.gif,.heic" multiple
       style="display:none">
-    <button id="btnStopTTS" class="btn-round btn-small" title="Parar voz" style="display:none; color: white">
-      Cancel
-    </button>
     <button id="btnTalk" class="btn-round" title="Hablar con el asistente">
       <img src="images/recursos/voice_icon.png" style="max-width:30px" alt="Logo" /></button>
   </div>
@@ -1225,6 +1233,18 @@
       hideGuide();
     }
     $id('btnGuideCancel').onclick = cancelGuideRecording;
+
+    /* -------- aceptar desde modal-guía -------- */
+    function saveGuideRecording() {
+      if (rec) {
+        clearTimeout(blockTimer);
+        recorder.stop();
+        rec = false;
+        btnRec.classList.remove('recording');
+      }
+      hideGuide();
+    }
+    $id('btnGuideSave').onclick = saveGuideRecording;
 
     /* ------------------------------------------------ carga inicial de la ficha ----------------------------------------- */
     async function loadSession() {
