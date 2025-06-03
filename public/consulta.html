@@ -1542,7 +1542,8 @@
     function playTTS(url) {
       currentAudio?.pause();                // detén la que hubiera
       currentAudio = new Audio(url);
-      btnStop.style.display = 'flex';       // muestra botón stop
+      btnStop.style.display = 'flex';
+      btnStop.textContent = 'Parar';        // cambia etiqueta a "Parar"
 
       currentAudio.addEventListener('ended', cleanupTTS);
       currentAudio.addEventListener('pause', cleanupTTS);
@@ -1555,6 +1556,7 @@
       fetch(currentAudio.src, { method: 'DELETE' });   // lo borras del servidor
       currentAudio = null;
       btnStop.style.display = talking ? 'flex' : 'none';
+      if (talking) btnStop.textContent = 'Cancel';
     }
 
     /* ---------- cancelar GRABACIÓN ---------- */
@@ -1609,6 +1611,7 @@
         showAssistantImg();
         btnTalk.classList.add('talking');
         btnStop.style.display = 'flex';
+        btnStop.textContent = 'Cancel';     // etiqueta de cancelar
       } else {       // ─ DETENER ─
         recVoice.stop();
         talking = false;
