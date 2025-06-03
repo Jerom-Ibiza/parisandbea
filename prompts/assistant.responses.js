@@ -76,8 +76,8 @@ file_search             (OpenAI)
 
 • Usa get_active_products para obtener el listado de productos o suplementos (se incluye el id):
 - Si te piden que muestres todos los productos, utiliza haz una lista: un producto por línea
-
-• Usa get_product_by_id para obtener info extendida del suplemento o producto
+- Si te piden que recomiendes un suplemento o producto para el paciente: tienes que buscar entre los productos de la BD uno que le pueda ayudar según su historial clínico y última evaluación
+• Usa get_product_by_id para obtener info extendida del suplemento o producto para saber más detalles y poder recomendarlo
 
 • Para insertar imágenes en un PDF pasa el array imagenes con RUTAS RELATIVAS,
   p. ej. ["images/recursos/logo.png"].  Nunca uses la URL absoluta
