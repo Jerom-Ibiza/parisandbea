@@ -7,6 +7,7 @@
   <title>Consulta | Paris & Bea</title>
   <link rel="stylesheet" href="css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- Favicon “clásico” -->
   <link rel="icon" type="image/png" sizes="32x32" href="images/recursos/favicon-32.png">
@@ -1319,12 +1320,22 @@
         /* ---- construir HTML de detalles ---- */
         let html = '', p = data.patient, h = data.historial;
         html += title('account_circle', 'Datos personales');
-        html += `<dl>${row('Alta', fDate(p.fecha_registro))}${row('LOPD', p.lopd_estado === 'firmado' ? '✅' : '❌')}${row('Nacimiento', fDate(p.fecha_nacimiento))}${row('DNI', p.dni)}${row('Email', p.email)}${row('Teléfono', p.telefono)}${row('Género', p.genero)}${row('Dirección', p.direccion)}</dl>`;
-        html += title('medical_services', 'Historial clínico');
-        html += `<dl>${h ? `${row('Motivo', h.motivo_consulta)}${row('Inicio', fDate(h.fecha_inicio_problema))}
+        html += `<dl>
+          ${row('<span class="material-icons-outlined">login</span> Alta', fDate(p.fecha_registro))}
+          ${row('<span class="material-symbols-outlined">shield_person</span> LOPD', p.lopd_estado === 'firmado' ? '✅' : '❌')}
+          ${row('<span class="material-symbols-outlined">early_on</span> Nacim.', fDate(p.fecha_nacimiento))}
+          ${row('<span class="material-symbols-outlined">id_card</span> DNI', p.dni)}
+          ${row('<span class="material-symbols-outlined">mail</span>  Email', p.email)}
+          ${row('<span class="material-symbols-outlined">call</span> Teléfono', p.telefono)}
+          ${row('<span class="material-symbols-outlined">transgender</span> Género', p.genero)}
+          ${row('<span class="material-symbols-outlined">home_pin</span> Dirección', p.direccion)}</dl>`;
+        if (h) {
+          html += title('medical_services', 'Historial clínico');
+          html += `<dl>${row('Motivo', h.motivo_consulta)}${row('Inicio', fDate(h.fecha_inicio_problema))}
                     ${row('Anteced.', h.antecedentes_personales)}${row('Ant. fam.', h.antecedentes_familiares)}${row('Trat. prev.', h.tratamientos_previos)}
                     ${row('Medicación', h.medicacion_actual)}${row('Alergias', h.alergias)}
-                    ${row('Hábitos', h.habitos_vida)}${row('Profesión', h.profesion)}` : ''}</dl>`;
+                    ${row('Hábitos', h.habitos_vida)}${row('Profesión', h.profesion)}</dl>`;
+        }
 
         if (data.evaluacion) {
           const e = data.evaluacion;
