@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Eliminación de Datos - Paris & Bea</title>
@@ -10,6 +11,16 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/style.css">
 </head>
+<style>
+  .logo-container {
+    animation-delay: 1s !important;
+  }
+
+  .logo-container2 {
+    animation: slideIn 1.5s forwards ease !important;
+  }
+</style>
+
 <body>
 
   <!-- LOGO ESTILO INDEX -->
@@ -29,7 +40,7 @@
 
   <!-- CONTENIDO PRINCIPAL -->
   <main>
-    <section class="content-section">
+    <section class="content-section" style="color: black;">
       <p>
         Si deseas solicitar la eliminación de tus datos personales en <strong>Paris & Bea</strong>,
         por favor, sigue estos pasos:
@@ -37,10 +48,10 @@
 
       <ol>
         <li>
-          <strong>Solicitud:</strong> Envía un mensaje de WhatsApp al 
-          <em>+34 630938107</em> 
-          o un correo electrónico a 
-          <a href="mailto:info@parisandbea.es">info@parisandbea.es</a>, 
+          <strong>Solicitud:</strong> Envía un mensaje de WhatsApp al
+          <em>+34 630938107</em>
+          o un correo electrónico a
+          <a href="mailto:info@parisandbea.es">info@parisandbea.es</a>,
           indicando tu petición de eliminación de datos.
         </li>
         <li>
@@ -57,7 +68,7 @@
           confirmar que la eliminación de tus datos se ha completado con éxito.
         </li>
       </ol>
-      
+
       <p>
         Ten en cuenta que, en algunos casos, podemos estar legalmente obligados a conservar ciertos
         datos (p. ej. registros sanitarios o facturas). Si esto ocurre, te lo haremos saber
@@ -122,10 +133,10 @@
         <img id="footerLogo" src="#" alt="Paris & Bea Logo" class="footer-logo">
       </a>
     </div>
-    
+
     <!-- Contenedor principal con dos tarjetas -->
     <div class="footer-sections">
-      
+
       <!-- Tarjeta de Contacto -->
       <div class="footer-section">
         <h3>Contacto</h3>
@@ -156,7 +167,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Tarjeta de Documentación -->
       <div class="footer-section">
         <h3>Documentación</h3>
@@ -179,9 +190,9 @@
           </a>
         </div>
       </div>
-      
+
     </div>
-    
+
     <div class="copyright-section">
       <p class="copyright-text">© 2025 Paris & Bea. Todos los derechos reservados.</p>
     </div>
@@ -238,7 +249,7 @@
         document.documentElement.style.setProperty('--footer-hover-color', '#ffffff');
       } else {
         document.documentElement.style.setProperty('--footer-card-bg', 'rgba(0, 0, 0, 0.05)');
-        document.documentElement.style.setProperty('--footer-hover-color', '#910a60');
+        document.documentElement.style.setProperty('--footer-hover-color', '#5b5b5b');
       }
     } catch (error) {
       console.error('Error en loadFooterData:', error);
@@ -261,4 +272,5 @@
     return (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
   }
 </script>
+
 </html>

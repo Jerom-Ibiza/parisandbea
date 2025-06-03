@@ -10,7 +10,34 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://parisandbea.es/terminos-centro-parisandbea.html">
+    <meta property="og:title" content="Términos | Paris & Bea">
+    <meta property="og:description" content="Lee atentamente nuestra política de citas y cancelaciones">
+    <meta property="og:image" content="https://parisandbea.es/images/recursos/parisandbea-importante.jpg">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta property="og:image:alt" content="Logo Paris & Bea Clínica Dental">
+
+    <!-- Opcional, pero recomendable para Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://parisandbea.es/images/recursos/parisandbea-importante.jpg">
+
+    <!-- Favicon “clásico” -->
+    <link rel="icon" type="image/png" sizes="32x32" href="images/recursos/favicon-32.png">
+
+    <!-- Icono para iOS / iPadOS (pantalla de inicio) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="images/recursos/icon-180.png">
 </head>
+<style>
+    .logo-container {
+        animation-delay: 1s !important;
+    }
+
+    .logo-container2 {
+        animation: slideIn 1.5s forwards ease !important;
+    }
+</style>
 
 <body>
 
@@ -31,27 +58,27 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main>
-        <section class="content-section">
+        <section class="content-section" style="color: black;">
             <h2>Política de Citas y Cancelaciones</h2>
             <p>
                 Nos encanta recibirte en Paris & Bea y queremos que disfrutes de un trato cercano y puntual. Para que
                 todo funcione correctamente, te recomendamos llegar entre 5 y 10&nbsp;minutos antes de tu cita.
             </p>
             <p>
-                Si necesitas cambiar o cancelar una sesión, podrás hacerlo sin coste avisándonos con al menos
-                <strong>24&nbsp;horas</strong> de antelación.
+                <strong>Si necesitas cambiar o cancelar una sesión, podrás hacerlo sin coste avisándonos con al menos
+                    24&nbsp;horas de antelación.</strong>
             </p>
             <p>
                 Nuestro calendario es muy ajustado y, cuando una cita queda libre con poco tiempo, apenas tenemos margen
-                para ofrecer ese hueco a otra persona. Por ello, si cancelas con menos de 24&nbsp;horas de antelación o
-                no te presentas, en tu siguiente visita deberemos cobrarte el importe íntegro de la sesión perdida,
-                según nuestra política de reservas.
+                para ofrecer ese hueco a otra persona. Por ello, <strong>si cancelas con menos de 24&nbsp;horas de
+                    antelación o no te presentas, en tu siguiente visita deberemos cobrarte el importe íntegro de la
+                    sesión perdida,
+                    según nuestra política de reservas.</strong>
             </p>
             <p>
                 Gracias por tu comprensión y por ayudarnos a organizar la agenda para seguir ofreciendo el mejor
                 servicio.
             </p>
-            <p><em>Última actualización: marzo de 2025</em></p>
         </section>
     </main>
 
@@ -226,7 +253,7 @@
                 document.documentElement.style.setProperty('--footer-hover-color', '#ffffff');
             } else {
                 document.documentElement.style.setProperty('--footer-card-bg', 'rgba(0, 0, 0, 0.05)');
-                document.documentElement.style.setProperty('--footer-hover-color', '#910a60');
+                document.documentElement.style.setProperty('--footer-hover-color', '#5b5b5b');
             }
         } catch (error) {
             console.error('Error en loadFooterData:', error);

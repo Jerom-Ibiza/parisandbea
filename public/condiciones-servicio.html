@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Condiciones de Servicio - Paris & Bea</title>
@@ -10,6 +11,16 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/style.css">
 </head>
+<style>
+  .logo-container {
+    animation-delay: 1s !important;
+  }
+
+  .logo-container2 {
+    animation: slideIn 1.5s forwards ease !important;
+  }
+</style>
+
 <body>
 
   <!-- LOGO ESTILO INDEX -->
@@ -22,20 +33,20 @@
   <!-- Cabecera general de la página -->
   <div class="page-header">
     <h2>
-      <span class="material-icons">fact_check</span> 
+      <span class="material-icons">fact_check</span>
       Condiciones de Servicio
     </h2>
   </div>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main>
-    <section class="content-section">
+    <section class="content-section" style="color: black;">
 
       <h2>1. Objeto y Ámbito</h2>
       <p>
         Estas Condiciones de Servicio regulan la prestación de servicios de
-        <strong>fisioterapia y osteopatía</strong> ofrecidos por <strong>Paris & Bea</strong> 
-        (en adelante, “el Centro”), así como el uso de la información disponible en su 
+        <strong>fisioterapia y osteopatía</strong> ofrecidos por <strong>Paris & Bea</strong>
+        (en adelante, “el Centro”), así como el uso de la información disponible en su
         sitio web <a href="https://parisandbea.es">parisandbea.es</a>.
       </p>
 
@@ -82,7 +93,7 @@
         El coste de cada sesión o tratamiento se informa previamente al paciente, ya sea
         telefónicamente, por escrito (email/WhatsApp) o presencialmente. Los pagos se
         efectúan, por regla general, el mismo día de la sesión, excepto que se acuerde
-        otro método. 
+        otro método.
       </p>
       <p>
         En el caso de terapias prolongadas, se puede establecer un plan de pagos a convenir.
@@ -111,24 +122,24 @@
 
       <h2>6. Propiedad Intelectual</h2>
       <p>
-        Toda la documentación, imágenes, textos y contenidos ofrecidos en <strong>parisandbea.es</strong> 
-        están protegidos por derechos de propiedad intelectual y son propiedad del Centro 
-        (o de terceros que han autorizado su uso). Se prohíbe su reproducción o distribución 
+        Toda la documentación, imágenes, textos y contenidos ofrecidos en <strong>parisandbea.es</strong>
+        están protegidos por derechos de propiedad intelectual y son propiedad del Centro
+        (o de terceros que han autorizado su uso). Se prohíbe su reproducción o distribución
         sin consentimiento previo.
       </p>
 
       <h2>7. Modificaciones de las Condiciones</h2>
       <p>
-        El Centro Paris & Bea se reserva el derecho de actualizar o modificar estas 
-        Condiciones de Servicio en cualquier momento. Cualquier cambio se publicará en 
+        El Centro Paris & Bea se reserva el derecho de actualizar o modificar estas
+        Condiciones de Servicio en cualquier momento. Cualquier cambio se publicará en
         esta página, teniendo efecto desde la fecha de publicación.
       </p>
 
       <h2>8. Legislación Aplicable y Jurisdicción</h2>
       <p>
-        Estas Condiciones se rigen por la legislación española. Para resolver cualquier 
-        controversia derivada del uso de nuestros servicios o de la aplicación de estas 
-        condiciones, ambas partes se someten a los juzgados y tribunales de Ibiza (Islas Baleares), 
+        Estas Condiciones se rigen por la legislación española. Para resolver cualquier
+        controversia derivada del uso de nuestros servicios o de la aplicación de estas
+        condiciones, ambas partes se someten a los juzgados y tribunales de Ibiza (Islas Baleares),
         salvo que la ley establezca otra jurisdicción.
       </p>
 
@@ -192,10 +203,10 @@
         <img id="footerLogo" src="#" alt="Paris & Bea Logo" class="footer-logo">
       </a>
     </div>
-    
+
     <!-- Contenedor principal con dos tarjetas -->
     <div class="footer-sections">
-      
+
       <!-- Tarjeta de Contacto -->
       <div class="footer-section">
         <h3>Contacto</h3>
@@ -226,7 +237,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Tarjeta de Documentación -->
       <div class="footer-section">
         <h3>Documentación</h3>
@@ -249,9 +260,9 @@
           </a>
         </div>
       </div>
-      
+
     </div>
-    
+
     <div class="copyright-section">
       <p class="copyright-text">© 2025 Paris & Bea. Todos los derechos reservados.</p>
     </div>
@@ -308,7 +319,7 @@
         document.documentElement.style.setProperty('--footer-hover-color', '#ffffff');
       } else {
         document.documentElement.style.setProperty('--footer-card-bg', 'rgba(0, 0, 0, 0.05)');
-        document.documentElement.style.setProperty('--footer-hover-color', '#910a60');
+        document.documentElement.style.setProperty('--footer-hover-color', '#5b5b5b');
       }
     } catch (error) {
       console.error('Error en loadFooterData:', error);
@@ -331,4 +342,5 @@
     return (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
   }
 </script>
+
 </html>
