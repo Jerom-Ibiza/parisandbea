@@ -246,7 +246,8 @@
 
             <div class="right-col">
                 <label for="dni">DNI / Pasaporte*</label>
-                <input id="dni" name="dni" required>
+                <input id="dni" name="dni" placeholder="12345678A" pattern="\d{7,8}[A-Za-z]?" inputmode="numeric"
+                    required>
 
                 <label for="direccion">Dirección</label>
                 <input id="direccion" name="direccion">
@@ -297,6 +298,12 @@
             } else {
                 fechaInput.value = digits;
             }
+        });
+        /* ========= formato DNI ========= */
+        const dniInput = document.getElementById('dni');
+        dniInput.addEventListener('input', () => {
+            let val = dniInput.value.toUpperCase().replace(/[^0-9A-Z]/g, '').slice(0, 9);
+            dniInput.value = val;
         });
         /* ========= token y validación ========= */
         const params = new URLSearchParams(location.search);
