@@ -3,6 +3,30 @@ const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
 
+const POSITIONS = {
+  es: {
+    signature: { rectangle: { x: 380, y: 580, width: 180, height: 80 }, page: 2 },
+    ia: { rectangle: { x: 49, y: 100, width: 14, height: 14 }, page: 1 },
+    comercial: { rectangle: { x: 49, y: 655, width: 14, height: 14 }, page: 2 }
+  },
+  en: {
+    signature: { rectangle: { x: 380, y: 620, width: 180, height: 80 }, page: 2 },
+    ia: { rectangle: { x: 49, y: 120, width: 14, height: 14 }, page: 1 },
+    comercial: { rectangle: { x: 49, y: 685, width: 14, height: 14 }, page: 2 }
+  },
+  de: {
+    signature: { rectangle: { x: 380, y: 580, width: 180, height: 80 }, page: 2 },
+    ia: { rectangle: { x: 49, y: 100, width: 14, height: 14 }, page: 1 },
+    comercial: { rectangle: { x: 49, y: 655, width: 14, height: 14 }, page: 2 }
+  },
+  fr: {
+    signature: { rectangle: { x: 380, y: 580, width: 180, height: 80 }, page: 2 },
+    ia: { rectangle: { x: 49, y: 100, width: 14, height: 14 }, page: 1 },
+    comercial: { rectangle: { x: 49, y: 655, width: 14, height: 14 }, page: 2 }
+  }
+};
+['en', 'de', 'fr'].forEach(l => POSITIONS[l] = { ...POSITIONS.es });
+
 const API = axios.create({
   baseURL: process.env.VIAFIRMA_BASE,
   auth: {
@@ -18,7 +42,8 @@ const API = axios.create({
  * @param {object} paciente { nombre, mail }
  */
 // utils/viafirma.js
-async function enviarConsentimiento(pdfUrl, paciente) {
+async function enviarConsentimiento(pdfUrl, paciente, lang = 'es') {
+  const cfg = POSITIONS[lang] || POSITIONS.es;
   const body = {
     groupCode: process.env.VIAFIRMA_GROUP,
     title: `Consentimiento LOPD – ${paciente.nombre}`,
@@ -47,8 +72,8 @@ async function enviarConsentimiento(pdfUrl, paciente) {
             recipientKey: 'signer1',
             helpText: 'Firma del paciente',
             positions: [{
-              rectangle: { x: 380, y: 580, width: 180, height: 80 }, // pág. 2
-              page: 2
+              rectangle: cfg.signature.rectangle,
+              page: cfg.signature.page
             }]
           },
 
@@ -64,8 +89,8 @@ async function enviarConsentimiento(pdfUrl, paciente) {
             ],
             positions: [{
               /* desplazada al área “F. Consentimiento…” */
-              rectangle: { x: 49, y: 100, width: 14, height: 14 }, // pág. 1
-              page: 1
+              rectangle: cfg.ia.rectangle,
+              page: cfg.ia.page
             }]
           },
 
@@ -81,8 +106,8 @@ async function enviarConsentimiento(pdfUrl, paciente) {
             ],
             positions: [{
               /* línea "[ ] NO DESEO RECIBIR…" */
-              rectangle: { x: 49, y: 655, width: 14, height: 14 }, // pág. 1
-              page: 2
+              rectangle: cfg.comercial.rectangle,
+              page: cfg.comercial.page
             }]
           }
         ],
