@@ -19,6 +19,11 @@
   .logo-container2 {
     animation: slideIn 1.5s forwards ease !important;
   }
+
+  #langSel {
+    width: auto;
+    margin-top: 10px;
+  }
 </style>
 
 <body>
@@ -34,6 +39,339 @@
   <div class="page-header">
     <h2><span class="material-icons">verified_user</span> Política de Privacidad</h2>
   </div>
+
+  <div style="text-align:right;margin:10px">
+    <select id="langSel" style="min-width:150px">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+      <option value="de">Deutsch</option>
+      <option value="fr">Français</option>
+    </select>
+  </div>
+
+  <script>
+    const strings = {
+      es: {
+        title: 'Política de Privacidad - Paris & Bea',
+        header: 'Política de Privacidad',
+        content: `
+      <h2>1. Introducción</h2>
+      <p>
+        En <strong>Centro Paris & Bea</strong> (en adelante, «el Centro») la protección de la
+        privacidad de nuestros pacientes y usuarios es prioritaria. Esta política explica
+        cómo tratamos tus datos personales cuando visitas nuestro sitio web o utilizas
+        nuestros servicios, de conformidad con el Reglamento (UE) 2016/679 (RGPD),
+        la Ley Orgánica 3/2018 y la normativa sanitaria aplicable.
+      </p>
+
+      <h2>2. Datos que recopilamos</h2>
+      <p>Podemos tratar las siguientes categorías:</p>
+      <ul>
+        <li><strong>Identificación y contacto:</strong> nombre, apellidos, teléfono, correo electrónico.</li>
+        <li><strong>Datos clínicos:</strong> fecha de nacimiento, género, historial médico, evaluaciones y
+          tratamientos —necesarios para la asistencia sanitaria.</li>
+        <li><strong>Documentación legal:</strong> consentimientos informados y LOPD firmados (PDF).</li>
+        <li><strong>Metadatos técnicos:</strong> registros de acceso y <em>logs</em> del servidor (dirección IP, agente
+          de usuario),
+          conservados temporalmente para seguridad y diagnóstico.</li>
+      </ul>
+
+      <h2>3. Finalidades y bases jurídicas</h2>
+      <ul>
+        <li><strong>Prestación asistencial</strong> y gestión de la historia clínica (art. 6.1 b y c RGPD).</li>
+        <li><strong>Emisión y firma digital</strong> de consentimientos informados (art. 6.1 c RGPD).</li>
+        <li><strong>Recordatorios de cita</strong> y comunicaciones sanitarias (interés legítimo, art. 6.1 f RGPD).</li>
+        <li><strong>Mejora del servicio mediante IA clínica interna</strong>: se usan
+          resúmenes ANONIMIZADOS (sin nombre, DNI ni datos de contacto) que se
+          procesan en la región Europea de OpenAI con <em>zero data retention</em>.</li>
+      </ul>
+
+      <h2>4. Encargados del tratamiento y transferencias</h2>
+      <p>Solo compartimos datos con proveedores que ofrecen garantías de cumplimiento RGPD y con los que hemos firmado
+        el <em>acuerdo de encargado de tratamiento</em> (art. 28 RGPD):</p>
+      <ul>
+        <li><strong>OpenAI Ireland Ltd.</strong> (Dublín, UE): procesamiento de IA en la <em>Responses API</em> con
+          residencia de datos en Europa y retención 0 días.</li>
+        <li><strong>VIAVANSI Corporación, S.L.</strong> (Sevilla, España – Viafirma): generación
+          y firma electrónica de consentimientos informados, 100 % eIDAS y RGPD.
+        </li>
+      </ul>
+      <p>No se realizan transferencias internacionales fuera del EEE; todos los
+        tratamientos se alojan en territorio europeo.</p>
+
+      <h2>5. Plazos de conservación</h2>
+      <ul>
+        <li>Historia clínica y consentimientos: mínimo 5 años desde la fecha de alta o el tiempo exigido por la
+          normativa sanitaria.</li>
+        <li>Datos tratados por OpenAI: eliminados automáticamente al término de la petición (retención 0).</li>
+        <li>Metadatos de acceso: &lt; 30 días para seguridad y análisis de incidencias.</li>
+      </ul>
+
+      <h2>6. Seguridad</h2>
+      <p>
+        Aplicamos medidas técnicas y organizativas (cifrado, control de acceso,
+        registro de actividad, etc.) para proteger la confidencialidad,
+        integridad y disponibilidad de los datos personales.
+      </p>
+
+      <h2>7. Derechos de los interesados</h2>
+      <p>Puedes ejercitar, cuando proceda, los derechos de acceso, rectificación, supresión, limitación, portabilidad y
+        oposición mediante:</p>
+      <ul>
+        <li>Email: <a href="mailto:info@parisandbea.es">info@parisandbea.es</a></li>
+        <li>Teléfono: +34 630 938 107</li>
+      </ul>
+      <p>Si consideras que tu solicitud no ha sido atendida, puedes reclamar ante la Agencia Española de Protección de
+        Datos (<a href="https://www.aepd.es/">www.aepd.es</a>).</p>
+
+      <h2>8. Cambios en la política</h2>
+      <p>
+        Esta política puede actualizarse para reflejar cambios legislativos o
+        en la operativa de tratamiento. Publicaremos la versión vigente en
+        esta misma página.
+      </p>
+
+      <h2>9. Contacto del responsable</h2>
+      <p>
+        <strong>Paris & Bea – Centro de Fisioterapia y Osteopatía</strong><br>
+        CIF: 51067638W<br>
+        Carrer d’Atenes 18, 07817 Sant Josep de sa Talaia, Illes Balears<br>
+        <a href="mailto:info@parisandbea.es">info@parisandbea.es</a> • +34 630 938 107
+      </p>`
+      },
+      en: {
+        title: 'Privacy Policy - Paris & Bea',
+        header: 'Privacy Policy',
+        content: `
+      <h2>1. Introduction</h2>
+      <p>
+        At <strong>Centro Paris & Bea</strong> (hereinafter, "the Center") protecting the privacy of our patients and users is a priority. This policy explains
+        how we process your personal data when you visit our website or use our services, in accordance with Regulation (EU) 2016/679 (GDPR),
+        Organic Law 3/2018 and the applicable healthcare regulations.
+      </p>
+
+      <h2>2. Data we collect</h2>
+      <p>We may process the following categories:</p>
+      <ul>
+        <li><strong>Identification and contact:</strong> name, surname, phone, email.</li>
+        <li><strong>Clinical data:</strong> date of birth, gender, medical history, assessments and treatments—necessary for healthcare.</li>
+        <li><strong>Legal documentation:</strong> signed informed consents and data-protection documents (PDF).</li>
+        <li><strong>Technical metadata:</strong> access logs and server <em>logs</em> (IP address, user agent) temporarily stored for security and diagnostics.</li>
+      </ul>
+
+      <h2>3. Purposes and legal bases</h2>
+      <ul>
+        <li><strong>Healthcare provision</strong> and management of the medical record (Art. 6.1 b and c GDPR).</li>
+        <li><strong>Issuance and digital signature</strong> of informed consents (Art. 6.1 c GDPR).</li>
+        <li><strong>Appointment reminders</strong> and health communications (legitimate interest, Art. 6.1 f GDPR).</li>
+        <li><strong>Service improvement through internal clinical AI</strong>: anonymized summaries (without name, ID or contact data) processed in OpenAI's European region with <em>zero data retention</em>.</li>
+      </ul>
+
+      <h2>4. Processors and transfers</h2>
+      <p>We only share data with providers that offer GDPR compliance guarantees and with whom we have signed a data processing agreement (Art. 28 GDPR):</p>
+      <ul>
+        <li><strong>OpenAI Ireland Ltd.</strong> (Dublin, EU): AI processing in the <em>Responses API</em> with data residency in Europe and zero-day retention.</li>
+        <li><strong>VIAVANSI Corporación, S.L.</strong> (Seville, Spain – Viafirma): generation and electronic signature of informed consents, 100% eIDAS and GDPR.</li>
+      </ul>
+      <p>No international transfers outside the EEA are made; all processing takes place in European territory.</p>
+
+      <h2>5. Retention periods</h2>
+      <ul>
+        <li>Medical record and consents: at least 5 years from the discharge date or the period required by health regulations.</li>
+        <li>Data processed by OpenAI: automatically deleted at the end of the request (zero retention).</li>
+        <li>Access metadata: &lt; 30 days for security and incident analysis.</li>
+      </ul>
+
+      <h2>6. Security</h2>
+      <p>
+        We apply technical and organisational measures (encryption, access control, activity logging, etc.) to protect the confidentiality,
+        integrity and availability of personal data.
+      </p>
+
+      <h2>7. Data subjects' rights</h2>
+      <p>You may exercise, where applicable, the rights of access, rectification, erasure, restriction, portability and objection via:</p>
+      <ul>
+        <li>Email: <a href="mailto:info@parisandbea.es">info@parisandbea.es</a></li>
+        <li>Phone: +34 630 938 107</li>
+      </ul>
+      <p>If you believe your request has not been addressed, you may lodge a complaint with the Spanish Data Protection Agency (<a href="https://www.aepd.es/">www.aepd.es</a>).</p>
+
+      <h2>8. Policy changes</h2>
+      <p>
+        This policy may be updated to reflect legislative changes or modifications in processing operations. We will publish the current version on this page.
+      </p>
+
+      <h2>9. Controller contact</h2>
+      <p>
+        <strong>Paris & Bea – Centro de Fisioterapia y Osteopatía</strong><br>
+        CIF: 51067638W<br>
+        Carrer d’Atenes 18, 07817 Sant Josep de sa Talaia, Illes Balears<br>
+        <a href="mailto:info@parisandbea.es">info@parisandbea.es</a> • +34 630 938 107
+      </p>`
+      },
+      de: {
+        title: 'Datenschutzerklärung - Paris & Bea',
+        header: 'Datenschutzerklärung',
+        content: `
+      <h2>1. Einleitung</h2>
+      <p>
+        Im <strong>Centro Paris & Bea</strong> (nachfolgend "das Zentrum") hat der Schutz der Privatsphäre unserer Patienten und Nutzer oberste Priorität. Diese Richtlinie erläutert,
+        wie wir deine personenbezogenen Daten verarbeiten, wenn du unsere Website besuchst oder unsere Dienste nutzt, entsprechend der Verordnung (EU) 2016/679 (DSGVO),
+        dem spanischen Gesetz 3/2018 und den geltenden Gesundheitsvorschriften.
+      </p>
+
+      <h2>2. Welche Daten erheben wir?</h2>
+      <p>Wir können folgende Kategorien verarbeiten:</p>
+      <ul>
+        <li><strong>Identifikation und Kontakt:</strong> Name, Nachname, Telefon, E-Mail.</li>
+        <li><strong>Klinische Daten:</strong> Geburtsdatum, Geschlecht, Krankengeschichte, Untersuchungen und Behandlungen – erforderlich für die medizinische Betreuung.</li>
+        <li><strong>Rechtliche Dokumentation:</strong> unterschriebene Einwilligungen und Datenschutzdokumente (PDF).</li>
+        <li><strong>Technische Metadaten:</strong> Zugriffs- und Server-<em>Logs</em> (IP-Adresse, User-Agent), vorübergehend zu Sicherheits- und Diagnosezwecken gespeichert.</li>
+      </ul>
+
+      <h2>3. Zwecke und Rechtsgrundlagen</h2>
+      <ul>
+        <li><strong>Erbringung der Gesundheitsleistungen</strong> und Verwaltung der Krankenakte (Art. 6.1 b und c DSGVO).</li>
+        <li><strong>Ausstellung und digitale Unterzeichnung</strong> von Einwilligungen (Art. 6.1 c DSGVO).</li>
+        <li><strong>Terminerinnerungen</strong> und gesundheitliche Mitteilungen (berechtigtes Interesse, Art. 6.1 f DSGVO).</li>
+        <li><strong>Serviceverbesserung durch interne klinische KI</strong>: anonymisierte Zusammenfassungen (ohne Namen, Ausweis- oder Kontaktdaten), verarbeitet in der europäischen Region von OpenAI mit <em>zero data retention</em>.</li>
+      </ul>
+
+      <h2>4. Auftragsverarbeiter und Übermittlungen</h2>
+      <p>Wir teilen Daten nur mit Anbietern, die DSGVO-Konformität gewährleisten und mit denen wir eine Auftragsverarbeitungsvereinbarung geschlossen haben (Art. 28 DSGVO):</p>
+      <ul>
+        <li><strong>OpenAI Ireland Ltd.</strong> (Dublin, EU): KI-Verarbeitung in der <em>Responses API</em> mit Datenresidenz in Europa und Aufbewahrung von null Tagen.</li>
+        <li><strong>VIAVANSI Corporación, S.L.</strong> (Sevilla, Spanien – Viafirma): Erstellung und elektronische Unterzeichnung von Einwilligungen, 100 % eIDAS- und DSGVO-konform.</li>
+      </ul>
+      <p>Es finden keine internationalen Übermittlungen außerhalb des EWR statt; sämtliche Verarbeitungen erfolgen innerhalb Europas.</p>
+
+      <h2>5. Aufbewahrungsfristen</h2>
+      <ul>
+        <li>Krankenakte und Einwilligungen: mindestens 5 Jahre ab Entlassungsdatum oder der gesetzlich vorgeschriebenen Dauer.</li>
+        <li>Von OpenAI verarbeitete Daten: werden nach Abschluss der Anfrage automatisch gelöscht (Aufbewahrung 0).</li>
+        <li>Zugriffsmetadaten: &lt; 30 Tage zu Sicherheits- und Analysezwecken.</li>
+      </ul>
+
+      <h2>6. Sicherheit</h2>
+      <p>
+        Wir setzen technische und organisatorische Maßnahmen ein (Verschlüsselung, Zugriffskontrolle, Aktivitätsprotokollierung usw.), um die Vertraulichkeit,
+        Integrität und Verfügbarkeit personenbezogener Daten zu schützen.
+      </p>
+
+      <h2>7. Rechte der Betroffenen</h2>
+      <p>Du kannst deine Rechte auf Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch ausüben über:</p>
+      <ul>
+        <li>E-Mail: <a href="mailto:info@parisandbea.es">info@parisandbea.es</a></li>
+        <li>Telefon: +34 630 938 107</li>
+      </ul>
+      <p>Wenn du der Meinung bist, dass deine Anfrage nicht beantwortet wurde, kannst du dich bei der spanischen Datenschutzbehörde (<a href="https://www.aepd.es/">www.aepd.es</a>) beschweren.</p>
+
+      <h2>8. Änderungen der Richtlinie</h2>
+      <p>
+        Diese Richtlinie kann aktualisiert werden, um gesetzliche Änderungen oder Anpassungen in der Datenverarbeitung widerzuspiegeln. Wir veröffentlichen die jeweils gültige Version auf dieser Seite.
+      </p>
+
+      <h2>9. Kontakt des Verantwortlichen</h2>
+      <p>
+        <strong>Paris & Bea – Centro de Fisioterapia y Osteopatía</strong><br>
+        CIF: 51067638W<br>
+        Carrer d’Atenes 18, 07817 Sant Josep de sa Talaia, Illes Balears<br>
+        <a href="mailto:info@parisandbea.es">info@parisandbea.es</a> • +34 630 938 107
+      </p>`
+      },
+      fr: {
+        title: 'Politique de Confidentialité - Paris & Bea',
+        header: 'Politique de Confidentialité',
+        content: `
+      <h2>1. Introduction</h2>
+      <p>
+        Au <strong>Centro Paris & Bea</strong> (ci-après « le Centre »), la protection de la vie privée de nos patients et utilisateurs est primordiale. Cette politique explique
+        comment nous traitons vos données personnelles lorsque vous visitez notre site web ou utilisez nos services, conformément au Règlement (UE) 2016/679 (RGPD),
+        à la Loi Organique 3/2018 et à la réglementation sanitaire applicable.
+      </p>
+
+      <h2>2. Données que nous recueillons</h2>
+      <p>Nous pouvons traiter les catégories suivantes&nbsp;:</p>
+      <ul>
+        <li><strong>Identification et contact :</strong> nom, prénom, téléphone, e-mail.</li>
+        <li><strong>Données cliniques :</strong> date de naissance, genre, antécédents médicaux, évaluations et traitements — nécessaires pour les soins.</li>
+        <li><strong>Documentation légale :</strong> consentements éclairés et documents RGPD signés (PDF).</li>
+        <li><strong>Métadonnées techniques :</strong> journaux d'accès et <em>logs</em> du serveur (adresse IP, agent utilisateur), conservés temporairement pour la sécurité et le diagnostic.</li>
+      </ul>
+
+      <h2>3. Finalités et bases juridiques</h2>
+      <ul>
+        <li><strong>Prestation des soins</strong> et gestion du dossier médical (art. 6.1 b et c RGPD).</li>
+        <li><strong>Émission et signature numérique</strong> des consentements éclairés (art. 6.1 c RGPD).</li>
+        <li><strong>Rappels de rendez-vous</strong> et communications sanitaires (intérêt légitime, art. 6.1 f RGPD).</li>
+        <li><strong>Amélioration du service via une IA clinique interne</strong> : résumés ANONYMISÉS (sans nom, pièce d'identité ni données de contact) traités dans la région européenne d'OpenAI avec <em>zero data retention</em>.</li>
+      </ul>
+
+      <h2>4. Sous-traitants et transferts</h2>
+      <p>Nous ne partageons les données qu'avec des prestataires offrant des garanties de conformité RGPD et avec lesquels nous avons signé un accord de traitement (art. 28 RGPD)&nbsp;:</p>
+      <ul>
+        <li><strong>OpenAI Ireland Ltd.</strong> (Dublin, UE)&nbsp;: traitement IA dans l'<em>Responses API</em> avec résidence des données en Europe et conservation zéro jour.</li>
+        <li><strong>VIAVANSI Corporación, S.L.</strong> (Séville, Espagne – Viafirma)&nbsp;: génération et signature électronique des consentements éclairés, 100&nbsp;% eIDAS et RGPD.</li>
+      </ul>
+      <p>Aucun transfert international hors de l'EEE n'est réalisé ; tous les traitements ont lieu sur le territoire européen.</p>
+
+      <h2>5. Durées de conservation</h2>
+      <ul>
+        <li>Dossier médical et consentements : minimum 5 ans à compter de la date de sortie ou le temps exigé par la réglementation sanitaire.</li>
+        <li>Données traitées par OpenAI : supprimées automatiquement à la fin de la requête (conservation 0).</li>
+        <li>Métadonnées d'accès : &lt; 30 jours pour la sécurité et l'analyse d'incidents.</li>
+      </ul>
+
+      <h2>6. Sécurité</h2>
+      <p>
+        Nous appliquons des mesures techniques et organisationnelles (chiffrement, contrôle d'accès, journalisation...) pour protéger la confidentialité,
+        l'intégrité et la disponibilité des données personnelles.
+      </p>
+
+      <h2>7. Droits des personnes concernées</h2>
+      <p>Vous pouvez exercer, le cas échéant, les droits d'accès, de rectification, de suppression, de limitation, de portabilité et d'opposition par&nbsp;:</p>
+      <ul>
+        <li>E-mail : <a href="mailto:info@parisandbea.es">info@parisandbea.es</a></li>
+        <li>Téléphone : +34 630 938 107</li>
+      </ul>
+      <p>Si vous estimez que votre demande n'a pas été satisfaite, vous pouvez adresser une réclamation à l'Agence espagnole de protection des données (<a href="https://www.aepd.es/">www.aepd.es</a>).</p>
+
+      <h2>8. Modifications de la politique</h2>
+      <p>
+        Cette politique peut être mise à jour pour refléter des changements législatifs ou opérationnels. Nous publierons la version en vigueur sur cette même page.
+      </p>
+
+      <h2>9. Contact du responsable</h2>
+      <p>
+        <strong>Paris & Bea – Centro de Fisioterapia y Osteopatía</strong><br>
+        CIF : 51067638W<br>
+        Carrer d’Atenes 18, 07817 Sant Josep de sa Talaia, Illes Balears<br>
+        <a href="mailto:info@parisandbea.es">info@parisandbea.es</a> • +34 630 938 107
+      </p>`
+      }
+    };
+
+    function applyLang(lang) {
+      const t = strings[lang] || strings.es;
+      document.documentElement.lang = lang;
+      document.title = t.title;
+      document.querySelector('.page-header h2').innerHTML = `<span class="material-icons">verified_user</span> ${t.header}`;
+      document.querySelector('.content-section').innerHTML = t.content;
+      document.getElementById('langSel').value = lang;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(location.search);
+      const lang = params.get('lang') || 'es';
+      applyLang(lang);
+      document.getElementById('langSel').addEventListener('change', e => {
+        applyLang(e.target.value);
+        const url = new URL(location.href);
+        url.searchParams.set('lang', e.target.value);
+        history.replaceState(null, '', url);
+      });
+    });
+  </script>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main>

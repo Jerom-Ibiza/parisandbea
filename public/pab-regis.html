@@ -286,7 +286,7 @@
                     <option value="fr">Français</option>
                 </select>
 
-                <a href="/politica-privacidad.html?embed=1" target="_blank" class="policy-link">
+                <a id="policyLink" href="/politica-privacidad.html?embed=1" target="_blank" class="policy-link">
                     <span class="material-icons">privacy_tip</span>
                     <span id="linkPrivacidad">Política de privacidad</span>
                 </a>
@@ -412,6 +412,7 @@
             document.getElementById('lblViafirma').textContent = t.viafirma;
             document.getElementById('submitBtn').textContent = t.submit;
             document.getElementById('linkPrivacidad').textContent = t.privacidad;
+            document.getElementById('policyLink').href = `/politica-privacidad.html?embed=1&lang=${lang}`;
             successTitle = t.successTitle;
             successText = t.successText;
         }
