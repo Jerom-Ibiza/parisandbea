@@ -1703,12 +1703,15 @@
         showAssistantImg();
         btnTalk.classList.add('talking');
         btnStop.style.display = 'flex';
-        btnStop.textContent = 'Cancel';     // etiqueta de cancelar
+        btnStop.textContent = 'Cancel';
+        hideScreensaver();                  /* evita salvapantallas */
+        clearTimeout(ssTimer);
       } else {       // ─ DETENER ─
         recVoice.stop();
         talking = false;
         btnTalk.classList.remove('talking');
         hideAssistantImg();
+        resetScreensaverTimer();
 
         recVoice.onstop = async () => {
           // 3. determinar extensión según mimeType
