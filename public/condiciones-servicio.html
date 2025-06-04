@@ -19,6 +19,33 @@
   .logo-container2 {
     animation: slideIn 1.5s forwards ease !important;
   }
+
+  #langSel {
+    min-width: 150px;
+    padding: 6px 36px 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='%23666' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    font-family: inherit;
+    font-size: 1rem;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+  }
+
+  #langSel:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+  }
 </style>
 
 <body>
@@ -36,6 +63,15 @@
       <span class="material-icons">fact_check</span>
       Condiciones de Servicio
     </h2>
+  </div>
+
+  <div style="text-align:right;margin:10px">
+    <select id="langSel" style="min-width:150px">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+      <option value="de">Deutsch</option>
+      <option value="fr">Français</option>
+    </select>
   </div>
 
   <!-- CONTENIDO PRINCIPAL -->
@@ -146,7 +182,165 @@
       <p><em>Última revisión de estas Condiciones de Servicio: marzo de 2025</em></p>
     </section>
   </main>
+  <script>
+    const strings = {
+      es: {
+        title: 'Condiciones de Servicio - Paris & Bea',
+        header: 'Condiciones de Servicio',
+        content: document.querySelector('.content-section').innerHTML
+      },
+      en: {
+        title: 'Service Terms - Paris & Bea',
+        header: 'Service Terms',
+        content: `
+      <h2>1. Purpose and Scope</h2>
+      <p>These Service Terms govern the physiotherapy and osteopathy services of <strong>Paris & Bea</strong> ("the Centre") and the use of information on our website <a href="https://parisandbea.es">parisandbea.es</a>.</p>
 
+      <h2>2. Bookings and Cancellations</h2>
+      <ul>
+        <li><strong>Requesting an Appointment:</strong> You may book by phone, email or WhatsApp. A booking is confirmed once we agree on date and time.</li>
+        <li><strong>Cancellations:</strong> Please notify us as soon as possible if you cannot attend so we can reschedule or offer the slot to another patient.</li>
+        <li><strong>Delays:</strong> If you arrive late we will try to assist you, but full service cannot be guaranteed if it affects later appointments.</li>
+      </ul>
+
+      <h2>3. Provision of Services</h2>
+      <ul>
+        <li><strong>Personalised Care:</strong> Treatments are tailored to each patient. Results may vary depending on health and individual response.</li>
+        <li><strong>Medical Advice:</strong> Information on our site does not replace professional medical judgement. Consult your doctor for serious conditions.</li>
+        <li><strong>Medical History:</strong> Patients must provide truthful information about their health so we can offer the best treatment and avoid contraindications.</li>
+      </ul>
+
+      <h2>4. Rates and Payments</h2>
+      <p>Costs are communicated beforehand. Payment is usually due the same day unless otherwise agreed.</p>
+      <p>For long treatments a payment plan may be arranged. Repeated failure to pay may lead to suspension of the service.</p>
+
+      <h2>5. Liability and Guarantees</h2>
+      <p>Although we strive to deliver professional care, specific results cannot be guaranteed as they depend on many individual factors.</p>
+      <ul>
+        <li><strong>Exclusion of Liability:</strong> We are not liable for damages caused by inaccurate information provided by the patient or failure to follow our recommendations.</li>
+        <li><strong>Force Majeure:</strong> If due to force majeure we cannot provide the service, the appointment will be rescheduled at no additional cost.</li>
+      </ul>
+
+      <h2>6. Intellectual Property</h2>
+      <p>All documentation, images and texts on <strong>parisandbea.es</strong> are protected by intellectual property rights. Reproduction or distribution without prior consent is prohibited.</p>
+
+      <h2>7. Changes to the Terms</h2>
+      <p>The Centre may update these Service Terms at any time. Changes will be posted here and take effect from their publication date.</p>
+
+      <h2>8. Applicable Law and Jurisdiction</h2>
+      <p>These Terms are governed by Spanish law. Any dispute will be submitted to the courts of Ibiza (Balearic Islands) unless otherwise required by law.</p>
+
+      <p><em>Last review of these Service Terms: March 2025</em></p>`
+      },
+      de: {
+        title: 'Servicebedingungen - Paris & Bea',
+        header: 'Servicebedingungen',
+        content: `
+      <h2>1. Zweck und Geltungsbereich</h2>
+      <p>Diese Bedingungen regeln die physiotherapeutischen und osteopathischen Leistungen von <strong>Paris & Bea</strong> ("dem Zentrum") sowie die Nutzung der Informationen auf unserer Website <a href="https://parisandbea.es">parisandbea.es</a>.</p>
+
+      <h2>2. Terminvereinbarung und Stornierung</h2>
+      <ul>
+        <li><strong>Termin anfragen:</strong> Termine können telefonisch, per E-Mail oder WhatsApp vereinbart werden. Eine Buchung gilt als bestätigt, sobald Datum und Uhrzeit vereinbart sind.</li>
+        <li><strong>Stornierungen:</strong> Bitte sag so früh wie möglich ab, wenn du nicht kommen kannst, damit wir den Termin neu vergeben können.</li>
+        <li><strong>Verspätungen:</strong> Bei verspäteter Ankunft bemühen wir uns dich zu behandeln, können aber keine vollständige Leistung garantieren, falls andere Termine betroffen sind.</li>
+      </ul>
+
+      <h2>3. Leistungserbringung</h2>
+      <ul>
+        <li><strong>Individuelle Betreuung:</strong> Unsere Behandlungen werden auf jede Person zugeschnitten. Die Ergebnisse können je nach Gesundheitszustand variieren.</li>
+        <li><strong>Ärztlicher Rat:</strong> Die Informationen auf der Website ersetzen keine persönliche ärztliche Beratung. Bei ernsthaften Beschwerden wende dich an deinen Arzt.</li>
+        <li><strong>Krankenakte:</strong> Der Patient muss wahrheitsgemäße Angaben zu seinem Gesundheitszustand machen, damit wir die bestmögliche Therapie anbieten können.</li>
+      </ul>
+
+      <h2>4. Tarife und Zahlungen</h2>
+      <p>Die Kosten werden im Voraus mitgeteilt. In der Regel ist die Zahlung am selben Tag fällig, sofern nichts anderes vereinbart wurde.</p>
+      <p>Bei längeren Behandlungen kann eine Ratenzahlung vereinbart werden. Mehrfache Zahlungsverweigerung kann zur Aussetzung der Behandlung führen.</p>
+
+      <h2>5. Haftung und Gewährleistung</h2>
+      <p>Wir bieten einen professionellen Service, können jedoch keine bestimmten Ergebnisse garantieren, da diese von vielen individuellen Faktoren abhängen.</p>
+      <ul>
+        <li><strong>Haftungsausschluss:</strong> Wir übernehmen keine Verantwortung für Schäden, die durch falsche Angaben des Patienten oder Missachtung unserer Hinweise entstehen.</li>
+        <li><strong>Höhere Gewalt:</strong> Können wir aufgrund höherer Gewalt nicht behandeln, wird der Termin kostenfrei verlegt.</li>
+      </ul>
+
+      <h2>6. Geistiges Eigentum</h2>
+      <p>Sämtliche Unterlagen, Bilder und Texte auf <strong>parisandbea.es</strong> unterliegen dem Urheberrecht. Eine Vervielfältigung oder Verbreitung ohne vorherige Zustimmung ist untersagt.</p>
+
+      <h2>7. Änderungen der Bedingungen</h2>
+      <p>Das Zentrum kann diese Bedingungen jederzeit aktualisieren. Änderungen gelten ab Veröffentlichung auf dieser Seite.</p>
+
+      <h2>8. Anwendbares Recht und Gerichtsstand</h2>
+      <p>Es gilt spanisches Recht. Gerichtsstand ist Ibiza, sofern gesetzlich nichts anderes vorgeschrieben ist.</p>
+
+      <p><em>Letzte Überprüfung dieser Servicebedingungen: März 2025</em></p>`
+      },
+      fr: {
+        title: 'Conditions de Service - Paris & Bea',
+        header: 'Conditions de Service',
+        content: `
+      <h2>1. Objet et Portée</h2>
+      <p>Ces conditions régissent les services de physiothérapie et d'ostéopathie de <strong>Paris & Bea</strong> (« le Centre ») et l'utilisation des informations figurant sur notre site <a href="https://parisandbea.es">parisandbea.es</a>.</p>
+
+      <h2>2. Réservations et Annulations</h2>
+      <ul>
+        <li><strong>Demande de rendez-vous :</strong> Vous pouvez réserver par téléphone, e-mail ou WhatsApp. Le rendez-vous est confirmé lorsque la date et l'heure sont convenues.</li>
+        <li><strong>Annulations :</strong> Merci de prévenir le plus tôt possible si vous ne pouvez pas venir, afin de reprogrammer ou d'offrir le créneau à un autre patient.</li>
+        <li><strong>Retards :</strong> En cas d'arrivée tardive, nous ferons le maximum pour vous prendre en charge, sans garantir la prestation complète si cela affecte les rendez-vous suivants.</li>
+      </ul>
+
+      <h2>3. Prestation des Services</h2>
+      <ul>
+        <li><strong>Soins personnalisés :</strong> Nos thérapeutes adaptent les traitements à chaque patient. Les résultats peuvent varier selon l'état de santé et la réponse individuelle.</li>
+        <li><strong>Conseils médicaux :</strong> Les informations du site ne remplacent pas l'avis d'un médecin. Consultez votre médecin en cas de pathologie grave.</li>
+        <li><strong>Dossier médical :</strong> Il appartient au patient de fournir des informations exactes pour éviter les contre-indications et recevoir le meilleur traitement.</li>
+      </ul>
+
+      <h2>4. Tarifs et Paiements</h2>
+      <p>Le prix de chaque séance est communiqué au préalable. Le paiement s'effectue généralement le jour même, sauf accord contraire.</p>
+      <p>Pour des traitements prolongés, un plan de paiement peut être mis en place. Le non-paiement répété peut entraîner la suspension du service.</p>
+
+      <h2>5. Responsabilité et Garanties</h2>
+      <p>Bien que nous nous engagions à fournir un service professionnel, les résultats spécifiques ne peuvent être garantis car ils dépendent de nombreux facteurs individuels.</p>
+      <ul>
+        <li><strong>Exclusion de responsabilité :</strong> Nous déclinons toute responsabilité en cas de dommages dus à des informations inexactes fournies par le patient ou au non-respect de nos recommandations.</li>
+        <li><strong>Force majeure :</strong> Si un cas de force majeure nous empêche d'assurer la séance, elle sera replanifiée sans coût supplémentaire.</li>
+      </ul>
+
+      <h2>6. Propriété intellectuelle</h2>
+      <p>Toute la documentation, les images et les textes disponibles sur <strong>parisandbea.es</strong> sont protégés. Toute reproduction ou diffusion sans consentement préalable est interdite.</p>
+
+      <h2>7. Modifications des Conditions</h2>
+      <p>Le Centre peut mettre à jour ces conditions à tout moment. Les changements prennent effet dès leur publication sur cette page.</p>
+
+      <h2>8. Droit applicable et Juridiction</h2>
+      <p>Ces conditions sont régies par le droit espagnol. Tout litige sera soumis aux tribunaux d'Ibiza, sauf obligation légale différente.</p>
+
+      <p><em>Dernière mise à jour de ces conditions de service : mars 2025</em></p>`
+      }
+    };
+
+    function applyLang(lang) {
+      const t = strings[lang] || strings.es;
+      document.documentElement.lang = lang;
+      document.title = t.title;
+      document.querySelector('.page-header h2').innerHTML = `<span class="material-icons">fact_check</span> ${t.header}`;
+      document.querySelector('.content-section').innerHTML = t.content;
+      document.getElementById('langSel').value = lang;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(location.search);
+      const lang = params.get('lang') || 'es';
+      applyLang(lang);
+      document.getElementById('langSel').addEventListener('change', e => {
+        applyLang(e.target.value);
+        const url = new URL(location.href);
+        url.searchParams.set('lang', e.target.value);
+        history.replaceState(null, '', url);
+      });
+    });
+  </script>
   <!-- SCRIPT PARA CARGA DE DATOS DINÁMICOS -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {

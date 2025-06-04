@@ -19,6 +19,33 @@
   .logo-container2 {
     animation: slideIn 1.5s forwards ease !important;
   }
+
+  #langSel {
+    min-width: 150px;
+    padding: 6px 36px 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='%23666' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    font-family: inherit;
+    font-size: 1rem;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+  }
+
+  #langSel:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+  }
 </style>
 
 <body>
@@ -36,6 +63,15 @@
       <span class="material-icons">delete</span>
       Eliminar Datos Personales
     </h2>
+  </div>
+
+  <div style="text-align:right;margin:10px">
+    <select id="langSel" style="min-width:150px">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+      <option value="de">Deutsch</option>
+      <option value="fr">Français</option>
+    </select>
   </div>
 
   <!-- CONTENIDO PRINCIPAL -->
@@ -76,6 +112,153 @@
       </p>
     </section>
   </main>
+  <script>
+    const strings = {
+      es: {
+        title: 'Eliminación de Datos - Paris & Bea',
+        header: 'Eliminar Datos Personales',
+        content: `
+      <p>
+        Si deseas solicitar la eliminación de tus datos personales en <strong>Paris & Bea</strong>,
+        por favor, sigue estos pasos:
+      </p>
+
+      <ol>
+        <li>
+          <strong>Solicitud:</strong> Envía un mensaje de WhatsApp al
+          <em>+34 630938107</em>
+          o un correo electrónico a
+          <a href="mailto:info@parisandbea.es">info@parisandbea.es</a>,
+          indicando tu petición de eliminación de datos.
+        </li>
+        <li>
+          <strong>Verificación de Identidad:</strong> Para proteger tu privacidad,
+          es posible que te pidamos más datos o comprobantes para confirmar que la petición
+          procede realmente de ti.
+        </li>
+        <li>
+          <strong>Plazo de Ejecución:</strong> Una vez verificada la solicitud, nos comprometemos
+          a eliminar completamente tus datos en un plazo máximo de 7 días naturales.
+        </li>
+        <li>
+          <strong>Confirmación:</strong> Te enviaremos un correo o mensaje de WhatsApp para
+          confirmar que la eliminación de tus datos se ha completado con éxito.
+        </li>
+      </ol>
+
+      <p>
+        Ten en cuenta que, en algunos casos, podemos estar legalmente obligados a conservar ciertos
+        datos (p. ej. registros sanitarios o facturas). Si esto ocurre, te lo haremos saber
+        y te explicaremos por qué no podemos borrarlos aún.
+      </p>`
+      },
+      en: {
+        title: 'Data Deletion - Paris & Bea',
+        header: 'Delete Personal Data',
+        content: `
+      <p>
+        If you wish to request the deletion of your personal data at <strong>Paris & Bea</strong>, please follow these steps:
+      </p>
+
+      <ol>
+        <li>
+          <strong>Request:</strong> Send a WhatsApp message to <em>+34 630938107</em> or an email to
+          <a href="mailto:info@parisandbea.es">info@parisandbea.es</a> stating your data deletion request.
+        </li>
+        <li>
+          <strong>Identity verification:</strong> To protect your privacy we may ask for additional information or proof that the request really comes from you.
+        </li>
+        <li>
+          <strong>Timeframe:</strong> Once verified, we commit to fully delete your data within a maximum of 7 calendar days.
+        </li>
+        <li>
+          <strong>Confirmation:</strong> We will send you an email or WhatsApp message confirming the deletion has been completed successfully.
+        </li>
+      </ol>
+
+      <p>
+        Keep in mind that in some cases we may be legally obliged to retain certain data (e.g. clinical records or invoices). If so, we will tell you and explain why we cannot delete them yet.
+      </p>`
+      },
+      de: {
+        title: 'Datenlöschung - Paris & Bea',
+        header: 'Personenbezogene Daten löschen',
+        content: `
+      <p>
+        Wenn du die Löschung deiner personenbezogenen Daten bei <strong>Paris & Bea</strong> beantragen möchtest, folge bitte diesen Schritten:
+      </p>
+
+      <ol>
+        <li>
+          <strong>Antrag:</strong> Sende eine WhatsApp-Nachricht an <em>+34 630938107</em> oder eine E-Mail an
+          <a href="mailto:info@parisandbea.es">info@parisandbea.es</a> mit deiner Bitte um Datenlöschung.
+        </li>
+        <li>
+          <strong>Identitätsprüfung:</strong> Zum Schutz deiner Privatsphäre können wir weitere Angaben oder Nachweise verlangen, um sicherzustellen, dass der Antrag wirklich von dir stammt.
+        </li>
+        <li>
+          <strong>Frist:</strong> Nach Überprüfung des Antrags löschen wir deine Daten innerhalb von maximal 7 Kalendertagen vollständig.
+        </li>
+        <li>
+          <strong>Bestätigung:</strong> Wir schicken dir eine E-Mail oder WhatsApp, sobald die Löschung erfolgreich abgeschlossen ist.
+        </li>
+      </ol>
+
+      <p>
+        Beachte, dass wir in einigen Fällen gesetzlich verpflichtet sein können, bestimmte Daten aufzubewahren (z. B. Patientenakten oder Rechnungen). In diesem Fall informieren wir dich und erklären, warum sie noch nicht gelöscht werden können.
+      </p>`
+      },
+      fr: {
+        title: 'Suppression des données - Paris & Bea',
+        header: 'Supprimer les données personnelles',
+        content: `
+      <p>
+        Si vous souhaitez demander la suppression de vos données personnelles chez <strong>Paris & Bea</strong>, veuillez suivre les étapes suivantes&nbsp;:
+      </p>
+
+      <ol>
+        <li>
+          <strong>Demande&nbsp;:</strong> Envoyez un message WhatsApp au <em>+34 630938107</em> ou un e-mail à
+          <a href="mailto:info@parisandbea.es">info@parisandbea.es</a> en indiquant votre souhait de suppression de données.
+        </li>
+        <li>
+          <strong>Vérification d'identité&nbsp;:</strong> Pour protéger votre vie privée, il se peut que nous vous demandions des informations ou justificatifs supplémentaires afin de confirmer que la demande provient bien de vous.
+        </li>
+        <li>
+          <strong>Délai d'exécution&nbsp;:</strong> Une fois la demande vérifiée, nous nous engageons à supprimer complètement vos données dans un délai maximum de 7&nbsp;jours calendaires.
+        </li>
+        <li>
+          <strong>Confirmation&nbsp;:</strong> Nous vous enverrons un e-mail ou un message WhatsApp pour confirmer que la suppression a été effectuée avec succès.
+        </li>
+      </ol>
+
+      <p>
+        Sachez que, dans certains cas, nous pouvons être légalement tenus de conserver certaines données (par ex. dossiers médicaux ou factures). Le cas échéant, nous vous le ferons savoir et vous expliquerons pourquoi nous ne pouvons pas encore les effacer.
+      </p>`
+      }
+    };
+
+    function applyLang(lang) {
+      const t = strings[lang] || strings.es;
+      document.documentElement.lang = lang;
+      document.title = t.title;
+      document.querySelector('.page-header h2').innerHTML = `<span class="material-icons">delete</span> ${t.header}`;
+      document.querySelector('.content-section').innerHTML = t.content;
+      document.getElementById('langSel').value = lang;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(location.search);
+      const lang = params.get('lang') || 'es';
+      applyLang(lang);
+      document.getElementById('langSel').addEventListener('change', e => {
+        applyLang(e.target.value);
+        const url = new URL(location.href);
+        url.searchParams.set('lang', e.target.value);
+        history.replaceState(null, '', url);
+      });
+    });
+  </script>
 
   <!-- SCRIPT PARA CARGA DE DATOS DINÁMICOS (logo, colores, tipografía) -->
   <script>
