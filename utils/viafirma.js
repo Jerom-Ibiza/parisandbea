@@ -11,18 +11,18 @@ const POSITIONS = {
   },
   en: {
     signature: { rectangle: { x: 380, y: 620, width: 180, height: 80 }, page: 2 },
-    ia: { rectangle: { x: 49, y: 120, width: 14, height: 14 }, page: 1 },
-    comercial: { rectangle: { x: 49, y: 685, width: 14, height: 14 }, page: 2 }
+    ia: { rectangle: { x: 49, y: 125, width: 14, height: 14 }, page: 1 },
+    comercial: { rectangle: { x: 53, y: 685, width: 14, height: 14 }, page: 2 }
   },
   de: {
-    signature: { rectangle: { x: 380, y: 580, width: 180, height: 80 }, page: 2 },
-    ia: { rectangle: { x: 49, y: 100, width: 14, height: 14 }, page: 1 },
-    comercial: { rectangle: { x: 49, y: 655, width: 14, height: 14 }, page: 2 }
+    signature: { rectangle: { x: 380, y: 480, width: 180, height: 80 }, page: 2 },
+    ia: { rectangle: { x: 49, y: 765, width: 14, height: 14 }, page: 2 },
+    comercial: { rectangle: { x: 49, y: 554, width: 14, height: 14 }, page: 2 }
   },
   fr: {
-    signature: { rectangle: { x: 380, y: 580, width: 180, height: 80 }, page: 2 },
-    ia: { rectangle: { x: 49, y: 100, width: 14, height: 14 }, page: 1 },
-    comercial: { rectangle: { x: 49, y: 655, width: 14, height: 14 }, page: 2 }
+    signature: { rectangle: { x: 380, y: 540, width: 180, height: 80 }, page: 2 },
+    ia: { rectangle: { x: 49, y: 89, width: 14, height: 14 }, page: 1 },
+    comercial: { rectangle: { x: 49, y: 605, width: 14, height: 14 }, page: 2 }
   }
 };
 

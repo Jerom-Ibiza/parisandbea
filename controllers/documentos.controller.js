@@ -438,7 +438,11 @@ exports.generateConsentDocument = async (req, res) => {
 
         let setCode = null;
         if (sendViafirma) {
-          setCode = await enviarConsentimiento(pdfURL, { nombre: nombrePaciente, phone: paciente.telefono });
+          setCode = await enviarConsentimiento(
+            pdfURL,
+            { nombre: nombrePaciente, phone: paciente.telefono },
+            idioma
+          );
 
           // guarda estado en BD si hace falta
           if (id_paciente)
