@@ -1,14 +1,3 @@
-// utils/lopdTemplates.js
-//
-//  Plantillas multilingües del consentimiento LOPD
-//  ------------------------------------------------
-//  • Exporta un simple objeto con cuatro claves de idioma: es, en, de y fr
-//  • Cada clave contiene:
-//      – header:  título que aparece arriba del PDF
-//      – sections:  array de [título, párrafos]
-//  • Sustituye libremente los datos del responsable si varían
-//
-
 module.exports = {
     /* ──────── ESPAÑOL ──────── */
     es: {
