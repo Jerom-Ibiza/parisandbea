@@ -37,6 +37,33 @@
     .logo-container2 {
         animation: slideIn 1.5s forwards ease !important;
     }
+
+    #langSel {
+        min-width: 150px;
+        padding: 6px 36px 6px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background-color: #fff;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='%23666' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px;
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        font-family: inherit;
+        font-size: 1rem;
+        color: #333;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: border-color .2s, box-shadow .2s;
+        margin-top: 10px;
+    }
+
+    #langSel:focus {
+        outline: none;
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+    }
 </style>
 
 <body>
@@ -55,7 +82,14 @@
             Información para Pacientes
         </h2>
     </div>
-
+    <div style="text-align:right;margin:10px">
+        <select id="langSel" style="min-width:150px">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+            <option value="de">Deutsch</option>
+            <option value="fr">Français</option>
+        </select>
+    </div>
     <!-- CONTENIDO PRINCIPAL -->
     <main>
         <section class="content-section" style="color: black;">
@@ -81,7 +115,112 @@
             </p>
         </section>
     </main>
+    <script>
+        const strings = {
+            es: {
+                title: 'Información para Pacientes - Paris & Bea',
+                header: 'Información para Pacientes',
+                content: `
+      <h2>Política de Citas y Cancelaciones</h2>
+      <p>
+        Nos encanta recibirte en Paris & Bea y queremos que disfrutes de un trato cercano y puntual. Para que
+        todo funcione correctamente, te recomendamos llegar entre 5 y 10&nbsp;minutos antes de tu cita.
+      </p>
+      <p><strong>Si necesitas cambiar o cancelar una sesión, podrás hacerlo sin coste avisándonos con al menos
+        24&nbsp;horas de antelación.</strong></p>
+      <p>
+        Nuestro calendario es muy ajustado y, cuando una cita queda libre con poco tiempo, apenas tenemos margen
+        para ofrecer ese hueco a otra persona. Por ello, <strong>si cancelas con menos de 24&nbsp;horas de
+        antelación o no te presentas, en tu siguiente visita deberemos cobrarte el importe íntegro de la sesión
+        perdida, según nuestra política de reservas.</strong>
+      </p>
+      <p>
+        Gracias por tu comprensión y por ayudarnos a organizar la agenda para seguir ofreciendo el mejor servicio.
+      </p>`
+            },
+            en: {
+                title: 'Patient Information - Paris & Bea',
+                header: 'Patient Information',
+                content: `
+      <h2>Appointment and Cancellation Policy</h2>
+      <p>
+        We love welcoming you at Paris & Bea and want you to enjoy friendly and punctual care. To keep everything running smoothly,
+        we recommend arriving 5–10 minutes before your appointment.
+      </p>
+      <p><strong>If you need to reschedule or cancel a session, you may do so free of charge by notifying us at least
+        24 hours in advance.</strong></p>
+      <p>
+        Our schedule is very tight and, when an appointment opens up at short notice, we have little time to offer that slot to someone else.
+        Therefore, <strong>if you cancel with less than 24 hours notice or do not show up, at your next visit we must charge you the full
+        amount for the missed session, according to our booking policy.</strong>
+      </p>
+      <p>
+        Thank you for your understanding and for helping us organise the calendar so we can continue to offer the best service.
+      </p>`
+            },
+            de: {
+                title: 'Patienteninformation - Paris & Bea',
+                header: 'Patienteninformation',
+                content: `
+      <h2>Termin- und Stornierungsrichtlinie</h2>
+      <p>
+        Wir freuen uns, dich bei Paris & Bea zu empfangen und möchten dir eine persönliche und pünktliche Betreuung bieten.
+        Damit alles reibungslos läuft, empfehlen wir dir, 5–10 Minuten vor deinem Termin zu erscheinen.
+      </p>
+      <p><strong>Wenn du einen Termin ändern oder absagen musst, kannst du dies kostenlos tun, indem du uns mindestens
+        24 Stunden vorher informierst.</strong></p>
+      <p>
+        Unser Kalender ist sehr eng und wenn ein Termin kurzfristig frei wird, haben wir kaum Zeit, diesen Platz einer anderen Person anzubieten.
+        Daher <strong>müssen wir dir bei Absagen unter 24 Stunden oder Nichterscheinen beim nächsten Besuch den vollen Betrag der
+        verpassten Sitzung berechnen, gemäß unserer Reservierungspolitik.</strong>
+      </p>
+      <p>
+        Vielen Dank für dein Verständnis und dafür, dass du uns hilfst, den Kalender zu organisieren, um weiterhin den besten Service zu bieten.
+      </p>`
+            },
+            fr: {
+                title: 'Informations pour les patients - Paris & Bea',
+                header: 'Informations pour les patients',
+                content: `
+      <h2>Politique de rendez-vous et d'annulation</h2>
+      <p>
+        Nous sommes ravis de vous recevoir chez Paris & Bea et souhaitons vous offrir un accueil chaleureux et ponctuel.
+        Pour que tout fonctionne correctement, nous vous recommandons d'arriver 5 à 10 minutes avant votre rendez-vous.
+      </p>
+      <p><strong>Si vous devez modifier ou annuler une séance, vous pouvez le faire sans frais en nous prévenant au moins
+        24&nbsp;heures à l'avance.</strong></p>
+      <p>
+        Notre planning est très serré et, lorsqu'un créneau se libère à la dernière minute, nous avons peu de temps pour l'offrir à quelqu'un d'autre.
+        C'est pourquoi <strong>si vous annulez avec moins de 24&nbsp;heures de préavis ou ne vous présentez pas, lors de votre prochaine visite nous
+        devrons vous facturer le montant intégral de la séance manquée, conformément à notre politique de réservation.</strong>
+      </p>
+      <p>
+        Merci de votre compréhension et de nous aider à organiser l'agenda afin de continuer à offrir le meilleur service.
+      </p>`
+            }
+        };
 
+        function applyLang(lang) {
+            const t = strings[lang] || strings.es;
+            document.documentElement.lang = lang;
+            document.title = t.title;
+            document.querySelector('.page-header h2').innerHTML = `<span class="material-icons">event_available</span> ${t.header}`;
+            document.querySelector('.content-section').innerHTML = t.content;
+            document.getElementById('langSel').value = lang;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(location.search);
+            const lang = params.get('lang') || 'es';
+            applyLang(lang);
+            document.getElementById('langSel').addEventListener('change', e => {
+                applyLang(e.target.value);
+                const url = new URL(location.href);
+                url.searchParams.set('lang', e.target.value);
+                history.replaceState(null, '', url);
+            });
+        });
+    </script>
     <!-- SCRIPT PARA CARGA DE DATOS DINÁMICOS -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {

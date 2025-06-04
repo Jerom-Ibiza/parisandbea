@@ -19,6 +19,33 @@
   .logo-container2 {
     animation: slideIn 1.5s forwards ease !important;
   }
+
+  #langSel {
+    min-width: 150px;
+    padding: 6px 36px 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke='%23666' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    font-family: inherit;
+    font-size: 1rem;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color .2s, box-shadow .2s;
+    margin-top: 10px;
+  }
+
+  #langSel:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+  }
 </style>
 
 <body>
@@ -36,6 +63,15 @@
       <span class="material-icons">article</span>
       Términos y Condiciones
     </h2>
+  </div>
+
+  <div style="text-align:right;margin:10px">
+    <select id="langSel" style="min-width:150px">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+      <option value="de">Deutsch</option>
+      <option value="fr">Français</option>
+    </select>
   </div>
 
   <!-- CONTENIDO PRINCIPAL -->
@@ -156,6 +192,192 @@
       <p><em>Última revisión de estos Términos y Condiciones: marzo de 2025</em></p>
     </section>
   </main>
+  <script>
+    const strings = {
+      es: {
+        title: 'Términos y Condiciones - Paris & Bea',
+        header: 'Términos y Condiciones',
+        content: document.querySelector('.content-section').innerHTML
+      },
+      en: {
+        title: 'Terms and Conditions - Paris & Bea',
+        header: 'Terms and Conditions',
+        content: `
+      <h2>1. Company Information</h2>
+      <p>These Terms and Conditions govern access to the website of <strong>Centro Paris & Bea</strong> ("the Centre"), specialised in physiotherapy and osteopathy.</p>
+      <ul>
+        <li><strong>Business name:</strong> Centro Paris & Bea</li>
+        <li><strong>Tax ID:</strong> XXXXXXX (pending)</li>
+        <li><strong>Address:</strong> Carrer d'Atenes, 18, 07817 Sant Josep de sa Talaia, Illes Balears, Spain</li>
+        <li><strong>Email:</strong> <a href="mailto:info@parisandbea.es">info@parisandbea.es</a></li>
+        <li><strong>Phone:</strong> +34 630938107</li>
+      </ul>
+      <p>Through this site we provide information about our services and allow you to contact us to request appointments.</p>
+
+      <h2>2. Purpose and Acceptance</h2>
+      <p>By browsing this site you accept these Terms and agree to use the website appropriately. If you disagree with any point, please leave the site or contact us.</p>
+
+      <h2>3. Scope of the Services</h2>
+      <p>The Centre offers in-person physiotherapy and osteopathy. The website:</p>
+      <ul>
+        <li>Lets users learn about our professional approach.</li>
+        <li>Facilitates contact to request information or book appointments.</li>
+        <li>Is not an online store; no payments are processed through this site.</li>
+      </ul>
+
+      <h2>4. Access and Use Conditions</h2>
+      <p>Access is free. To book appointments we may request personal details (phone, name, email). You guarantee that the information provided is true and that you have the legal capacity to request a service.</p>
+      <p>We may contact you to confirm the booking and collect clinical information once you attend the Centre.</p>
+
+      <h2>5. Privacy Policy and Data Protection</h2>
+      <p>All information on how we handle your personal data is detailed in our <strong>Privacy Policy</strong>, available on the website.</p>
+
+      <h2>6. Intellectual Property</h2>
+      <p>All content, designs and logos on the site belong to the Centre (or authorised third parties). Reproduction, distribution or public communication is prohibited without prior written consent.</p>
+
+      <h2>7. Liability</h2>
+      <p>We strive to keep the information accurate but cannot guarantee the absence of errors. We are not responsible for damages arising from use of the site. Content is informational and does not replace professional diagnosis. Contact us or your health professional if you have any questions.</p>
+
+      <h2>8. External Links</h2>
+      <p>Links to third-party websites are provided for convenience. We are not responsible for their content or for any damages arising from them.</p>
+
+      <h2>9. Modifications</h2>
+      <p>We may update these Terms at any time to adapt to legislation or our needs. Changes will be effective once published here.</p>
+
+      <h2>10. Governing Law and Jurisdiction</h2>
+      <p>These Terms are governed by Spanish law. Any dispute will be submitted to the courts of Ibiza (Balearic Islands, Spain) unless otherwise required by law.</p>
+
+      <h2>11. Contact</h2>
+      <p>For any questions you can email <a href="mailto:info@parisandbea.es">info@parisandbea.es</a> or call +34 630938107.</p>
+      <p><em>Last review of these Terms and Conditions: March 2025</em></p>`
+      },
+      de: {
+        title: 'Allgemeine Geschäftsbedingungen - Paris & Bea',
+        header: 'Allgemeine Geschäftsbedingungen',
+        content: `
+      <h2>1. Unternehmensinformationen</h2>
+      <p>Diese Bedingungen regeln die Nutzung der Website von <strong>Centro Paris & Bea</strong> ("das Zentrum"), spezialisiert auf Physiotherapie und Osteopathie.</p>
+      <ul>
+        <li><strong>Firmenname:</strong> Centro Paris & Bea</li>
+        <li><strong>Steuernummer:</strong> XXXXXXX (ausstehend)</li>
+        <li><strong>Adresse:</strong> Carrer d'Atenes 18, 07817 Sant Josep de sa Talaia, Illes Balears, Spanien</li>
+        <li><strong>E-Mail:</strong> <a href="mailto:info@parisandbea.es">info@parisandbea.es</a></li>
+        <li><strong>Telefon:</strong> +34 630938107</li>
+      </ul>
+      <p>Über diese Seite informieren wir über unsere Leistungen und ermöglichen die Terminvereinbarung.</p>
+
+      <h2>2. Zweck und Annahme</h2>
+      <p>Mit der Nutzung der Website akzeptierst du diese Bedingungen und verpflichtest dich zu einer angemessenen Nutzung. Wenn du nicht einverstanden bist, verlasse die Seite oder kontaktiere uns.</p>
+
+      <h2>3. Leistungsumfang</h2>
+      <p>Das Zentrum bietet persönliche Behandlungen an. Die Website:</p>
+      <ul>
+        <li>Informiert über unseren professionellen Ansatz.</li>
+        <li>Erleichtert die Kontaktaufnahme zur Terminvereinbarung.</li>
+        <li>Ist kein Online-Shop und verarbeitet keine Zahlungen.</li>
+      </ul>
+
+      <h2>4. Zugangs- und Nutzungsbedingungen</h2>
+      <p>Der Zugang ist kostenlos. Für Terminbuchungen können persönliche Daten (Telefon, Name, E-Mail) erforderlich sein. Du versicherst, dass die Angaben korrekt sind und du geschäftsfähig bist.</p>
+      <p>Wir können dich kontaktieren, um den Termin zu bestätigen und weitere klinische Informationen zu erfragen.</p>
+
+      <h2>5. Datenschutz</h2>
+      <p>Alle Informationen zur Verarbeitung deiner Daten findest du in unserer <strong>Datenschutzerklärung</strong> auf dieser Website.</p>
+
+      <h2>6. Geistiges Eigentum</h2>
+      <p>Alle Inhalte und Logos gehören dem Zentrum oder autorisierten Dritten. Eine Vervielfältigung oder Weitergabe ohne vorherige schriftliche Zustimmung ist untersagt.</p>
+
+      <h2>7. Haftung</h2>
+      <p>Wir bemühen uns um korrekte Informationen, übernehmen jedoch keine Gewähr für Fehler. Die Inhalte dienen nur Informationszwecken und ersetzen keine persönliche Beratung.</p>
+
+      <h2>8. Externe Links</h2>
+      <p>Für Inhalte verlinkter Seiten übernehmen wir keine Verantwortung.</p>
+
+      <h2>9. Änderungen</h2>
+      <p>Wir behalten uns vor, diese Bedingungen jederzeit anzupassen. Änderungen gelten ab Veröffentlichung.</p>
+
+      <h2>10. Anwendbares Recht und Gerichtsstand</h2>
+      <p>Es gilt spanisches Recht. Gerichtsstand ist Ibiza, sofern gesetzlich nichts anderes bestimmt ist.</p>
+
+      <h2>11. Kontakt</h2>
+      <p>Bei Fragen schreibe an <a href="mailto:info@parisandbea.es">info@parisandbea.es</a> oder rufe +34 630938107 an.</p>
+      <p><em>Letzte Überprüfung dieser Bedingungen: März 2025</em></p>`
+      },
+      fr: {
+        title: 'Conditions Générales - Paris & Bea',
+        header: 'Conditions Générales',
+        content: `
+      <h2>1. Informations sur l'entreprise</h2>
+      <p>Ces conditions régissent l'utilisation du site de <strong>Centro Paris & Bea</strong> (« le Centre ») spécialisé en physiothérapie et ostéopathie.</p>
+      <ul>
+        <li><strong>Nom commercial :</strong> Centro Paris & Bea</li>
+        <li><strong>Identifiant fiscal :</strong> XXXXXXX (en attente)</li>
+        <li><strong>Adresse :</strong> Carrer d'Atenes 18, 07817 Sant Josep de sa Talaia, Îles Baléares, Espagne</li>
+        <li><strong>Email :</strong> <a href="mailto:info@parisandbea.es">info@parisandbea.es</a></li>
+        <li><strong>Téléphone :</strong> +34 630938107</li>
+      </ul>
+      <p>Ce site fournit des informations sur nos services et permet de nous contacter pour prendre rendez-vous.</p>
+
+      <h2>2. Objet et acceptation</h2>
+      <p>En naviguant sur ce site, vous acceptez les présentes conditions et vous vous engagez à en faire un usage approprié. Si vous n'êtes pas d'accord, quittez le site ou contactez-nous.</p>
+
+      <h2>3. Portée des services</h2>
+      <p>Le Centre offre des soins en personne. Le site :</p>
+      <ul>
+        <li>Permet de connaître notre approche professionnelle.</li>
+        <li>Facilite la prise de contact pour demander des informations ou des rendez-vous.</li>
+        <li>N'est pas une boutique en ligne et ne gère pas de paiements.</li>
+      </ul>
+
+      <h2>4. Conditions d'accès et d'utilisation</h2>
+      <p>L'accès est libre. Pour fixer un rendez-vous nous pouvons demander des données personnelles (téléphone, nom, email). Vous garantissez l'exactitude des informations fournies.</p>
+      <p>Nous pourrons vous contacter pour confirmer le rendez-vous et recueillir des informations cliniques lors de votre visite.</p>
+
+      <h2>5. Politique de confidentialité</h2>
+      <p>Toutes les informations relatives au traitement de vos données figurent dans notre <strong>Politique de confidentialité</strong> disponible sur le site.</p>
+
+      <h2>6. Propriété intellectuelle</h2>
+      <p>Tous les contenus et logos du site appartiennent au Centre ou à des tiers autorisés. Leur reproduction ou diffusion sans consentement écrit est interdite.</p>
+
+      <h2>7. Responsabilité</h2>
+      <p>Nous nous efforçons d'assurer l'exactitude des informations, sans pouvoir garantir l'absence totale d'erreurs. Le contenu est informatif et ne remplace pas un diagnostic personnalisé.</p>
+
+      <h2>8. Liens externes</h2>
+      <p>Nous ne sommes pas responsables du contenu des sites tiers liés.</p>
+
+      <h2>9. Modifications</h2>
+      <p>Nous pouvons modifier ces conditions à tout moment. Les changements prennent effet dès leur publication.</p>
+
+      <h2>10. Droit applicable et juridiction</h2>
+      <p>Ces conditions sont régies par la loi espagnole. Tout litige sera soumis aux tribunaux d'Ibiza, sauf disposition légale contraire.</p>
+
+      <h2>11. Contact</h2>
+      <p>Pour toute question, écrivez à <a href="mailto:info@parisandbea.es">info@parisandbea.es</a> ou appelez le +34 630938107.</p>
+      <p><em>Dernière mise à jour de ces conditions : mars 2025</em></p>`
+      }
+    };
+
+    function applyLang(lang) {
+      const t = strings[lang] || strings.es;
+      document.documentElement.lang = lang;
+      document.title = t.title;
+      document.querySelector('.page-header h2').innerHTML = `<span class="material-icons">article</span> ${t.header}`;
+      document.querySelector('.content-section').innerHTML = t.content;
+      document.getElementById('langSel').value = lang;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(location.search);
+      const lang = params.get('lang') || 'es';
+      applyLang(lang);
+      document.getElementById('langSel').addEventListener('change', e => {
+        applyLang(e.target.value);
+        const url = new URL(location.href);
+        url.searchParams.set('lang', e.target.value);
+        history.replaceState(null, '', url);
+      });
+    });
+  </script>
 
   <!-- SCRIPT PARA CARGA DE DATOS DINÁMICOS -->
   <script>
