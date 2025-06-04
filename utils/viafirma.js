@@ -60,28 +60,12 @@ async function enviarConsentimiento(pdfUrl, paciente) {
             helpText: 'IA – Acepto',
             metadataList: [
               { key: 'providerId', value: 'Check' },   // tipo checkbox  :contentReference[oaicite:0]{index=0}
-              { key: 'text', value: 'ACEPTO que se usen mis datos para IA' }
+              { key: 'text', value: 'ACEPTO que se usen mis datos ANOMIZADOS con IA' }
             ],
             positions: [{
               /* desplazada al área “F. Consentimiento…” */
               rectangle: { x: 49, y: 100, width: 14, height: 14 }, // pág. 1
               page: 1
-            }]
-          },
-
-          /* ───── IA  No acepto  (opcional) ───── */
-          {
-            type: 'GENERIC',
-            recipientKey: 'signer1',
-            optional: true,                        // se puede omitir
-            helpText: 'IA – No acepto',
-            metadataList: [
-              { key: 'providerId', value: 'Check' },
-              { key: 'text', value: 'NO ACEPTO el uso de IA' }
-            ],
-            positions: [{
-              rectangle: { x: 49, y: 778, width: 14, height: 14 }, // pág. 1
-              page: 2
             }]
           },
 
@@ -97,7 +81,7 @@ async function enviarConsentimiento(pdfUrl, paciente) {
             ],
             positions: [{
               /* línea "[ ] NO DESEO RECIBIR…" */
-              rectangle: { x: 49, y: 643, width: 14, height: 14 }, // pág. 1
+              rectangle: { x: 49, y: 655, width: 14, height: 14 }, // pág. 1
               page: 2
             }]
           }

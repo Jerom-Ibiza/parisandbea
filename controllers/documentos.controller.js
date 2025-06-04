@@ -401,7 +401,7 @@ exports.generateConsentDocument = async (req, res) => {
       ['F. CONSENTIMIENTO EXPLÍCITO PARA EL USO DE IA Y TRANSFERENCIA INTERNACIONAL:', [
         'Marque lo que proceda:',
         '[   ] ACEPTO Autorizo expresamente que PARIS & BEA envíe mis datos de salud (anomizados) a OpenAI Ireland Ltd. y otros encargados equivalentes, con la única finalidad de apoyar el diagnóstico y/o documentar mi asistencia mediante herramientas de inteligencia artificial. Y entiendo que la decisión clínica final será siempre del profesional sanitario.',
-        '[   ] NO ACEPTO No autorizo el uso de mis datos por sistemas de IA externos. Reconozco que la clínica podrá seguir prestándome asistencia, pero las funcionalidades de IA no se aplicarán a mi caso.'
+        'Si no autorizo el uso de mis datos por sistemas de IA externos. Reconozco que la clínica podrá seguir prestándome asistencia, pero las funcionalidades de IA no se aplicarán a mi caso.'
       ]],
       ['G. DERECHOS:', [
         '• Tiene derecho a solicitar el acceso, rectificación, supresión, oposición, limitación y portabilidad de sus datos personales.',
