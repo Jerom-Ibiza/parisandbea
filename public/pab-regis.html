@@ -208,9 +208,11 @@
                 align-items: center;
             }
 
-            /* para que botón y enlace queden a la misma altura visual */
-            .policy-link {
-                margin-left: auto;
+            #langSel {
+                width: auto;
+                min-width: 150px;
+                margin-top: 20px;
+                ;
             }
         }
     </style>
@@ -220,12 +222,6 @@
 
     <div class="form-box" id="box" style="display:none">
         <img src="images/recursos/parisandbealogo.png" alt="Logo">
-        <select id="langSel" style="float:right;margin-bottom:10px">
-            <option value="es">Español</option>
-            <option value="en">English</option>
-            <option value="de">Deutsch</option>
-            <option value="fr">Français</option>
-        </select>
         <h1 id="formTitle">Registro de paciente</h1>
 
         <!-- ▸ dos columnas: left-col y right-col  -->
@@ -282,6 +278,13 @@
             <!-- acciones -->
             <div class="form-actions">
                 <button id="submitBtn" type="submit">Enviar inscripción</button>
+
+                <select id="langSel" style="float:right;margin-bottom:10px">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                    <option value="de">Deutsch</option>
+                    <option value="fr">Français</option>
+                </select>
 
                 <a href="/politica-privacidad.html?embed=1" target="_blank" class="policy-link">
                     <span class="material-icons">privacy_tip</span>
@@ -513,8 +516,8 @@
                 /* —— ÉXITO —— */
                 await Swal.fire({
                     icon: 'success',
-                    title: '¡Bienvenido/a!',
-                    text: 'Registro completado con éxito',
+                    title: successTitle,
+                    text: successText,
                     timer: 2800,
                     timerProgressBar: true,
                     allowOutsideClick: false,
