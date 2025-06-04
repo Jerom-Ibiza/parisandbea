@@ -25,7 +25,6 @@ const POSITIONS = {
     comercial: { rectangle: { x: 49, y: 655, width: 14, height: 14 }, page: 2 }
   }
 };
-['en', 'de', 'fr'].forEach(l => POSITIONS[l] = { ...POSITIONS.es });
 
 const API = axios.create({
   baseURL: process.env.VIAFIRMA_BASE,
