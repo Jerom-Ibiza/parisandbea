@@ -22,8 +22,11 @@ exports.register = async (req, res) => {
         const {
             nombre, apellidos, fecha_nacimiento, genero,
             dni, direccion, telefono, email, prefijo,
-            sendViafirma            // checkbox del formulario (boolean)
+            sendViafirma, lang            // checkbox del formulario (boolean)
         } = req.body;
+
+        const consentLang =
+            typeof lang === 'string' ? lang.trim().toLowerCase() : 'es';
 
         /* -------- validación mínima -------- */
         if (!nombre) return res.status(400).json({ error: 'Falta nombre' });
@@ -79,7 +82,7 @@ exports.register = async (req, res) => {
 
         try {
             consentInfo = await new Promise((resolve, reject) => {
-                const mockReq = { body: { id_paciente: result.insertId, sendViafirma: enviarFirma } };
+                const mockReq = { body: { id_paciente: result.insertId, sendViafirma: enviarFirma, lang: consentLang } };
                 const mockRes = {
                     status(c) { this.statusCode = c; return this; },
                     json(obj) {

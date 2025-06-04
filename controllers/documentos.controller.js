@@ -4,6 +4,14 @@ const path = require('path');
 const db = require('../database');
 const pool = require('../database');
 const { enviarConsentimiento } = require('../utils/viafirma');
+const LOPD_TEMPLATES = require('../utils/lopdTemplates');
+
+const NO_COMERCIAL = {
+  es: '[   ] NO DESEO RECIBIR INFORMACIONES COMERCIALES',
+  en: '[   ] I DO NOT WISH TO RECEIVE MARKETING INFORMATION',
+  de: '[   ] ICH MÖCHTE KEINE WERBEINFORMATIONEN ERHALTEN',
+  fr: '[   ] JE NE SOUHAITE PAS RECEVOIR D’INFORMATIONS COMMERCIALES'
+};
 
 const CHUNK_MAX = 15_000;
 
@@ -295,8 +303,11 @@ exports.generateConsentDocument = async (req, res) => {
       id_paciente,          // ← NUEVO  (recomendado)
       fechaDocumento,
       nombreArchivo,
-      sendViafirma = true
+      sendViafirma = true,
+      lang = 'es'
     } = req.body || {};
+
+    const idioma = String(lang).toLowerCase();
 
     /* 1.2  obtenemos datos del paciente directamente de BD
             (solo nombre, apellidos, dni, email)               */
@@ -365,55 +376,24 @@ exports.generateConsentDocument = async (req, res) => {
       ? fechaDocumento.split('-').reverse().join('-')      // yyyy-mm-dd → dd-mm-yyyy
       : `${String(hoy.getDate()).padStart(2, '0')}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${hoy.getFullYear()}`;
 
-    /* 6. contenido del PDF (igual que antes) --------------------- */
-    const secciones = [
-      ['A. RESPONSABLE:', [
-        `• ${nombreResponsable} (${cifResponsable})`,
-        `• ${direccionCentro}`,
-        `• ${mailCentro}`
-      ]],
-      ['B. FINALIDADES:', [
-        '• Prestación asistencial al paciente (visitas médicas, intervenciones, pruebas).',
-        '• Gestión del paciente y su historia clínica.',
-        '• Tareas administrativas derivadas de la prestación asistencial.',
-        '• Apoyo al diagnóstico, redacción de informes y transcripción de notas clínicas mediante sistemas de inteligencia artificial externos (p. ej., OpenAI Ireland Ltd. – “ChatGPT/Whisper” – y ViaFirma en España), siempre bajo la supervisión de un profesional sanitario y con fines exclusivos de asistencia',
-        '• Informarle de nuestros productos y servicios vía electrónica y postal.'
-      ]],
-      ['C. LEGITIMACIÓN:', [
-        '• Ejecución de contrato de prestación de servicios entre el sanitario y el paciente.',
-        '• Ejecución de un contrato con su mutua médica.',
-        '• Tratamiento necesario para fines de diagnóstico y asistencia sanitaria realizado por profesional sujeto a secreto.',
-        '• Ley reguladora de la autonomía del paciente y de derechos y obligaciones en materia de información y documentación clínica.',
-        '• Consentimiento explícito del interesado para que sus datos clínicos anomizados puedan ser tratados por herramientas de IA y, en su caso, ser transferidos dentro del EEE (ver apartado E).',
-        '• Interés legítimo en informar a nuestros pacientes de nuestros productos y servicios sanitarios.'
-      ]],
-      ['D. DESTINATARIOS:', [
-        '• Compañías responsables de su cobertura médica para que ésta pueda conocer el acto prestado y hacer frente a su responsabilidad.',
-        '• Centros o profesionales sanitarios responsables del paciente o necesarios para la prestación de los servicios solicitados.',
-        '• Casos legalmente previstos.',
-        '• Proveedores tecnológicos que prestan servicios de IA y alojamiento, actuando como encargados del tratamiento: OpenAI Ireland Ltd. (operador de ChatGPT/Whisper) y ViaFirma en España. Dichos proveedores han suscrito contrato de encargo con la clínica y aplican Cláusulas Contractuales Estándar y otras salvaguardas para garantizar un nivel de protección equivalente al europeo.'
-      ]],
-      ['E. CONSERVACIÓN DE LOS DATOS:', [
-        '• Serán conservados durante la vigencia del acuerdo asistencial.',
-        '• Se conservarán en todo caso según las exigencias de conservación de la documentación clínica de la Ley reguladora de la autonomía del paciente.',
-        '• Datos comerciales: cuando el usuario solicite su baja.'
-      ]],
-      ['F. CONSENTIMIENTO EXPLÍCITO PARA EL USO DE IA Y TRANSFERENCIA INTERNACIONAL:', [
-        'Marque lo que proceda:',
-        '[   ] ACEPTO Autorizo expresamente que PARIS & BEA envíe mis datos de salud (anomizados) a OpenAI Ireland Ltd. y otros encargados equivalentes, con la única finalidad de apoyar el diagnóstico y/o documentar mi asistencia mediante herramientas de inteligencia artificial. Y entiendo que la decisión clínica final será siempre del profesional sanitario.',
-        'Si no autorizo el uso de mis datos por sistemas de IA externos. Reconozco que la clínica podrá seguir prestándome asistencia, pero las funcionalidades de IA no se aplicarán a mi caso.'
-      ]],
-      ['G. DERECHOS:', [
-        '• Tiene derecho a solicitar el acceso, rectificación, supresión, oposición, limitación y portabilidad de sus datos personales.',
-        '• Puede solicitarlos dirigiéndose a los datos de contacto del responsable.',
-        '• En caso de divergencias, puede presentar una reclamación ante la Autoridad de Protección de Datos (www.agpd.es).'
-      ]]
-    ];
+    /* 6. contenido del PDF dependiendo del idioma ---------------- */
+    const tpl = LOPD_TEMPLATES[idioma] || LOPD_TEMPLATES.es;
+    const secciones = tpl.sections.map(([tit, parrs], idx) => {
+      if (idx === 0) {
+        return [tit, [
+          `• ${nombreResponsable} (${cifResponsable})`,
+          `• ${direccionCentro}`,
+          `• ${mailCentro}`
+        ]];
+      }
+      return [tit, parrs];
+    });
+    const headerText = tpl.header;
 
     /* 7. maquetación ------------------------------------------------ */
     doc.moveDown(6);
     doc.fontSize(14).fillColor('#000').font('Raleway-Bold')
-      .text('INFORMACIÓN SOBRE PROTECCIÓN DE DATOS DEL PACIENTE', { align: 'center' })
+      .text(headerText, { align: 'center' })
       .moveDown(1);
 
     doc.fontSize(11).fillColor('#000');
@@ -425,7 +405,8 @@ exports.generateConsentDocument = async (req, res) => {
     });
 
     doc.moveDown(0.5);
-    doc.font('Raleway').text('[   ] NO DESEO RECIBIR INFORMACIONES COMERCIALES');
+    const noComText = NO_COMERCIAL[idioma] || NO_COMERCIAL.es;
+    doc.font('Raleway').text(noComText);
     doc.moveDown(1.2);
 
     // Datos firma manual

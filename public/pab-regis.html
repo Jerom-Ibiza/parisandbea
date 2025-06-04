@@ -315,6 +315,8 @@
                     <option value="fr">Français</option>
                 </select>
 
+                <input type="hidden" id="docLang" name="lang" value="es">
+
                 <a id="policyLink" href="/politica-privacidad.html?embed=1" target="_blank" class="policy-link">
                     <span class="material-icons">privacy_tip</span>
                     <span id="linkPrivacidad">Política de privacidad</span>
@@ -442,6 +444,7 @@
             document.getElementById('submitBtn').textContent = t.submit;
             document.getElementById('linkPrivacidad').textContent = t.privacidad;
             document.getElementById('policyLink').href = `/politica-privacidad.html?embed=1&lang=${lang}`;
+            document.getElementById('docLang').value = lang;
             successTitle = t.successTitle;
             successText = t.successText;
         }
