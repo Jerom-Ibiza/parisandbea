@@ -220,39 +220,45 @@
 
     <div class="form-box" id="box" style="display:none">
         <img src="images/recursos/parisandbealogo.png" alt="Logo">
-        <h1>Registro de paciente</h1>
+        <select id="langSel" style="float:right;margin-bottom:10px">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+            <option value="de">Deutsch</option>
+            <option value="fr">Français</option>
+        </select>
+        <h1 id="formTitle">Registro de paciente</h1>
 
         <!-- ▸ dos columnas: left-col y right-col  -->
         <form id="regForm">
             <div class="left-col">
-                <label for="nombre">Nombre*</label>
+                <label id="lblNombre" for="nombre">Nombre*</label>
                 <input id="nombre" name="nombre" required>
 
-                <label for="apellidos">Apellidos</label>
+                <label id="lblApellidos" for="apellidos">Apellidos</label>
                 <input id="apellidos" name="apellidos" required>
 
-                <label for="fecha_nacimiento">Fecha nacimiento (dd/mm/aaaa)</label>
+                <label id="lblFecha" for="fecha_nacimiento">Fecha nacimiento (dd/mm/aaaa)</label>
                 <input id="fecha_nacimiento" name="fecha_nacimiento" placeholder="dd/mm/aaaa"
                     pattern="\d{2}[-/]\d{2}[-/]\d{4}" autocomplete="bday" inputmode="numeric">
 
-                <label for="genero">Género</label>
+                <label id="lblGenero" for="genero">Género</label>
                 <select id="genero" name="genero">
-                    <option value="">-- selecciona --</option>
-                    <option>Femenino</option>
-                    <option>Masculino</option>
-                    <option>Otro</option>
+                    <option id="optGeneroNull" value="">-- selecciona --</option>
+                    <option id="optGeneroF">Femenino</option>
+                    <option id="optGeneroM">Masculino</option>
+                    <option id="optGeneroO">Otro</option>
                 </select>
             </div>
 
             <div class="right-col">
-                <label for="dni">DNI / Pasaporte*</label>
+                <label id="lblDni" for="dni">DNI / Pasaporte*</label>
                 <input id="dni" name="dni" placeholder="DNI o pasaporte" required>
 
-                <label for="direccion">Dirección</label>
+                <label id="lblDireccion" for="direccion">Dirección</label>
                 <input id="direccion" name="direccion">
 
                 <!-- PREFIJO + TELÉFONO -->
-                <label for="prefijo">Teléfono*</label>
+                <label id="lblTelefono" for="prefijo">Teléfono*</label>
                 <div style="display:flex;gap:8px">
                     <input id="prefijo" name="prefijo" value="+34" style="max-width:90px" pattern="\+\d{1,4}"
                         title="Empieza por + seguido de 1-4 dígitos" inputmode="numeric" autocomplete="tel-country-code"
@@ -263,29 +269,159 @@
                         style="flex:1">
                 </div>
 
-                <label for="email">Email</label>
+                <label id="lblEmail" for="email">Email</label>
                 <input id="email" name="email" type="email" autocomplete="email">
             </div>
 
             <label style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
                 <input type="checkbox" id="sendViafirma" name="sendViafirma" checked
                     style="width:18px;height:18px;accent-color:#0076b6">
-                Firma digital consentimiento informado (recomendado)
+                <span id="lblViafirma">Firma digital consentimiento informado (recomendado)</span>
             </label>
 
             <!-- acciones -->
             <div class="form-actions">
-                <button type="submit">Enviar inscripción</button>
+                <button id="submitBtn" type="submit">Enviar inscripción</button>
 
                 <a href="/politica-privacidad.html?embed=1" target="_blank" class="policy-link">
                     <span class="material-icons">privacy_tip</span>
-                    Política de privacidad
+                    <span id="linkPrivacidad">Política de privacidad</span>
                 </a>
             </div>
         </form>
     </div>
 
     <script>
+        const strings = {
+            es: {
+                title: 'Registro de Paciente | Paris & Bea',
+                formTitle: 'Registro de paciente',
+                nombre: 'Nombre*',
+                apellidos: 'Apellidos',
+                fecha: 'Fecha nacimiento (dd/mm/aaaa)',
+                fechaPH: 'dd/mm/aaaa',
+                genero: 'Género',
+                generoNull: '-- selecciona --',
+                generoF: 'Femenino',
+                generoM: 'Masculino',
+                generoO: 'Otro',
+                dni: 'DNI / Pasaporte*',
+                dniPH: 'DNI o pasaporte',
+                direccion: 'Dirección',
+                telefono: 'Teléfono*',
+                email: 'Email',
+                viafirma: 'Firma digital consentimiento informado (recomendado)',
+                submit: 'Enviar inscripción',
+                privacidad: 'Política de privacidad',
+                successTitle: '¡Bienvenido/a!',
+                successText: 'Registro completado con éxito',
+            },
+            en: {
+                title: 'Patient Registration | Paris & Bea',
+                formTitle: 'Patient registration',
+                nombre: 'First name*',
+                apellidos: 'Last name',
+                fecha: 'Date of birth (dd/mm/yyyy)',
+                fechaPH: 'dd/mm/yyyy',
+                genero: 'Gender',
+                generoNull: '-- select --',
+                generoF: 'Female',
+                generoM: 'Male',
+                generoO: 'Other',
+                dni: 'ID / Passport*',
+                dniPH: 'ID or passport',
+                direccion: 'Address',
+                telefono: 'Phone*',
+                email: 'Email',
+                viafirma: 'Digital signature of informed consent (recommended)',
+                submit: 'Submit',
+                privacidad: 'Privacy policy',
+                successTitle: 'Welcome!',
+                successText: 'Registration completed successfully',
+            },
+            de: {
+                title: 'Patientenregistrierung | Paris & Bea',
+                formTitle: 'Patientenregistrierung',
+                nombre: 'Vorname*',
+                apellidos: 'Nachname',
+                fecha: 'Geburtsdatum (TT/MM/JJJJ)',
+                fechaPH: 'TT/MM/JJJJ',
+                genero: 'Geschlecht',
+                generoNull: '-- auswählen --',
+                generoF: 'Weiblich',
+                generoM: 'Männlich',
+                generoO: 'Andere',
+                dni: 'Ausweis / Pass*',
+                dniPH: 'Ausweis oder Pass',
+                direccion: 'Adresse',
+                telefono: 'Telefon*',
+                email: 'E-Mail',
+                viafirma: 'Digitale Unterschrift der Einverständniserklärung (empfohlen)',
+                submit: 'Anmeldung absenden',
+                privacidad: 'Datenschutzrichtlinie',
+                successTitle: 'Willkommen!',
+                successText: 'Registrierung erfolgreich abgeschlossen',
+            },
+            fr: {
+                title: 'Enregistrement du patient | Paris & Bea',
+                formTitle: 'Enregistrement du patient',
+                nombre: 'Prénom*',
+                apellidos: 'Nom',
+                fecha: 'Date de naissance (jj/mm/aaaa)',
+                fechaPH: 'jj/mm/aaaa',
+                genero: 'Genre',
+                generoNull: '-- sélectionnez --',
+                generoF: 'Féminin',
+                generoM: 'Masculin',
+                generoO: 'Autre',
+                dni: "Carte d'identité / Passeport*",
+                dniPH: "Carte d'identité ou passeport",
+                direccion: 'Adresse',
+                telefono: 'Téléphone*',
+                email: 'Email',
+                viafirma: 'Signature numérique du consentement éclairé (recommandé)',
+                submit: "Envoyer l'inscription",
+                privacidad: 'Politique de confidentialité',
+                successTitle: 'Bienvenue!',
+                successText: "Inscription réussie",
+            }
+        };
+
+        function applyLang(lang) {
+            const t = strings[lang] || strings.es;
+            document.documentElement.lang = lang;
+            document.title = t.title;
+            document.getElementById('formTitle').textContent = t.formTitle;
+            document.getElementById('lblNombre').textContent = t.nombre;
+            document.getElementById('lblApellidos').textContent = t.apellidos;
+            document.getElementById('lblFecha').textContent = t.fecha;
+            document.getElementById('fecha_nacimiento').placeholder = t.fechaPH;
+            document.getElementById('lblGenero').textContent = t.genero;
+            document.getElementById('optGeneroNull').textContent = t.generoNull;
+            document.getElementById('optGeneroF').textContent = t.generoF;
+            document.getElementById('optGeneroM').textContent = t.generoM;
+            document.getElementById('optGeneroO').textContent = t.generoO;
+            document.getElementById('lblDni').textContent = t.dni;
+            document.getElementById('dni').placeholder = t.dniPH;
+            document.getElementById('lblDireccion').textContent = t.direccion;
+            document.getElementById('lblTelefono').textContent = t.telefono;
+            document.getElementById('lblEmail').textContent = t.email;
+            document.getElementById('lblViafirma').textContent = t.viafirma;
+            document.getElementById('submitBtn').textContent = t.submit;
+            document.getElementById('linkPrivacidad').textContent = t.privacidad;
+            successTitle = t.successTitle;
+            successText = t.successText;
+        }
+
+        let successTitle = strings.es.successTitle;
+        let successText = strings.es.successText;
+
+        document.getElementById('langSel').addEventListener('change', e => {
+            applyLang(e.target.value);
+        });
+
+        applyLang('es');
+
         /* ========= máscara de fecha ========= */
         const fechaInput = document.getElementById('fecha_nacimiento');
         fechaInput.addEventListener('input', () => {
