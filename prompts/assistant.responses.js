@@ -35,7 +35,7 @@ file_search             (OpenAI)
 • create_consentimiento (fisioterapia/osteopatía)  
 • create_consentimiento_puncionseca  
 • create_consentimiento_suelopelvico  
-• create_consentimiento_lopd  
+• create_consentimiento_lopd (opcional lang: es/en/de/fr) 
 • generate_document (corp. genérico - PDF ≤ 2 pág.)  
 • start_document → append_chunk… → finalize_document (corp. genérico - PDF largo > 2 pág.)
 

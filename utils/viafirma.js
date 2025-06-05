@@ -12,7 +12,7 @@ const POSITIONS = {
   en: {
     signature: { rectangle: { x: 380, y: 620, width: 180, height: 80 }, page: 2 },
     ia: { rectangle: { x: 49, y: 125, width: 14, height: 14 }, page: 1 },
-    comercial: { rectangle: { x: 53, y: 685, width: 14, height: 14 }, page: 2 }
+    comercial: { rectangle: { x: 49, y: 686, width: 14, height: 14 }, page: 2 }
   },
   de: {
     signature: { rectangle: { x: 380, y: 480, width: 180, height: 80 }, page: 2 },

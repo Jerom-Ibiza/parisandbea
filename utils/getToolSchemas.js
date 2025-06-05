@@ -328,7 +328,11 @@ module.exports = (LOCAL_FUNCTIONS = {}) => {
         type: 'object',
         properties: {
           nombreArchivo: { type: 'string', description: 'Nombre final del PDF (opcional, incluye .pdf)' },
-          fechaDocumento: { type: 'string', description: 'Fecha en formato yyyy-mm-dd (opcional)' }
+          fechaDocumento: { type: 'string', description: 'Fecha en formato yyyy-mm-dd (opcional)' },
+          lang: {
+            type: 'string',
+            description: 'Idioma del documento: es | en | de | fr (por defecto es)'
+          }
         },
         additionalProperties: false
       }

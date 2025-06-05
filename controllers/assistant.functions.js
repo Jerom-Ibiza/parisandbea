@@ -430,11 +430,14 @@ const LOCAL_FUNCTIONS = {
     if (!req.session.user || !req.session.patient)
       throw new Error('Sesión no válida');
 
+    const { lang = 'es', ...rest } = args;
+
     /* ahora solo pasamos los IDs y los opcionales que nos lleguen */
     const payload = {
       id_paciente: req.session.patient.id_paciente,
       id_profesional: req.session.user.id_profesional,  // por si tuvieras lógica futura
-      ...args                                          // nombreArchivo, fechaDocumento…
+      lang,
+      ...rest                                         // nombreArchivo, fechaDocumento…
     };
 
     return await new Promise((resolve, reject) => {

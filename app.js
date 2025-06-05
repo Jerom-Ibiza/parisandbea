@@ -7,6 +7,7 @@ const cron = require('node-cron');
 const { revisarAyer } = require('./cron/incidenciasCron');
 const { limpiarDrafts } = require('./cron/cleanDraftsCron');
 const { cleanTokens } = require('./cron/cleanTokensCron');
+const { cleanConsentimientos } = require('./cron/cleanConsentimientosCron');
 const cors = require('cors');
 const TMP = path.join(__dirname, 'tmp');
 
@@ -164,6 +165,12 @@ cron.schedule('0 2 * * *', () => {
 cron.schedule('30 3 * * *', () => {
   console.log('[cron] Limpiando borradores PDF caducados…');
   limpiarDrafts();               // 24 h por defecto
+}, { timezone: 'Europe/Madrid' });
+
+// Cada lunes a las 04:45 (hora de Madrid) elimina consentimientos generados
+cron.schedule('45 4 * * 1', () => {
+  console.log('[cron] Limpiando documentos de consentimientos…');
+  cleanConsentimientos();
 }, { timezone: 'Europe/Madrid' });
 
 app.use((req, res, next) => {
