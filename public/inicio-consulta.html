@@ -300,7 +300,7 @@
       justify-content: center;
       gap: 20px;
       background: none;
-      margin-bottom: 100px;
+      margin-bottom: 50px;
     }
 
     /* --- estilo común de ambos botones --- */
@@ -346,6 +346,38 @@
         /* centra icono + texto */
       }
     }
+
+    /* ===== pantallas anchas 1200-1920px ===== */
+    @media (min-width:1200px) and (max-width:1920px) {
+      .wrapper {
+        max-width: 1200px;
+      }
+
+      .main-section {
+        display: flex;
+        align-items: flex-start;
+        gap: 40px;
+        width: 100%;
+      }
+
+      .manual-box {
+        max-width: 340px;
+      }
+
+      .table-responsive {
+        flex: 1;
+        max-height: calc(100vh - 260px);
+        overflow-y: auto;
+      }
+
+      .mic-btn {
+        margin-top: 140px;
+      }
+    }
+
+    .mic-btn {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 
@@ -366,35 +398,36 @@
 
   <div class="wrapper">
     <img src="images/recursos/parisandbealogo.png" alt="Logo" class="logo" />
+    <div class="main-section">
+      <!-- fila mic + stop -->
+      <div class="mic-row">
+        <button id="btnStopRec" class="stop-btn" title="Cancelar grabación">
+          Cancel
+        </button>
+        <button id="btnStartIdentification" class="mic-btn" title="Identificar paciente por voz">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2zm-5 9v-3h-2v3H7v2h10v-2h-5z" />
+          </svg>
+        </button>
+      </div>
 
-    <!-- fila mic + stop -->
-    <div class="mic-row">
-      <button id="btnStopRec" class="stop-btn" title="Cancelar grabación">
-        Cancel
-      </button>
-      <button id="btnStartIdentification" class="mic-btn" title="Identificar paciente por voz">
-        <svg viewBox="0 0 24 24">
-          <path
-            d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2zm-5 9v-3h-2v3H7v2h10v-2h-5z" />
-        </svg>
-      </button>
-    </div>
-
-    <!-- búsqueda manual -->
-    <div class="manual-box">
-      <input id="txtQuery" type="text" placeholder="Nombre, DNI, teléfono o email…" />
-    </div>
-    <div class="table-responsive">
-      <table id="tblResults" class="results-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Apellidos</th>
-            <th>DNI</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <!-- búsqueda manual -->
+      <div class="manual-box">
+        <input id="txtQuery" type="text" placeholder="Nombre, DNI, teléfono o email…" />
+      </div>
+      <div class="table-responsive">
+        <table id="tblResults" class="results-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Apellidos</th>
+              <th>DNI</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </div>
   <!-- ===== FOOTER con los dos botones ===== -->

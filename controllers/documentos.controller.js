@@ -108,7 +108,6 @@ exports.finalizeDraft = async (req, res) => {
     const mockSend = data => {
       /* borramos borrador */
       pool.query('DELETE FROM document_drafts WHERE id_draft = ?', [draftId]).catch(console.error);
-      pool.query('DELETE FROM document_chunks WHERE id_draft = ?', [draftId]).catch(console.error);
       res.json(data);                     // devolvemos al cliente
     };
 
