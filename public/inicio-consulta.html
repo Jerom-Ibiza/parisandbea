@@ -146,19 +146,27 @@
       font-size: 16px
     }
 
-    .manual-box button {
-      padding: 0 20px;
-      background: #aed3c1;
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background .2s
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
     }
 
-    .manual-box button:active {
-      background: #7fb29b
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    .results-table th,
+    .results-table td {
+      padding: 8px;
+      border: 1px solid #e0e0e0;
+      text-align: left;
+    }
+
+    .results-table tr:hover {
+      background: #f5f5f5;
+      cursor: pointer;
     }
 
     /* ——— enlace archivos ——— */
@@ -375,7 +383,18 @@
     <!-- búsqueda manual -->
     <div class="manual-box">
       <input id="txtQuery" type="text" placeholder="Nombre, DNI, teléfono o email…" />
-      <button id="btnSearch">Enviar</button>
+    </div>
+    <div class="table-responsive">
+      <table id="tblResults" class="results-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Apellidos</th>
+            <th>DNI</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
   <!-- ===== FOOTER con los dos botones ===== -->
@@ -474,36 +493,49 @@
       }
     }
 
-    // ——— Búsqueda manual por texto ———
-    $('btnSearch').onclick = sendManual;
-    $('txtQuery').onkeydown = e => { if (e.key === 'Enter') sendManual(); };
-
-    async function sendManual() {
+    // ——— Búsqueda en tiempo real ———
+    const tbody = $('tblResults').querySelector('tbody');
+    let typingTimer;
+    $('txtQuery').addEventListener('input', () => {
+      clearTimeout(typingTimer);
       const q = $('txtQuery').value.trim();
-      if (!q) { alert('Escribe un dato del paciente'); return; }
+      if (!q) { tbody.innerHTML = ''; return; }
+      typingTimer = setTimeout(() => fetchResults(q), 300);
+    });
+
+    async function fetchResults(q) {
+      try {
+        const r = await fetch('/api/voice/suggest?q=' + encodeURIComponent(q));
+        const res = await r.json();
+        tbody.innerHTML = res.map(p => `
+          <tr data-id="${p.id_paciente}">
+            <td>${p.nombre}</td>
+            <td>${p.apellidos}</td>
+            <td>${p.dni ?? ''}</td>
+          </tr>`).join('');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    tbody.addEventListener('click', async e => {
+      const tr = e.target.closest('tr');
+      if (!tr) return;
       try {
         showLoader();
-        const r = await fetch('/api/voice/identify-text', {
+        const r = await fetch('/api/voice/select', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: q })
+          body: JSON.stringify({ id: tr.dataset.id })
         });
         const res = await r.json();
         hideLoader();
-        if (!res.found) {
-          await Swal.fire({
-            icon: 'warning',
-            title: 'Paciente no encontrado'
-          });
-          return;
-        }
-        location.href = res.redirect;
+        if (r.ok && res.redirect) location.href = res.redirect;
       } catch (e) {
         console.error(e);
         hideLoader();
-        alert('Error buscando paciente');
       }
-    }
+    });
 
     // ——— Cerrar modal tocando fondo ———
     $('modalTime').addEventListener('click', e => {

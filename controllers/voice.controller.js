@@ -1,9 +1,9 @@
 // controllers/voice.controller.js
 
-const fs     = require('fs');
-const path   = require('path');
+const fs = require('fs');
+const path = require('path');
 const multer = require('multer');
-const pool   = require('../database');
+const pool = require('../database');
 const logger = require('../logger');
 const OpenAI = require('openai');
 
@@ -18,22 +18,24 @@ const normalize = s => s
   .replace(/[\u0300-\u036f]/g, '');
 
 const words2digits = s => {
-  const map = { cero:'0', uno:'1', dos:'2', tres:'3', cuatro:'4',
-                cinco:'5', seis:'6', siete:'7', ocho:'8', nueve:'9' };
+  const map = {
+    cero: '0', uno: '1', dos: '2', tres: '3', cuatro: '4',
+    cinco: '5', seis: '6', siete: '7', ocho: '8', nueve: '9'
+  };
   return s.split(/\s+/).map(w => map[w] ?? w).join('');
 };
 
 const levenshtein = (a, b) => {
   if (a.length > b.length) [a, b] = [b, a];
-  const row = Array.from({length: a.length+1}, (_, i) => i);
+  const row = Array.from({ length: a.length + 1 }, (_, i) => i);
   for (let i = 1; i <= b.length; i++) {
     let prev = row[0];
     row[0] = i;
     for (let j = 1; j <= a.length; j++) {
       const cur = row[j];
-      row[j] = b[i-1] === a[j-1]
+      row[j] = b[i - 1] === a[j - 1]
         ? prev
-        : 1 + Math.min(prev, row[j-1], cur);
+        : 1 + Math.min(prev, row[j - 1], cur);
       prev = cur;
     }
   }
@@ -48,7 +50,7 @@ async function getBy(sql, params) {
 
 async function fuzzyByTokens(tokens) {
   const first = tokens[0];
-  const like = `%${first.slice(0,3)}%`;
+  const like = `%${first.slice(0, 3)}%`;
   const [rows] = await pool.query(
     `SELECT id_paciente,nombre,apellidos
        FROM pacientes
@@ -68,13 +70,13 @@ async function fuzzyByTokens(tokens) {
 
 async function searchPatient(raw) {
   // 1) email, DNI, teléfono
-  const digitSeq  = words2digits(raw).replace(/\D/g, '');
-  const email     = raw.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/);
-  const dni       = raw.match(/\b\d{7,8}[a-z]\b/i);
+  const digitSeq = words2digits(raw).replace(/\D/g, '');
+  const email = raw.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/);
+  const dni = raw.match(/\b\d{7,8}[a-z]\b/i);
   const phoneLike = digitSeq.length >= 6 ? `%${digitSeq}%` : null;
 
-  if (email)  return getBy(`SELECT id_paciente,nombre,apellidos FROM pacientes WHERE email = ? LIMIT 1`, [email[0]]);
-  if (dni)    return getBy(`SELECT id_paciente,nombre,apellidos FROM pacientes WHERE dni = ? LIMIT 1`, [dni[0].toUpperCase()]);
+  if (email) return getBy(`SELECT id_paciente,nombre,apellidos FROM pacientes WHERE email = ? LIMIT 1`, [email[0]]);
+  if (dni) return getBy(`SELECT id_paciente,nombre,apellidos FROM pacientes WHERE dni = ? LIMIT 1`, [dni[0].toUpperCase()]);
   if (phoneLike) return getBy(`SELECT id_paciente,nombre,apellidos FROM pacientes WHERE REPLACE(telefono," ","") LIKE ? LIMIT 1`, [phoneLike]);
 
   // 2) tokens exactos
@@ -123,7 +125,7 @@ exports.identifyPatient = [
         language: 'es'
       });
 
-      fs.unlink(realPath, () => {});
+      fs.unlink(realPath, () => { });
       const raw = normalize(text.trim());
       const pat = await searchPatient(raw);
       if (!pat) {
@@ -152,5 +154,53 @@ exports.identifyPatientByText = async (req, res) => {
   } catch (e) {
     logger.error(e);
     res.status(500).json({ error: 'Error buscando paciente' });
+  }
+};
+
+// --- sugerencias rápidas por texto ---
+exports.suggestPatients = async (req, res) => {
+  try {
+    const q = String(req.query.q || '').trim();
+    if (!q) return res.json([]);
+    const norm = normalize(q);
+    const like = `%${norm}%`;
+    const digits = words2digits(q).replace(/\D/g, '');
+
+    let sql = `SELECT id_paciente,nombre,apellidos,dni
+                 FROM pacientes
+                WHERE LOWER(CONVERT(nombre USING utf8mb4)) LIKE ?
+                   OR LOWER(CONVERT(apellidos USING utf8mb4)) LIKE ?
+                   OR dni LIKE ?
+                   OR email LIKE ?`;
+    const params = [like, like, `%${q}%`, `%${q}%`];
+    if (digits) {
+      sql += ' OR REPLACE(telefono," ","") LIKE ?';
+      params.push(`%${digits}%`);
+    }
+    sql += ' ORDER BY nombre LIMIT 10';
+
+    const [rows] = await pool.query(sql, params);
+    res.json(rows);
+  } catch (e) {
+    logger.error(e);
+    res.status(500).json({ error: 'Error buscando pacientes' });
+  }
+};
+
+// --- seleccionar paciente por ID ---
+exports.selectPatientById = async (req, res) => {
+  try {
+    const id = Number(req.body.id);
+    if (!id) return res.status(400).json({ error: 'Falta id' });
+    const [rows] = await pool.query(
+      'SELECT id_paciente,nombre,apellidos FROM pacientes WHERE id_paciente = ? LIMIT 1',
+      [id]
+    );
+    if (!rows.length) return res.status(404).json({ error: 'Paciente no encontrado' });
+    req.session.patient = rows[0];
+    res.json({ redirect: '/consulta.html' });
+  } catch (e) {
+    logger.error(e);
+    res.status(500).json({ error: 'Error seleccionando paciente' });
   }
 };
