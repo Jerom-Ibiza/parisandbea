@@ -32,7 +32,7 @@ get_patient_file        → devuelve { url, filename } de un adjunto concreto
 file_search             (OpenAI)
 
 # CREAR PDFs
-• create_consentimiento (fisioterapia/osteopatía)  
+• create_consentimiento (fisioterapia/osteopatía, opcional lang: es/en/de/fr)
 • create_consentimiento_puncionseca  
 • create_consentimiento_suelopelvico  
 • create_consentimiento_lopd (opcional lang: es/en/de/fr) 

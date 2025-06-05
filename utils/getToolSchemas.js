@@ -239,7 +239,8 @@ module.exports = (LOCAL_FUNCTIONS = {}) => {
         properties: {
           nombre_representado: { type: 'string', description: 'Nombre del representado (opcional)' },
           calidad_representante: { type: 'string', description: 'Relaci�n o cargo (opcional)' },
-          dni_representante: { type: 'string', description: 'DNI/NIE/Pasaporte (opcional)' }
+          dni_representante: { type: 'string', description: 'DNI/NIE/Pasaporte (opcional)' },
+          lang: { type: 'string', description: 'Idioma del documento: es | en | de | fr (por defecto es)' }
         },
         additionalProperties: false
       }

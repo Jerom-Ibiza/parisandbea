@@ -278,10 +278,13 @@ const LOCAL_FUNCTIONS = {
     if (!req.session.user || !req.session.patient)
       throw new Error('Sesión no válida');
 
+    const { lang = 'es', ...rest } = args;
+
     const payload = {
       id_paciente: req.session.patient.id_paciente,
       id_profesional: req.session.user.id_profesional,
-      ...args
+      lang,
+      ...rest
     };
 
     /* devolvemos una Promise que se resuelve en mockRes.json() */
