@@ -2,96 +2,164 @@ const pool = require('../database');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
+const FISIO_TPL = require('../utils/fisioOstioTemplates');
 
 /* ───────── helpers generales ───────── */
-const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto',
-  'septiembre', 'octubre', 'noviembre', 'diciembre'];
+const MESES = {
+  es: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto',
+    'septiembre', 'octubre', 'noviembre', 'diciembre'],
+  en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December'],
+  de: ['Januar', 'Februar', 'M\u00e4rz', 'April', 'Mai', 'Juni', 'Juli', 'August',
+    'September', 'Oktober', 'November', 'Dezember'],
+  fr: ['janvier', 'f\u00e9vrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'ao\u00fbt',
+    'septembre', 'octobre', 'novembre', 'd\u00e9cembre']
+};
 
-const hoyYHora = () => {
+const hoyYHora = (lang = 'es') => {
   const now = new Date();
-  const hoy = `${String(now.getDate()).padStart(2, '0')} de ${meses[now.getMonth()]} de ${now.getFullYear()}`;
+  const meses = MESES[lang] || MESES.es;
+  const dd = String(now.getDate()).padStart(2, '0');
+  const mm = meses[now.getMonth()];
+  const yyyy = now.getFullYear();
+  let hoy;
+  switch (lang) {
+    case 'en':
+      hoy = `${dd} ${mm} ${yyyy}`;
+      break;
+    case 'de':
+      hoy = `${dd}. ${mm} ${yyyy}`;
+      break;
+    case 'fr':
+      hoy = `${dd} ${mm} ${yyyy}`;
+      break;
+    default:
+      hoy = `${dd} de ${mm} de ${yyyy}`;
+  }
   const hora = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   return { hoy, hora };
 };
 
 const normaliza = txt => (txt || '').trim();
 
-/* ───────── helper WINBACK 1-4 ───────── */
-const winbackCompleto = (addTitulo, addListaSafe) => {
-  addTitulo('TECAR. 1 - PROCEDIMIENTO');
-  addListaSafe([
-    'TECAR (alta frecuencia), que estimula los mecanismos de cicatrización naturales del cuerpo y favorece la renovación celular',
-    'HI-TENS (alta frecuencia con impulsos de baja frecuencia), que aumenta la potencia analgésica del TENS',
-    'HI-EMS (media frecuencia modulada en bajas frecuencias), que contrae en profundidad los músculos para conseguir un refuerzo muscular y un drenaje'
-  ]);
+const HEADINGS = {
+  es: {
+    centro: '· CENTRO DE OSTEOPATÍA INTEGRAL Y FISIOTERAPIA:',
+    profesional: '· PROFESIONAL:',
+    otrosProfesionales: '· OTROS PROFESIONALES DEL CENTRO:',
+    paciente: '· IDENTIFICACIÓN DEL PACIENTE:',
+    naturaleza: '· NATURALEZA, OBJETIVO Y PLAN DE TRATAMIENTO',
+    dataProtection: '· PROTECCIÓN DE DATOS',
+    patientRights: '· DERECHOS DEL PACIENTE',
+    declaration: '· DECLARACIÓN DEL PACIENTE',
+    tecar1: 'TECAR. 1 - PROCEDIMIENTO',
+    tecar2: 'TECAR. 2 - CONSECUENCIAS SEGURAS',
+    tecar3: 'TECAR. 3 - DESCRIPCIÓN DE LAS CONTRAINDICACIONES',
+    tecar4: 'TECAR. 4 - EFECTOS SECUNDARIOS',
+    cryo1: 'CRYO. 1 - PROCEDIMIENTO',
+    cryo2: 'CRYO. 2 - DESCRIPCIÓN DE LAS CONTRAINDICACIONES',
+    cryo3: 'CRYO. 3 - EFECTOS SECUNDARIOS'
+  },
+  en: {
+    centro: '· INTEGRAL OSTEOPATHY & PHYSIOTHERAPY CENTRE:',
+    profesional: '· PRACTITIONER:',
+    otrosProfesionales: '· OTHER CENTRE PRACTITIONERS:',
+    paciente: '· PATIENT IDENTIFICATION:',
+    naturaleza: '· NATURE, PURPOSE AND TREATMENT PLAN',
+    dataProtection: '· DATA PROTECTION',
+    patientRights: '· PATIENT RIGHTS',
+    declaration: '· PATIENT DECLARATION',
+    tecar1: 'TECAR. 1 - PROCEDURE',
+    tecar2: 'TECAR. 2 - EXPECTED CONSEQUENCES',
+    tecar3: 'TECAR. 3 - CONTRAINDICATIONS',
+    tecar4: 'TECAR. 4 - SIDE EFFECTS',
+    cryo1: 'CRYO. 1 - PROCEDURE',
+    cryo2: 'CRYO. 2 - CONTRAINDICATIONS',
+    cryo3: 'CRYO. 3 - SIDE EFFECTS'
+  },
+  de: {
+    centro: '· ZENTRUM FÜR OSTEOPATHIE UND PHYSIOTHERAPIE:',
+    profesional: '· BEHANDLER:',
+    otrosProfesionales: '· WEITERE MITARBEITER DES ZENTRUMS:',
+    paciente: '· PATIENTENIDENTIFIKATION:',
+    naturaleza: '· ART, ZIEL UND BEHANDLUNGSPLAN',
+    dataProtection: '· DATENSCHUTZ',
+    patientRights: '· RECHTE DES PATIENTEN',
+    declaration: '· ERKLÄRUNG DES PATIENTEN',
+    tecar1: 'TECAR. 1 - VERFAHREN',
+    tecar2: 'TECAR. 2 - SICHERE FOLGEN',
+    tecar3: 'TECAR. 3 - KONTRAINDIKATIONEN',
+    tecar4: 'TECAR. 4 - NEBENWIRKUNGEN',
+    cryo1: 'CRYO. 1 - VERFAHREN',
+    cryo2: 'CRYO. 2 - KONTRAINDIKATIONEN',
+    cryo3: 'CRYO. 3 - NEBENWIRKUNGEN'
+  },
+  fr: {
+    centro: '· CENTRE D\u2019OST\u00c9OPATHIE ET DE PHYSIOTH\u00c9RAPIE :',
+    profesional: '· PROFESSIONNEL :',
+    otrosProfesionales: '· AUTRES PROFESSIONNELS DU CENTRE :',
+    paciente: '· IDENTIFICATION DU PATIENT :',
+    naturaleza: '· NATURE, OBJECTIF ET PLAN DE TRAITEMENT',
+    dataProtection: '· PROTECTION DES DONN\u00c9ES',
+    patientRights: '· DROITS DU PATIENT',
+    declaration: '· D\u00c9CLARATION DU PATIENT',
+    tecar1: 'TECAR. 1 - PROC\u00c9DURE',
+    tecar2: 'TECAR. 2 - CONS\u00c9QUENCES ATTENDUES',
+    tecar3: 'TECAR. 3 - CONTRE-INDICATIONS',
+    tecar4: 'TECAR. 4 - EFFETS SECONDAIRES',
+    cryo1: 'CRYO. 1 - PROC\u00c9DURE',
+    cryo2: 'CRYO. 2 - CONTRE-INDICATIONS',
+    cryo3: 'CRYO. 3 - EFFETS SECONDAIRES'
+  }
+};
 
-  addTitulo('TECAR. 2 - CONSECUENCIAS SEGURAS');
-  addListaSafe([
-    'Alivio de los dolores musculares y sintomáticos (agudos y crónicos)',
-    'Relajación de los espasmos musculares',
-    'Mejora de la cicatrización ósea relacionada con las patologías artrósicas',
-    'Mejora de la movilidad de las funciones articulares',
-    'Atención de las patologías musculares y tendinosas debidas a traumatismos',
-    'Mejora de la microcirculación y del proceso de cicatrización',
-    'Fortalecimiento muscular con un aumento de la flexibilidad'
-  ]);
+const INTRO = {
+  es: 'Con el fin de que disponga de la información necesaria y otorgue su consentimiento de forma libre y voluntaria antes de iniciar cualquier intervención, se le facilita el presente documento. Lea detenidamente cada apartado y pregunte cualquier duda.',
+  en: 'To ensure you have all the necessary information and give your consent freely and voluntarily before starting any procedure, we provide this document. Please read each section carefully and ask any questions.',
+  de: 'Damit Sie über alle notwendigen Informationen verfügen und Ihre Einwilligung frei und freiwillig vor Beginn jeder Maßnahme erteilen können, stellen wir Ihnen dieses Dokument zur Verfügung. Lesen Sie jeden Abschnitt sorgfältig durch und stellen Sie eventuelle Fragen.',
+  fr: 'Afin que vous disposiez des informations nécessaires et donniez votre consentement libre et volontaire avant de commencer toute intervention, nous vous remettons le présent document. Lisez chaque section attentivement et posez toutes vos questions.'
+};
 
-  addTitulo('TECAR. 3 - DESCRIPCIÓN DE LAS CONTRAINDICACIONES');
-  addListaSafe([
-    'Mujeres embarazadas',
-    'Menores sin consentimiento del representante legal',
-    'Cáncer y lesiones cancerosas',
-    'Trastornos o lesiones en la piel (eczemas, quemaduras, heridas abiertas)',
-    'Trastornos de la coagulación (Flebitis, Tromboflebitis)',
-    'Insensibilidad al calor o al dolor',
-    'Fiebre, infección bacteriana o enfermedad infecciosa',
-    'Hipertensión o hipotensión grave',
-    'Implantes eléctricos (marcapasos, bomba de insulina, neuroestimulador)'
-  ]);
+const LABELS = {
+  es: {
+    place: (d, h) => `En Ibiza, ${d}   Hora: ${h}`,
+    firmaPaciente: 'Firma del/la Paciente: ________________________________',
+    firmaProfesional: 'Firma del/la Profesional: _____________________________',
+    repText: (n, d, c) => `Yo, ${n}, con DNI/NIE/Pasaporte ${d}, actuando como representante legal del paciente, en calidad de ${c}, manifiesto que he recibido la información anterior y considero beneficiosa la realización del tratamiento descrito. Por ello, otorgo mi consentimiento en su nombre.`,
+    repFirma: 'Firma del/de la Representante: ________________________'
+  },
+  en: {
+    place: (d, h) => `In Ibiza, ${d}   Time: ${h}`,
+    firmaPaciente: 'Patient signature: ________________________________',
+    firmaProfesional: 'Practitioner signature: _____________________________',
+    repText: (n, d, c) => `I, ${n}, with ID/Passport ${d}, acting as the patient's legal representative in the capacity of ${c}, confirm that I have received the above information and consider the described treatment beneficial. Therefore, I give my consent on their behalf.`,
+    repFirma: 'Representative signature: ________________________'
+  },
+  de: {
+    place: (d, h) => `In Ibiza, ${d}   Uhrzeit: ${h}`,
+    firmaPaciente: 'Unterschrift des/der Patienten/in: ________________________________',
+    firmaProfesional: 'Unterschrift des/der Therapeuten/in: _____________________________',
+    repText: (n, d, c) => `Ich, ${n}, mit Ausweis/Pas ${d}, handelnd als gesetzlicher Vertreter des Patienten in meiner Eigenschaft als ${c}, bestätige, dass ich die obigen Informationen erhalten habe und die Durchführung der beschriebenen Behandlung für vorteilhaft halte. Daher erteile ich in seinem/ihrem Namen meine Einwilligung.`,
+    repFirma: 'Unterschrift des/der Vertreters/in: ________________________'
+  },
+  fr: {
+    place: (d, h) => `À Ibiza, le ${d}   Heure: ${h}`,
+    firmaPaciente: 'Signature du/de la patient(e) : ________________________________',
+    firmaProfesional: 'Signature du/de la professionnel(le) : _____________________________',
+    repText: (n, d, c) => `Je, ${n}, titulaire de la pièce d’identité/passeport ${d}, agissant en tant que représentant légal du patient en qualité de ${c}, déclare avoir reçu les informations ci-dessus et considérer bénéfique la réalisation du traitement décrit. Par conséquent, je donne mon consentement en son nom.`,
+    repFirma: 'Signature du/de la représentant(e) : ________________________'
+  }
+};
 
-  addTitulo('TECAR. 4 - EFECTOS SECUNDARIOS');
-  addListaSafe([
-    'En algunos casos, se puede sentir un aumento transitorio del dolor dentro de las 24 horas posteriores a la sesión si la intensidad es demasiado alta. Esta sensación desaparece de forma espontánea',
-    'En casos muy raros, el paciente puede sufrir alergia a la crema conductiva o quemaduras superficiales',
-    'En pocos casos, si se efectúa una terapia de cuerpo entero, se puede observar hipotensión reactiva'
-  ]);
-
-  addTitulo('CRYO. 1 - PROCEDIMIENTO');
-  addListaSafe([
-    'Winback ha desarrollado el dispositivo CRYOBACK el cual combina el frío intenso y la electroestimulación. La gran combinación de estas dos tecnologías permite la mejor penetración del frío, al tiempo que garantiza la máxima seguridad y una perfecta focalización de la zona tratada. Cada almohadilla (PAD) está equipada con dos sensores de temperatura que comprueban en tiempo real la temperatura de la zona de contacto y, por tanto, de la superficie de la piel. La combinación de crioterapia con electroestimulación:',
-    'Es un procedimiento no invasivo, rápido y sin necesidad de preparación inicial',
-    'Acciones localizadas y controladas gracias a las placas frías colocadas en la piel de la zona a tratar',
-    'Estimulación muscular en paralelo con el efecto “crio”, permitiendo el reclutamiento de las fibras musculares y ofreciendo un fortalecimiento localizado de los tejidos',
-    'Más confort durante el tratamiento gracias a la estimulación eléctrica que facilita la bajada de temperatura de la zona a tratar',
-    'Un fortalecimiento muscular más cómodo gracias a la hipoestesia creada por el frío'
-  ]);
-
-  addTitulo('CRYO. 2 - DESCRIPCIÓN DE LAS CONTRAINDICACIONES');
-  addListaSafe([
-    'Embarazo o lactancia',
-    'Epilepsias y pacientes con tumores',
-    'Pacientes con inflamaciones agudas o enfermedades infecciosas',
-    'Pacientes con heridas abiertas en la zona del tratamiento',
-    'Pacientes con enfermedades cardíacas o renales, o diabetes severa',
-    'Pacientes con enfermedades sanguíneas o con enfermedades que provocan debilidad física',
-    'Pacientes con la piel dañada o afectada por una enfermedad (psoriasis, eczemas)',
-    'Pacientes con enfermedades que modifican la respuesta al frío o al calor',
-    'Pacientes que se hayan sometido a una operación quirúrgica en los últimos meses',
-    'Fiebre – Infección bacteriana – Enfermedad infecciosa',
-    'Hipertensión o hipotensión grave',
-    'Implantes eléctricos (Marcapasos, bomba de insulina, neuroestimulador)'
-  ]);
-
-  addTitulo('CRYO. 3 - EFECTOS SECUNDARIOS');
-  addListaSafe([
-    'Después del tratamiento, los tejidos tratados temporalmente pueden aparecer rígidos a la vista o tacto',
-    'Enrojecimiento de la piel',
-    'Después del tratamiento se puede experimentar una sensación de mareo o cansancio',
-    'Endurecimiento o insensibilidad de la zona tratada por unas 48 horas',
-    'En casos muy raros: quemaduras de la piel',
-    'Alergia a la crema',
-    'En algunos casos, durante las 24 horas después del tratamiento, se puede sentir un resurgimiento transitorio del dolor'
-  ]);
+const winbackFromTpl = (tpl, addTitulo, addListaSafe, lang) => {
+  const h = HEADINGS[lang] || HEADINGS.es;
+  addTitulo(h.tecar1); addListaSafe(tpl.tecar1);
+  addTitulo(h.tecar2); addListaSafe(tpl.tecar2);
+  addTitulo(h.tecar3); addListaSafe(tpl.tecar3);
+  addTitulo(h.tecar4); addListaSafe(tpl.tecar4);
+  addTitulo(h.cryo1); addListaSafe(tpl.cryo1);
+  addTitulo(h.cryo2); addListaSafe(tpl.cryo2);
+  addTitulo(h.cryo3); addListaSafe(tpl.cryo3);
 };
 
 /* ───────────── función principal ───────────── */
@@ -206,7 +274,11 @@ exports.createConsentimientoFusionado = async (req, res) => {
     }
     /* ───── fin parche ───── */
 
-    const { hoy, hora } = hoyYHora();
+    const lang = (req.body.idioma || req.body.lang || req.body.language || 'es').toLowerCase();
+    const tpl = FISIO_TPL[lang] || FISIO_TPL.es;
+    const textos = HEADINGS[lang] || HEADINGS.es;
+    const labels = LABELS[lang] || LABELS.es;
+    const { hoy, hora } = hoyYHora(lang);
 
     /* ─────────── maquetación básica ─────────── */
 
@@ -256,19 +328,15 @@ exports.createConsentimientoFusionado = async (req, res) => {
     logoCenter();
 
     doc.font('Raleway-Bold').fontSize(13)
-      .text('CONSENTIMIENTO INFORMADO Y ACEPTACIÓN DE SERVICIOS PROFESIONALES DE OSTEOPATÍA INTEGRAL Y FISIOTERAPIA', {
-        align: 'center', lineGap: 2
-      })
+      .text(tpl.header, { align: 'center', lineGap: 2 })
       .moveDown();
 
     doc.font('Raleway').fontSize(11)
-      .text('Con el fin de que disponga de la información necesaria y otorgue su consentimiento de forma libre y voluntaria antes de iniciar cualquier intervención, se le facilita el presente documento. Lea detenidamente cada apartado y pregunte cualquier duda.', {
-        align: 'justify'
-      })
+      .text(INTRO[lang], { align: 'justify' })
       .moveDown();
 
     /* CENTRO */
-    addTitulo('· CENTRO DE OSTEOPATÍA INTEGRAL Y FISIOTERAPIA:');
+    addTitulo(textos.centro);
     addListaSafe([
       'Centro: Paris & Bea',
       `Dirección: ${normaliza(home?.direccion_centro)}`,
@@ -278,7 +346,7 @@ exports.createConsentimientoFusionado = async (req, res) => {
     ]);
 
     /* PROFESIONAL INICIAL */
-    addTitulo('· PROFESIONAL:');
+    addTitulo(textos.profesional);
     const compInit = [
       `Nombre: ${profInit.nombre}`,
       profInit.dni && `DNI/NIE: ${profInit.dni}`,
@@ -290,7 +358,7 @@ exports.createConsentimientoFusionado = async (req, res) => {
 
     /* OTROS PROFESIONALES */
     if (otros.length) {
-      addTitulo('· OTROS PROFESIONALES DEL CENTRO:');
+      addTitulo(textos.otrosProfesionales);
       otros.forEach(p => {
         const comp = [
           `Nombre: ${p.nombre}`,
@@ -304,7 +372,7 @@ exports.createConsentimientoFusionado = async (req, res) => {
     }
 
     /* PACIENTE */
-    addTitulo('· IDENTIFICACIÓN DEL PACIENTE:');
+    addTitulo(textos.paciente);
     addListaSafe([
       `Nombre y apellidos: ${pac.nombre} ${pac.apellidos}`,
       `DNI/NIE/Pasaporte: ${pac.dni || '—'}`,
@@ -320,125 +388,54 @@ exports.createConsentimientoFusionado = async (req, res) => {
 
     /* helper para imprimir WINBACK con sangría persistente */
     const imprimirWinbackIndentado = () => {
-      const savedX = doc.x;                      // posición de partida
-      const shiftIndent = () => {
-        doc.x = doc.page.margins.left + INDENT_WINBACK;
-      };
+      const savedX = doc.x;
+      const shiftIndent = () => { doc.x = doc.page.margins.left + INDENT_WINBACK; };
 
-      /* primera vez desplazamos x y registramos listener */
       shiftIndent();
       doc.on('pageAdded', shiftIndent);
 
-      winbackCompleto(addTitulo, addListaSafe);
+      winbackFromTpl(tpl.winback, addTitulo, addListaSafe, lang);
 
-      /* restauramos estado original */
       doc.removeListener('pageAdded', shiftIndent);
       doc.x = savedX;
     };
 
     const bloqueFisio = () => {
-      addTitulo('· NATURALEZA, OBJETIVO Y PLAN DE TRATAMIENTO');
-      doc.font('Raleway').text(
-        'El plan de tratamiento propuesto se inicia con Fisioterapia, disciplina de naturaleza sanitaria, que puede incluir, pero no se limita a, las siguientes técnicas de las que se me ha informado:',
-        { align: 'justify' }).moveDown(0.5);
+      addTitulo(textos.naturaleza);
+      doc.font('Raleway').text(tpl.physio.intro, { align: 'justify' }).moveDown(0.5);
 
-      addListaSafe([
-        'Evaluación física y funcional',
-        'Terapias manuales',
-        'Ejercicios terapéuticos',
-        'Electroterapia',
-        'Termoterapia y crioterapia',
-        'Ultrasonido',
-        'Vendaje neuromuscular',
-        'Tratamientos con dispositivos SWINS S.A.S/WINBACK de acuerdo con los siguientes aspectos:'
-      ]);
+      addListaSafe(tpl.physio.techniques);
 
       /* WINBACK indentado */
       imprimirWinbackIndentado();
-
-      doc.font('Raleway').text(
-        'El objetivo del tratamiento es mejorar mi estado físico y funcional mediante técnicas de fisioterapia.',
-        { align: 'justify' }).moveDown();
-
-      doc.font('Raleway').text(
-        'Los beneficios esperados son el alivio del dolor, la mejora de la movilidad, la recuperación de la función y la prevención de lesiones.',
-        { align: 'justify' }).moveDown();
-
-      doc.font('Raleway').text(
-        'Los efectos secundarios potenciales podrían ser dolor temporal, hematomas, mareos, reacciones alérgicas a los materiales utilizados (vendajes, cremas, etc.).',
-        { align: 'justify' }).moveDown();
-
-      doc.font('Raleway').text(
-        'Existen alternativas disponibles como tratamientos alternativos, incluidos medicamentos, cirugía u otros enfoques terapéuticos.',
-        { align: 'justify' }).moveDown();
-
-      doc.font('Raleway').text(
-        'Y el tratamiento podría continuar con otras disciplinas como la Osteopatía, de naturaleza no sanitaria, aplicada por otros profesionales del centro, de acuerdo a los siguientes aspectos, de los cuales se me ha informado:',
-        { align: 'justify' }).moveDown(0.5);
-
-      addListaSafe([
-        'La duración y periodicidad más aconsejable en mis circunstancias personales',
-        'Los efectos razonablemente esperables',
-        'Los costes económicos de la realización de las sesiones propuestas de Osteopatía',
-        'Los beneficios físicos que pueden derivarse de la utilización y prestación de los servicios propuestos, al depender de múltiples factores y variables, no pueden garantizarse absolutamente en todos los casos',
-        'Los servicios no sanitarios de Osteopatía no excluyen, ni sustituyen, cualquier tratamiento médico o farmacológico convencional, de manera que la aceptación de los servicios propuestos es una decisión voluntaria, libre y responsable',
-        'La Osteopatía basa su práctica en la relajación y el equilibrio de la estructura musculoesquelética, craneal y visceral, todo ello de forma manual',
-        'Durante la sesión, el profesional realizará una serie de test y palpaciones manuales, para identificar las estructuras que han sufrido pérdida de movimiento o estrés mecánico, y aplicará las técnicas manuales pertinentes, con el objetivo de normalizar la función y recuperar la elasticidad de los tejidos, reduciendo las molestias y favoreciendo la relajación y el equilibrio del sistema nervioso.'
-      ]);
+      doc.font('Raleway').text(tpl.physio.objective, { align: 'justify' }).moveDown();
+      doc.font('Raleway').text(tpl.physio.benefits, { align: 'justify' }).moveDown();
+      doc.font('Raleway').text(tpl.physio.sideEffects, { align: 'justify' }).moveDown();
+      doc.font('Raleway').text(tpl.physio.alternatives, { align: 'justify' }).moveDown();
+      doc.font('Raleway').text(tpl.physio.osteoContinuationIntro, { align: 'justify' }).moveDown(0.5);
+      addListaSafe(tpl.physio.osteoAspects);
     };
 
     const bloqueOsteo = () => {
-      addTitulo('· NATURALEZA, OBJETIVO Y PLAN DE TRATAMIENTO');
-      doc.font('Raleway').text(
-        'El plan de tratamiento propuesto se inicia con Osteopatía, disciplina de naturaleza no sanitaria, de acuerdo a los siguientes aspectos, de los cuales se me ha informado:',
-        { align: 'justify' }).moveDown(0.5);
+      addTitulo(textos.naturaleza);
+      doc.font('Raleway').text(tpl.osteo.intro, { align: 'justify' }).moveDown(0.5);
 
-      addListaSafe([
-        'La duración y periodicidad más aconsejable en mis circunstancias personales',
-        'Los efectos razonablemente esperables',
-        'Los costes económicos de la realización de las sesiones propuestas de Osteopatía',
-        'Los beneficios físicos que pueden derivarse de la utilización y prestación de los servicios propuestos, al depender de múltiples factores y variables, no pueden garantizarse absolutamente en todos los casos',
-        'Los servicios no sanitarios de Osteopatía no excluyen, ni sustituyen, cualquier tratamiento médico o farmacológico convencional, de manera que la aceptación de los servicios propuestos es una decisión voluntaria, libre y responsable',
-        'La Osteopatía basa su práctica en la relajación y el equilibrio de la estructura musculoesquelética, craneal y visceral, todo ello de forma manual'
-      ]);
+      addListaSafe(tpl.osteo.osteoAspects);
 
-      doc.font('Raleway').text(
-        'Durante la sesión, el profesional realizará una serie de test y palpaciones manuales, para identificar las estructuras que han sufrido pérdida de movimiento o estrés mecánico, y aplicará las técnicas manuales pertinentes, con el objetivo de normalizar la función y recuperar la elasticidad de los tejidos, reduciendo las molestias y favoreciendo la relajación y el equilibrio del sistema nervioso.',
-        { align: 'justify' }).moveDown();
+      doc.font('Raleway').text(tpl.osteo.afterOsteoIntro, { align: 'justify' }).moveDown();
 
-      doc.font('Raleway').text(
-        'Y el tratamiento podría continuar con otras disciplinas como la Fisioterapia, de naturaleza sanitaria, aplicada por otros profesionales del centro, que puede incluir, pero no se limita a, las siguientes técnicas de las que se me ha informado:',
-        { align: 'justify' }).moveDown(0.5);
+      doc.font('Raleway').text(tpl.osteo.physioContinuationIntro, { align: 'justify' }).moveDown(0.5);
 
-      addListaSafe([
-        'Evaluación física y funcional',
-        'Terapias manuales',
-        'Ejercicios terapéuticos',
-        'Electroterapia',
-        'Termoterapia y crioterapia',
-        'Ultrasonido',
-        'Vendaje neuromuscular',
-        'Tratamientos con dispositivo SWINS S.A.S/WINBACK de acuerdo con los siguientes aspectos y procedimientos:'
-      ]);
+      doc.font('Raleway').text(tpl.osteo.physioTechniquesIntro, { align: 'justify' }).moveDown(0.5);
+      addListaSafe(tpl.osteo.techniques);
 
       /* WINBACK indentado */
       imprimirWinbackIndentado();
 
-      doc.font('Raleway').text(
-        'El objetivo del tratamiento es mejorar mi estado físico y funcional mediante técnicas de fisioterapia.',
-        { align: 'justify' }).moveDown();
-
-      doc.font('Raleway').text(
-        'Los beneficios esperados son el alivio del dolor, la mejora de la movilidad, la recuperación de la función y la prevención de lesiones.',
-        { align: 'justify' }).moveDown();
-
-      doc.font('Raleway').text(
-        'Los efectos secundarios potenciales podrían ser dolor temporal, hematomas, mareos, reacciones alérgicas a los materiales utilizados (vendajes, cremas, etc.).',
-        { align: 'justify' }).moveDown();
-
-      doc.font('Raleway').text(
-        'Existen alternativas disponibles como tratamientos alternativos, incluidos medicamentos, cirugía u otros enfoques terapéuticos.',
-        { align: 'justify' }).moveDown();
+      doc.font('Raleway').text(tpl.osteo.objective, { align: 'justify' }).moveDown();
+      doc.font('Raleway').text(tpl.osteo.benefits, { align: 'justify' }).moveDown();
+      doc.font('Raleway').text(tpl.osteo.sideEffects, { align: 'justify' }).moveDown();
+      doc.font('Raleway').text(tpl.osteo.alternatives, { align: 'justify' }).moveDown();
     };
 
     /* decide qué bloque imprimir */
@@ -447,36 +444,28 @@ exports.createConsentimientoFusionado = async (req, res) => {
     else addTitulo('⚠ No se ha podido determinar la especialidad del profesional inicial.');
 
     /* BLOQUES FINALES COMUNES */
-    addTitulo('· PROTECCIÓN DE DATOS');
-    doc.font('Raleway').text(
-      'De conformidad con el Reglamento (UE) 2016/679 (RGPD) y la L.O. 3/2018, mis datos personales se tratarán con la máxima confidencialidad y exclusivamente para la gestión de mi historia clínica y la prestación de los servicios solicitados. Podré ejercer mis derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad.',
-      { align: 'justify' }).moveDown();
+    addTitulo(textos.dataProtection);
+    doc.font('Raleway').text(tpl.common.dataProtection, { align: 'justify' }).moveDown();
 
-    addTitulo('· DERECHOS DEL PACIENTE');
-    doc.font('Raleway').text(
-      'En virtud de la Ley 41/2002, de 14 de noviembre, básica reguladora de la autonomía del paciente, se me ha facilitado información comprensible y veraz, y se garantizará mi intimidad y la protección de mi historia clínica.',
-      { align: 'justify' }).moveDown();
+    addTitulo(textos.patientRights);
+    doc.font('Raleway').text(tpl.common.patientRights, { align: 'justify' }).moveDown();
 
-    addTitulo('· DECLARACIÓN DEL PACIENTE');
-    doc.font('Raleway').text(
-      'Declaro que he leído y comprendido la información contenida en este documento, que se han resuelto satisfactoriamente todas mis preguntas y que otorgo mi consentimiento informado para recibir tratamientos de fisioterapia y/o osteopatía en las condiciones descritas. Asimismo, entiendo que tengo derecho a retirar mi consentimiento y detener el tratamiento en cualquier momento.',
-      { align: 'justify' }).moveDown();
+    addTitulo(textos.declaration);
+    doc.font('Raleway').text(tpl.common.declaration, { align: 'justify' }).moveDown();
 
-    doc.text(`En Ibiza, ${hoy}   Hora: ${hora}`).moveDown(5);
-    doc.text('Firma del/la Paciente: ________________________________').moveDown(4);
-    doc.text('Firma del/la Profesional: _____________________________').moveDown(1);
+    doc.text(labels.place(hoy, hora)).moveDown(5);
+    doc.text(labels.firmaPaciente).moveDown(4);
+    doc.text(labels.firmaProfesional).moveDown(1);
 
     /* PÁGINA REPRESENTANTE (opcional) */
     if (nombre_representante || dni_representante || calidad_representante) {
       doc.addPage();
       logoCenter();
 
-      doc.font('Raleway').text(
-        `Yo, ${repNombre}, con DNI/NIE/Pasaporte ${repDni}, actuando como representante legal del paciente, en calidad de ${repCalidad}, manifiesto que he recibido la información anterior y considero beneficiosa la realización del tratamiento descrito. Por ello, otorgo mi consentimiento en su nombre.`,
-        { align: 'justify' }).moveDown(2);
+      doc.font('Raleway').text(labels.repText(repNombre, repDni, repCalidad), { align: 'justify' }).moveDown(2);
 
-      doc.text(`En Ibiza, ${hoy}   Hora: ${hora}`).moveDown(5);
-      doc.text('Firma del/de la Representante: ________________________');
+      doc.text(labels.place(hoy, hora)).moveDown(5);
+      doc.text(labels.repFirma);
     }
 
     /* FIN */
