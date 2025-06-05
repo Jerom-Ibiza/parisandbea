@@ -346,9 +346,10 @@ module.exports = (LOCAL_FUNCTIONS = {}) => {
       description: 'Env�a un email corporativo con plantilla HTML y adjuntos opcionales',
       parameters: {
         type: 'object',
-        required: ['to', 'subject'],
+        required: ['subject'],
         properties: {
-          to: { type: 'string', description: 'Direcci�n del destinatario' },
+          to: { type: 'string', description: 'Direcci�n de destino (opcional)' },
+          id_paciente: { type: 'string', description: 'ID o c�digo PAC-XXXXX del paciente' },
           subject: { type: 'string' },
           text: { type: 'string', description: 'Texto plano (opcional)' },
           htmlContent: { type: 'string', description: 'HTML completo, si quieres sobrescribir la plantilla corporativa' },

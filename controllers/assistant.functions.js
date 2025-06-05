@@ -456,8 +456,8 @@ const LOCAL_FUNCTIONS = {
 
   /* ────────── ENVIAR EMAIL ────────── */
   async send_mail(args = {}, req) {
-    const { to, subject, text, htmlContent, attachments } = args;
-    if (!to || !subject) throw new Error('Faltan "to" o "subject"');
+    const { to, id_paciente, subject, text, htmlContent, attachments } = args;
+    if (!subject) throw new Error('Falta "subject"');
 
     /* Generamos SIEMPRE el HTML con la plantilla corporativa  */
     const html = getEmailTemplate(
@@ -468,6 +468,7 @@ const LOCAL_FUNCTIONS = {
     const payload = {
       id_profesional: req.session.user?.id_profesional ?? null,   // ← clave que el controlador espera
       to,
+      id_paciente,
       subject,
       text: 'Visualiza este correo en un cliente que soporte HTML.',
       htmlContent: html,

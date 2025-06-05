@@ -20,7 +20,7 @@ get_active_products | get_product_by_id
 # ÚLTIMOS CHATS
 get_last_chats  
 # ENVÍO MAIL
-send_mail
+send_mail (subject + id_paciente o email)
 # ARCHIVOS CORPORATIVOS
 list_files(folder)
 

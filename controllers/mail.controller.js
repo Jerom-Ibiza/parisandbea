@@ -7,7 +7,7 @@ const db = require('../database');
 
 // ---------------------------------------------------------------------------
 // Una pequeña función para generar una plantilla de email
-function getEmailTemplate (title, content, footerHTML = '') {
+function getEmailTemplate(title, content, footerHTML = '') {
   const logoURL = 'https://parisandbea.es/images/recursos/parisandbealogo.png';
   return `
   <html>
@@ -49,7 +49,32 @@ const transporter = nodemailer.createTransport({
  */
 exports.sendMail = async (req, res) => {
   try {
-    const { to, subject, text, htmlContent, attachments } = req.body;
+    const { to: toRaw, id_paciente, subject, text, htmlContent, attachments } = req.body;
+
+    let to = toRaw;
+    // Permitir enviar por id_paciente sin exponer el email
+    let toName = '';
+    if (!to && id_paciente) {
+      let id = id_paciente;
+      if (typeof id === 'string') {
+        const m = id.match(/PAC-(\d+)/i);
+        if (m) id = parseInt(m[1], 10);
+      }
+      if (!isNaN(id)) {
+        const [rows] = await db.query(
+          'SELECT nombre, email FROM pacientes WHERE id_paciente = ? LIMIT 1',
+          [id]
+        );
+        if (rows.length) {
+          to = rows[0].email || null;
+          toName = rows[0].nombre || '';
+        }
+      }
+    }
+
+    if (!to || !subject) {
+      return res.status(400).json({ error: 'Faltan "to" o "subject"' });
+    }
 
     /* ---------- busca al profesional ---------- */
     /* Preferencia: id en sesión; fallback: id_profesional recibido en body */
@@ -69,9 +94,9 @@ exports.sendMail = async (req, res) => {
     const proFooter = pro ? `
       <div style="margin-top:25px;font-size:13px">
         <p><strong>${pro.nombre || ''}</strong></p>
-        ${pro.colegiado  ? `<p>N.º colegiado: ${pro.colegiado}</p>` : ''}
-        ${pro.telefono   ? `<p>Tel.: ${pro.telefono}</p>`            : ''}
-        ${pro.email      ? `<p>Email: ${pro.email}</p>`              : ''}
+        ${pro.colegiado ? `<p>N.º colegiado: ${pro.colegiado}</p>` : ''}
+        ${pro.telefono ? `<p>Tel.: ${pro.telefono}</p>` : ''}
+        ${pro.email ? `<p>Email: ${pro.email}</p>` : ''}
       </div>` : '';
 
     /* ---------- plantilla corporativa ---------- */
@@ -86,9 +111,9 @@ exports.sendMail = async (req, res) => {
 
     /* ---------- envío ---------- */
     const mailOptions = {
-      from : process.env.SMTP_USER || 'info@parisandbea.es',
+      from: process.env.SMTP_USER || 'info@parisandbea.es',
       to, subject,
-      text : 'Visualiza este correo en un cliente que soporte HTML.',
+      text: 'Visualiza este correo en un cliente que soporte HTML.',
       html, attachments
     };
     const info = await transporter.sendMail(mailOptions);
@@ -99,15 +124,15 @@ exports.sendMail = async (req, res) => {
       `INSERT INTO emails_sent
          (to_name,to_email,subject,content,date_sent,attachment_paths,status)
        VALUES (?,?,?,?,NOW(),?,?)`,
-      ['' ,to, subject, text || '',
-       attachments ? JSON.stringify(attachments.map(a=>a.path||a.filename)) : null,
-       'sent']
+      [toName || '', to, subject, text || '',
+      attachments ? JSON.stringify(attachments.map(a => a.path || a.filename)) : null,
+        'sent']
     );
 
-    res.json({ message:'Email enviado correctamente', info });
+    res.json({ message: 'Email enviado correctamente', info });
   } catch (err) {
     console.error('Error al enviar email:', err);
-    res.status(500).json({ error:'Error al enviar email' });
+    res.status(500).json({ error: 'Error al enviar email' });
   }
 };
 
@@ -138,7 +163,7 @@ exports.fetchReceivedEmails = async (req, res) => {
     imap.openBox('INBOX', false, cb);
   }
 
-  imap.once('ready', function() {
+  imap.once('ready', function () {
     openInbox(async (err, box) => {
       if (err) {
         console.error('Error al abrir INBOX:', err);
@@ -171,8 +196,8 @@ exports.fetchReceivedEmails = async (req, res) => {
 
         const f = imap.fetch(results, { bodies: '' });
 
-        f.on('message', function(msg, seqno) {
-          msg.on('body', function(stream, info) {
+        f.on('message', function (msg, seqno) {
+          msg.on('body', function (stream, info) {
             simpleParser(stream, async (err, mail) => {
               if (err) {
                 console.error('Error al parsear el correo:', err);
@@ -232,7 +257,7 @@ exports.fetchReceivedEmails = async (req, res) => {
             });
           });
 
-          msg.once('attributes', function(attrs) {
+          msg.once('attributes', function (attrs) {
             const { uid } = attrs;
             // Opcional: marcar como leído
             imap.addFlags(uid, ['\\Seen'], (err) => {
@@ -243,11 +268,11 @@ exports.fetchReceivedEmails = async (req, res) => {
           });
         });
 
-        f.once('error', function(err) {
+        f.once('error', function (err) {
           console.error('Error en la lectura de correo:', err);
         });
 
-        f.once('end', function() {
+        f.once('end', function () {
           console.log('Finalizó la búsqueda de correos.');
           imap.end();
         });
@@ -255,12 +280,12 @@ exports.fetchReceivedEmails = async (req, res) => {
     });
   });
 
-  imap.once('error', function(err) {
+  imap.once('error', function (err) {
     console.error('Error general IMAP:', err);
     return res.status(500).json({ error: 'Error en la conexión IMAP' });
   });
 
-  imap.once('end', function() {
+  imap.once('end', function () {
     console.log('Conexión IMAP cerrada');
   });
 
