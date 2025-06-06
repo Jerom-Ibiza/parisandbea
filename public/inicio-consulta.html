@@ -70,7 +70,7 @@
 
     .mic-btn.recording {
       background: #4482ff;
-      border-color: #e04141;
+      border-color: #265fd0;
       animation: pulse 1s infinite
     }
 
@@ -226,7 +226,7 @@
       padding: 24px 26px;
       border-radius: 14px;
       text-align: center;
-      max-width: 300px;
+      max-width: 400px;
       font-size: 16px;
       box-shadow: 0 6px 16px rgba(0, 0, 0, .25)
     }
@@ -354,28 +354,36 @@
       }
 
       .main-section {
-        display: flex;
-        align-items: flex-start;
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        grid-template-areas:
+          "manual table"
+          "mic table";
         gap: 40px;
         width: 100%;
+        align-items: start;
       }
 
       .manual-box {
         max-width: 340px;
+        grid-area: manual;
+        margin-top: 7px;
+      }
+
+      .mic-row {
+        grid-area: mic;
+        margin-top: 20px;
       }
 
       .table-responsive {
         flex: 1;
+        grid-area: table;
         max-height: calc(100vh - 260px);
         overflow-y: auto;
       }
 
       .mic-btn {
-        margin-top: 90px;
-      }
-
-      .manual-box {
-        margin-top: 5px;
+        margin-top: 40px;
       }
     }
 
