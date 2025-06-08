@@ -4,4 +4,6 @@
 <file name="database.js" server="ftp.parisandbea.es/httpdocs/" local="133856514972455602" remote="133856515200000000" Dst="1" />
 <file name="favicon.ico" server="ftp.parisandbea.es/httpdocs/" local="133856485605701149" remote="133856520600000000" Dst="1" />
 <file name="logger.js" server="ftp.parisandbea.es/httpdocs/" local="133879740751873668" remote="133879740600000000" Dst="2" />
+<file name="package-lock.json" server="ftp.parisandbea.es/httpdocs/" local="133937063608509074" remote="133928421000000000" Dst="2" />
+<file name="package.json" server="ftp.parisandbea.es/httpdocs/" local="133937063609556364" remote="133916273400000000" Dst="2" />
 </dwsync>
