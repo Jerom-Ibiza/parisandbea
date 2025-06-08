@@ -136,7 +136,7 @@ cron.schedule('0 * * * *', () => {
 /* ───── eliminar un audio del tmp ───── */
 app.delete('/tmp/:file', (req, res) => {
   const file = path.basename(req.params.file);          // evita path-traversal
-  if (!/\.(mp3|webm|m4a|mp4|wav|flac|ogg|oga|pdf|docx?|png|jpe?g|webp|gif|heic)$/i.test(f))
+  if (!/\.(mp3|webm|m4a|mp4|wav|flac|ogg|oga|pdf|docx?|png|jpe?g|webp|gif|heic)$/i.test(file))
     return res.status(400).json({ error: 'Formato no permitido' });
 
   const abs = path.join(TMP, file);
