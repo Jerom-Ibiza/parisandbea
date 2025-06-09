@@ -638,8 +638,8 @@ body {
 
 .modal-close {
   position: absolute;
-  top: 14px;
-  right: 20px;
+  top: 7px;
+  right: 10px;
   font-size: 1.8rem;
   line-height: 1;
   cursor: pointer;
@@ -1275,8 +1275,8 @@ body {
 
 .modal-close {
   position: absolute;
-  top: 18px;
-  right: 24px;
+  top: 9px;
+  right: 12px;
   font-size: 2rem;
   line-height: 1;
   background: transparent;
