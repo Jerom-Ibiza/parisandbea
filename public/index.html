@@ -39,6 +39,88 @@
   <link rel="icon" type="image/png" sizes="32x32" href="images/recursos/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="images/recursos/icon-180.png">
 </head>
+<style>
+  /* =======================================================
+   ESTILOS MODAL PARA PANTALLAS ANCHAS (>= 1200px)
+   ======================================================= */
+  @media (min-width: 1200px) {
+
+    .modal-card {
+      /* Hacemos el modal más ancho para aprovechar el espacio */
+      width: min(98%, 1900px);
+      max-height: 90vh;
+      /* Mantenemos la altura máxima */
+
+      /* ¡La magia! Convertimos el modal en un contenedor flex de dos columnas */
+      display: flex;
+      gap: 32px;
+      /* Espacio entre la imagen y el contenido */
+      padding: 32px;
+      /* Un poco más de padding general */
+    }
+
+    /* --- Columna Izquierda: La Imagen --- */
+    .modal-img {
+      /* La imagen ocupará un 40% del ancho disponible */
+      flex: 0 0 40%;
+      width: 40%;
+
+      /* La altura se ajusta al contenido, sin un máximo fijo tan restrictivo */
+      height: auto;
+      max-height: calc(90vh - 64px);
+      /* (90vh del modal - 32px padding top/bottom) */
+
+      /* La imagen ya no necesita margen inferior */
+      margin-bottom: 0;
+    }
+
+    /* --- Columna Derecha: El Contenido --- */
+    .modal-content-wrapper {
+      /* El contenido ocupará el 60% restante */
+      flex: 1 1 60%;
+
+      /* MUY IMPORTANTE: Hacemos que esta columna tenga su propio scroll */
+      /* si el contenido (profes, bonos, etc.) es muy largo. */
+      overflow-y: auto;
+      max-height: calc(90vh - 64px);
+      /* La misma altura que la imagen */
+      padding-right: 12px;
+      /* Espacio para la barra de scroll y evitar que pegue */
+    }
+
+    /* Pequeños ajustes de alineación y márgenes para el nuevo layout */
+    .modal-logo {
+      margin: 0 0 24px 0;
+      /* Quitamos el margen automático y lo alineamos a la izquierda */
+      display: block;
+      /* Aseguramos que sea un bloque */
+      width: 150px;
+    }
+
+    .modal-title {
+      text-align: left;
+      /* Alineamos el título a la izquierda */
+    }
+
+    .modal-extra {
+      justify-content: flex-start;
+      /* Alineamos los chips a la izquierda */
+    }
+
+    .block-title {
+      /* El título de sección ya no necesita estar centrado */
+      text-align: left;
+      /* Ajustamos el decorador para que se alinee a la izquierda */
+      display: block;
+    }
+
+    .block-title::after {
+      /* Movemos el subrayado a la izquierda */
+      margin: 0;
+      left: 0;
+    }
+  }
+</style>
 
 <body>
 
@@ -75,51 +157,43 @@
       <img src="images/wallpaper-ancho.webp" alt="Centro Paris & Bea – banner" class="wallpaper-img">
     </picture>
   </section>
-  <!-- SERVICIOS ---------------------------------------------------------------->
   <section id="serviciosSection" class="servicios-wrapper">
-    <!-- Se rellena dinámicamente con JS -->
     <div class="swiper servicios-swiper">
       <div class="swiper-wrapper" id="serviciosWrapper"></div>
-      <!-- flechas solo visibles en pantallas estrechas -->
       <div class="swiper-button-prev"></div>
       <div class="swiper-button-next"></div>
     </div>
   </section>
-  <!-- ------------------------------------------------------------------------->
   <div class="logo-container">
     <img id="headerLogo" src="#" alt="Paris & Bea Logo" class="logo">
   </div>
-  <!-- MODAL SERVICIO ------------------------------------------------->
   <div id="modalServicio" class="modal-servicio" hidden>
     <div class="modal-backdrop" data-close></div>
 
     <div class="modal-card">
       <button class="modal-close" aria-label="Cerrar" data-close>&times;</button>
 
-      <img id="modalLogo" class="modal-logo" src="#" alt="Logo Paris & Bea">
       <img id="modalImg" class="modal-img" src="#" alt="" loading="lazy">
 
-      <h2 id="modalNombre" class="modal-title"></h2>
-
-      <p id="modalDescripcion" class="modal-descripcion"></p>
-
-      <p id="modalDetalle" class="modal-detalle"></p>
-      <div class="modal-extra">
-        <span id="modalDuracion" class="modal-chip"></span>
-        <span id="modalPrecio" class="modal-chip chip-price"></span>
-      </div>
-      <!-- =================== PROFESIONALES =================== -->
-      <section id="modalProfesionales" class="modal-block" hidden>
-        <h3 class="block-title">Nuestro equipo</h3>
-        <ul id="prosList" class="pros-grid"><!-- se rellena por JS --></ul>
-      </section>
-      <!-- ======================= BONOS ======================= -->
-      <section id="modalBonos" class="modal-block" hidden>
-        <h3 class="block-title">Bonos disponibles</h3>
-        <div class="bonos-grid"><!-- ul no hace falta, pura grid -->
-          <!-- JS inserta aquí .bono-card -->
+      <div class="modal-content-wrapper">
+        <img id="modalLogo" class="modal-logo" src="#" alt="Logo Paris & Bea">
+        <h2 id="modalNombre" class="modal-title"></h2>
+        <p id="modalDescripcion" class="modal-descripcion"></p>
+        <p id="modalDetalle" class="modal-detalle"></p>
+        <div class="modal-extra">
+          <span id="modalDuracion" class="modal-chip"></span>
+          <span id="modalPrecio" class="modal-chip chip-price"></span>
         </div>
-      </section>
+        <section id="modalProfesionales" class="modal-block" hidden>
+          <h3 class="block-title">Nuestro equipo</h3>
+          <ul id="prosList" class="pros-grid"></ul>
+        </section>
+        <section id="modalBonos" class="modal-block" hidden>
+          <h3 class="block-title">Bonos disponibles</h3>
+          <div class="bonos-grid">
+          </div>
+        </section>
+      </div>
     </div>
   </div>
   <script>
