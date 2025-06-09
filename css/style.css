@@ -470,6 +470,30 @@ body {
   }
 }
 
+/* ---------- BANNER PRODUCTOS ---------- */
+.productos-banner {
+  width: 100%;
+  text-align: center;
+  margin: 40px 0;
+}
+
+.productos-banner img {
+  width: 70%;
+  max-width: 600px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 20px;
+}
+
+.productos-banner-title {
+  margin-top: 16px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--titulos-color, #357765);
+  text-align: center;
+}
+
 /* ---------- SERVICIOS (fichas) ---------- */
 .servicios-wrapper {
   width: 100%;
@@ -493,7 +517,7 @@ body {
 }
 
 .servicios-card {
-  width: clamp(400px, 11vw, 240px);
+  width: clamp(220px, 40vw, 260px);
   aspect-ratio: 1 / 1;
   border-radius: 14px;
   overflow: hidden;
@@ -508,6 +532,12 @@ body {
   .servicios-card {
     width: 90vw;
     height: 90vw;
+  }
+}
+
+@media (min-width:768px) {
+  .servicios-card {
+    width: clamp(260px, 32vw, 320px);
   }
 }
 
@@ -528,10 +558,13 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 6px 10px;
-  background: rgba(0, 0, 0, .55);
+  padding: 10px;
+  background: linear-gradient(to top, rgba(0, 0, 0, .7), rgba(0, 0, 0, 0));
   color: #fff;
-  font-size: .9rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, .6);
   text-align: center;
   backdrop-filter: blur(2px);
 }
@@ -553,11 +586,10 @@ body {
   }
 }
 
-/* sobremesa ≥1280 px → fichas ~2× más grandes, siempre cuadradas */
-@media (min-width:920px) {
+/* sobremesa ≥1200 px → fichas más grandes */
+@media (min-width:1200px) {
   .servicios-card {
-    width: clamp(280px, 18vw, 420px);
-    /* 280 – 420 px de lado */
+    width: clamp(300px, 24vw, 380px);
   }
 }
 
