@@ -258,7 +258,7 @@
                 <label id="lblNombre" for="nombre">Nombre*</label>
                 <input id="nombre" name="nombre" required>
 
-                <label id="lblApellidos" for="apellidos">Apellidos</label>
+                <label id="lblApellidos" for="apellidos">Apellidos*</label>
                 <input id="apellidos" name="apellidos" required>
 
                 <label id="lblFecha" for="fecha_nacimiento">Fecha nacimiento (dd/mm/aaaa)</label>
@@ -278,8 +278,16 @@
                 <label id="lblDni" for="dni">DNI / Pasaporte*</label>
                 <input id="dni" name="dni" placeholder="DNI o pasaporte" required>
 
-                <label id="lblDireccion" for="direccion">Dirección</label>
-                <input id="direccion" name="direccion">
+                <div style="display:flex;gap:8px">
+                    <div style="flex:0 0 110px">
+                        <label id="lblCp" for="cp">Código Postal*</label>
+                        <input id="cp" name="cp" pattern="\d{4,5}" inputmode="numeric" required style="width:100%">
+                    </div>
+                    <div style="flex:1">
+                        <label id="lblDireccion" for="direccion">Dirección*</label>
+                        <input id="direccion" name="direccion" required style="width:100%">
+                    </div>
+                </div>
 
                 <!-- PREFIJO + TELÉFONO -->
                 <label id="lblTelefono" for="prefijo">Teléfono*</label>
@@ -340,7 +348,8 @@
                 generoO: 'Otro',
                 dni: 'DNI / Pasaporte*',
                 dniPH: 'DNI o pasaporte',
-                direccion: 'Dirección',
+                cp: 'C.P.*',
+                direccion: 'Dirección*',
                 telefono: 'Teléfono*',
                 email: 'Email',
                 viafirma: 'Firma digital consentimiento informado (recomendado)',
@@ -363,7 +372,8 @@
                 generoO: 'Other',
                 dni: 'ID / Passport*',
                 dniPH: 'ID or passport',
-                direccion: 'Address',
+                cp: 'ZIP*',
+                direccion: 'Address*',
                 telefono: 'Phone*',
                 email: 'Email',
                 viafirma: 'Digital signature of informed consent (recommended)',
@@ -386,7 +396,8 @@
                 generoO: 'Andere',
                 dni: 'Ausweis / Pass*',
                 dniPH: 'Ausweis oder Pass',
-                direccion: 'Adresse',
+                cp: 'PLZ*',
+                direccion: 'Adresse*',
                 telefono: 'Telefon*',
                 email: 'E-Mail',
                 viafirma: 'Digitale Unterschrift der Einverständniserklärung (empfohlen)',
@@ -409,7 +420,8 @@
                 generoO: 'Autre',
                 dni: "Carte d'identité / Passeport*",
                 dniPH: "Carte d'identité ou passeport",
-                direccion: 'Adresse',
+                cp: 'C.P.*',
+                direccion: 'Adresse*',
                 telefono: 'Téléphone*',
                 email: 'Email',
                 viafirma: 'Signature numérique du consentement éclairé (recommandé)',
@@ -435,6 +447,7 @@
             document.getElementById('optGeneroM').textContent = t.generoM;
             document.getElementById('optGeneroO').textContent = t.generoO;
             document.getElementById('lblDni').textContent = t.dni;
+            document.getElementById('lblCp').textContent = t.cp;
             document.getElementById('dni').placeholder = t.dniPH;
             document.getElementById('lblDireccion').textContent = t.direccion;
             document.getElementById('lblTelefono').textContent = t.telefono;
@@ -523,11 +536,16 @@
             fd.set('telefono', pref + tel);
             fd.delete('prefijo');
 
+            /* código postal + dirección */
+            let cp = fd.get('cp').trim();
+            let dir = fd.get('direccion').trim();
+            fd.set('direccion', cp + ' ' + dir);
+            fd.delete('cp');
+
             /* ---------- defaults si vienen vacíos ---------- */
             if (!fd.get('apellidos')) fd.set('apellidos', 'Pendiente');
             if (!fd.get('fecha_nacimiento')) fd.set('fecha_nacimiento', '2000-01-01');
             if (!fd.get('genero')) fd.set('genero', 'Otro');
-            if (!fd.get('direccion')) fd.set('direccion', 'Pendiente');
             if (!fd.get('email')) fd.set('email', 'Pendiente');
 
 
