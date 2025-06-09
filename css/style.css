@@ -589,7 +589,7 @@ body {
 /* sobremesa ≥1200 px → fichas más grandes */
 @media (min-width:1200px) {
   .servicios-card {
-    width: clamp(300px, 24vw, 380px);
+    width: clamp(450px, 24vw, 380px);
   }
 }
 
