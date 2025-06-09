@@ -497,7 +497,7 @@ body {
 /* ---------- SERVICIOS (fichas) ---------- */
 .servicios-wrapper {
   width: 100%;
-  padding: 60px 0 40px;
+  padding: 60px 5px 40px;
   background: #fff;
   overflow: hidden;
 }
@@ -537,7 +537,7 @@ body {
 
 @media (min-width:768px) {
   .servicios-card {
-    width: clamp(260px, 32vw, 320px);
+    width: clamp(260px, 52vw, 320px);
   }
 }
 
@@ -569,14 +569,6 @@ body {
   backdrop-filter: blur(2px);
 }
 
-/* móvil: ficha casi de ancho completo (90 vw) */
-@media(max-width:640px) {
-  .servicios-card {
-    width: 90vw;
-    height: 90vw;
-  }
-}
-
 /* flechas visibles solo cuando hay < 992 px */
 @media(min-width:992px) {
 
@@ -589,7 +581,7 @@ body {
 /* sobremesa ≥1200 px → fichas más grandes */
 @media (min-width:1200px) {
   .servicios-card {
-    width: clamp(450px, 24vw, 380px);
+    width: clamp(450px, 34vw, 380px);
   }
 }
 
