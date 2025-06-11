@@ -116,6 +116,9 @@ app.use('/api/public/pacientes', publicPacRoutes);
 const viafirmaRoutes = require('./routes/viafirma.routes');
 app.use('/api/viafirma', viafirmaRoutes);
 
+const citasRoutes = require('./routes/citas.routes');
+app.use('/api/citas', citasRoutes);
+
 const ONE_HOUR = 60 * 60 * 1000;
 
 /* cada hora: borra MP3/WEBM del tmp >30 min */
