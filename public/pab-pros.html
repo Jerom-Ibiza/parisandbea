@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Agenda | Paris & Bea</title>
+
+    <!-- ====== Google Fonts & Material Icons ====== -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- ====== FullCalendar 6 (core + dayGrid + timeGrid + interaction) ====== -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
+
+    <!-- ====== flatpickr (date‑time picker) ====== -->
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+    <!-- ====== SweetAlert2 ====== -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- ====== Tus estilos globales ====== -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        :root {
+            --accent: #aed3c1;
+            --accent-dark: #7fb29b;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Raleway', sans-serif;
+            background: #efefef;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--accent);
+            color: #fff;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        header .material-icons {
+            font-size: 28px
+        }
+
+        #calendar {
+            flex: 1 0 auto;
+            max-width: 1000px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .1);
+        }
+
+        footer {
+            flex: 0 0 auto;
+            width: 100%;
+            padding: 24px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 24px;
+            background: var(--accent);
+            border: none;
+            border-radius: 16px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .3s, transform .2s;
+        }
+
+        .btn:hover {
+            background: var(--accent-dark);
+            transform: scale(1.05)
+        }
+
+        /* FullCalendar overrides */
+        .fc .fc-toolbar-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #5b5b5b
+        }
+
+        .fc-button {
+            background: var(--accent) !important;
+            border: none !important;
+            border-radius: 8px !important;
+        }
+
+        .fc-button:hover {
+            background: var(--accent-dark) !important
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <span class="material-icons" onclick="history.back()" style="cursor:pointer">arrow_back</span>
+        <h1 style="margin:0;font-size:1.2rem">Agenda</h1>
+    </header>
+
+    <div id="calendar"></div>
+
+    <footer>
+        <button class="btn" id="newEventBtn">
+            <span class="material-icons">add</span> Nueva cita
+        </button>
+    </footer>
+
+    <script>
+        /* ======================= utilidades ======================= */
+        const apiKey = localStorage.getItem('x-api-key');   // o la forma en que ya la guardes
+        const proId = localStorage.getItem('id_profesional'); // guarda esto tras el login
+
+        if (!apiKey || !proId) {
+            // algo va mal, vuelve al login
+            location.href = '/pab-login.html';
+        }
+
+        /* ----------------- instanciar FullCalendar ---------------- */
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            locale: 'es',
+            initialView: 'timeGridWeek',
+            slotDuration: '00:30:00',
+            nowIndicator: true,
+            height: 'auto',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: fetchEvents,
+            dateClick: onDateClick,
+            eventClick: onEventClick,
+            editable: true,
+            eventDrop: onEventChange,
+            eventResize: onEventChange
+        });
+        calendar.render();
+
+        /* ============== cargar citas (GET /search) ============== */
+        async function fetchEvents(info, success, fail) {
+            try {
+                const qs = new URLSearchParams({
+                    id_profesional: proId,
+                    startDate: info.startStr,
+                    endDate: info.endStr
+                });
+                const r = await fetch('/api/citas/search?' + qs, {
+                    headers: { 'x-api-key': apiKey }
+                });
+                const data = await r.json();
+                const evs = data.map(c => ({
+                    id: c.id_cita,
+                    title: c.titulo,
+                    start: c.fecha_hora_inicio,
+                    end: c.fecha_hora_fin,
+                    extendedProps: c         // conserva todos los campos
+                }));
+                success(evs);
+            } catch (err) { console.error(err); fail(err); }
+        }
+
+        /* ============= crear cita desde botón flotante ============ */
+        document.getElementById('newEventBtn').addEventListener('click', () => openForm());
+
+        /* ============= crear cita clicando en hueco libre ========== */
+        function onDateClick(info) {
+            openForm({
+                start: info.dateStr,
+                end: FullCalendar.formatDate(
+                    FullCalendar.add(info.date, { minutes: 30 }),
+                    { timeZone: 'local', format: 'iso' } // añade 30 min
+                )
+            });
+        }
+
+        /* =================== abrir formulario ===================== */
+        async function openForm(prefill = {}) {
+            const { value: formValues } = await Swal.fire({
+                title: prefill.id ? 'Editar cita' : 'Nueva cita',
+                html: `
+      <input id="swal-title" class="swal2-input" placeholder="Título" value="${prefill.title || ''}">
+      <input id="swal-start" class="swal2-input" placeholder="Inicio">
+      <input id="swal-end"   class="swal2-input" placeholder="Fin">
+    `,
+                focusConfirm: false,
+                didOpen: () => {
+                    flatpickr('#swal-start', {
+                        enableTime: true,
+                        time_24hr: true,
+                        defaultDate: prefill.start || null,
+                        locale: 'es'
+                    });
+                    flatpickr('#swal-end', {
+                        enableTime: true,
+                        time_24hr: true,
+                        defaultDate: prefill.end || null,
+                        locale: 'es'
+                    });
+                },
+                preConfirm: () => {
+                    return {
+                        title: document.getElementById('swal-title').value,
+                        start: document.getElementById('swal-start').value,
+                        end: document.getElementById('swal-end').value
+                    };
+                },
+                showCancelButton: true,
+                confirmButtonText: prefill.id ? 'Actualizar' : 'Crear'
+            });
+
+            if (!formValues) return; // cancelado
+
+            if (prefill.id) {
+                /* -------- UPDATE -------- */
+                await fetch('/api/citas/update/' + prefill.id, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey
+                    },
+                    body: JSON.stringify({
+                        titulo: formValues.title,
+                        fecha_hora_inicio: formValues.start,
+                        fecha_hora_fin: formValues.end
+                    })
+                });
+            } else {
+                /* -------- CREATE -------- */
+                await fetch('/api/citas/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey
+                    },
+                    body: JSON.stringify({
+                        titulo: formValues.title,
+                        fecha_hora_inicio: formValues.start,
+                        fecha_hora_fin: formValues.end,
+                        id_profesional: proId
+                    })
+                });
+            }
+            calendar.refetchEvents();
+        }
+
+        /* =================== click en un evento =================== */
+        function onEventClick(info) {
+            const c = info.event;
+            Swal.fire({
+                title: c.title,
+                html: `
+      <p><b>Inicio:</b> ${c.start.toLocaleString()}</p>
+      <p><b>Fin:</b> ${c.end.toLocaleString()}</p>
+    `,
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Editar',
+                denyButtonText: 'Eliminar',
+                cancelButtonText: 'Cerrar'
+            }).then(async result => {
+                if (result.isConfirmed) {
+                    openForm({
+                        id: c.id,
+                        title: c.title,
+                        start: c.startStr,
+                        end: c.endStr
+                    });
+                } else if (result.isDenied) {
+                    const ok = await Swal.fire({
+                        icon: 'warning',
+                        title: '¿Eliminar definitivamente?',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    });
+                    if (ok.isConfirmed) {
+                        await fetch('/api/citas/delete/' + c.id, {
+                            method: 'DELETE',
+                            headers: { 'x-api-key': apiKey }
+                        });
+                        calendar.refetchEvents();
+                    }
+                }
+            });
+        }
+
+        /* ======= drag‑drop / redimensionar: actualizar cita ======= */
+        async function onEventChange(info) {
+            await fetch('/api/citas/update/' + info.event.id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKey
+                },
+                body: JSON.stringify({
+                    fecha_hora_inicio: info.event.startStr,
+                    fecha_hora_fin: info.event.endStr
+                })
+            });
+        }
+    </script>
+</body>
+
+</html>

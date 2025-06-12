@@ -27,7 +27,7 @@ app.use(session({
 
 // Proteger la página pab-files.html si no hay sesión
 app.use((req, res, next) => {
-  const protectedPages = ['/pab-files.html', '/inicio-consulta.html', '/consulta.html'];
+  const protectedPages = ['/pab-files.html', '/inicio-consulta.html', '/consulta.html', '/pab-pros.html'];
   if (protectedPages.includes(req.path) && !req.session.user) {
     return res.redirect('/pab-login.html');
   }
