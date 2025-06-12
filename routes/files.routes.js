@@ -9,12 +9,7 @@ const path = require('path');
 // ---------------------------
 
 // 1. checkAuth - Protege rutas con sesión
-const checkAuth = (req, res, next) => {
-  if (!req.session || !req.session.user) {
-    return res.status(401).json({ error: 'No autorizado. Sesión no iniciada.' });
-  }
-  next();
-};
+const checkAuth = require('../middleware/checkAuth');
 
 // 2. checkApiKey - Protege rutas con la API key
 const checkApiKey = (req, res, next) => {

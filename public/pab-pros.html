@@ -127,35 +127,50 @@
 
     <script>
         /* ======================= utilidades ======================= */
-        const apiKey = localStorage.getItem('x-api-key');   // o la forma en que ya la guardes
-        const proId = localStorage.getItem('id_profesional'); // guarda esto tras el login
+        let proId = null;
 
-        if (!apiKey || !proId) {
-            // algo va mal, vuelve al login
-            location.href = '/pab-login.html';
+        async function loadSession() {
+            try {
+                const r = await fetch('/api/session/info');
+                const data = await r.json();
+                if (!data.user) {
+                    location.href = '/pab-login.html';
+                    return false;
+                }
+                proId = data.user.id_profesional;
+                return true;
+            } catch (e) {
+                console.error(e);
+                location.href = '/pab-login.html';
+                return false;
+            }
         }
-
         /* ----------------- instanciar FullCalendar ---------------- */
         const calendarEl = document.getElementById('calendar');
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            locale: 'es',
-            initialView: 'timeGridWeek',
-            slotDuration: '00:30:00',
-            nowIndicator: true,
-            height: 'auto',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            events: fetchEvents,
-            dateClick: onDateClick,
-            eventClick: onEventClick,
-            editable: true,
-            eventDrop: onEventChange,
-            eventResize: onEventChange
+        let calendar;
+
+        loadSession().then(ok => {
+            if (!ok) return;
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'es',
+                initialView: 'timeGridWeek',
+                slotDuration: '00:30:00',
+                nowIndicator: true,
+                height: 'auto',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: fetchEvents,
+                dateClick: onDateClick,
+                eventClick: onEventClick,
+                editable: true,
+                eventDrop: onEventChange,
+                eventResize: onEventChange
+            });
+            calendar.render();
         });
-        calendar.render();
 
         /* ============== cargar citas (GET /search) ============== */
         async function fetchEvents(info, success, fail) {
@@ -165,9 +180,7 @@
                     startDate: info.startStr,
                     endDate: info.endStr
                 });
-                const r = await fetch('/api/citas/search?' + qs, {
-                    headers: { 'x-api-key': apiKey }
-                });
+                const r = await fetch('/api/citas/search?' + qs);
                 const data = await r.json();
                 const evs = data.map(c => ({
                     id: c.id_cita,
@@ -236,8 +249,7 @@
                 await fetch('/api/citas/update/' + prefill.id, {
                     method: 'PUT',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': apiKey
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         titulo: formValues.title,
@@ -250,8 +262,7 @@
                 await fetch('/api/citas/create', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': apiKey
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         titulo: formValues.title,
@@ -296,8 +307,7 @@
                     });
                     if (ok.isConfirmed) {
                         await fetch('/api/citas/delete/' + c.id, {
-                            method: 'DELETE',
-                            headers: { 'x-api-key': apiKey }
+                            method: 'DELETE'
                         });
                         calendar.refetchEvents();
                     }
@@ -310,8 +320,7 @@
             await fetch('/api/citas/update/' + info.event.id, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': apiKey
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     fecha_hora_inicio: info.event.startStr,
