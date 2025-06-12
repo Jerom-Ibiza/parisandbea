@@ -390,6 +390,25 @@
     .mic-btn {
       margin-bottom: 20px;
     }
+
+    /* ===== cabecera ===== */
+    header {
+      background: #aed3c1;
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    header .material-icons {
+      font-size: 28px;
+    }
+
+    #profName {
+      margin-left: auto;
+      font-weight: 700;
+    }
   </style>
 </head>
 
@@ -407,6 +426,14 @@
       <button onclick="hideTimeModal()">Entendido</button>
     </div>
   </div>
+
+  <header>
+    <div id="logoutBtn" style="display:flex;align-items:center;gap:6px;cursor:pointer">
+      <span class="material-icons">arrow_back</span>
+      <span>Logout</span>
+    </div>
+    <div id="profName"></div>
+  </header>
 
   <div class="wrapper">
     <img src="images/recursos/parisandbealogo.png" alt="Logo" class="logo" />
@@ -453,15 +480,23 @@
     <button id="registerBtn" class="footer-btn">
       <span class="material-icons">person_add</span> Inscripción
     </button>
-    <button id="logoutBtn" class="footer-btn">
-      <span class="material-icons">logout</span> Logout
-    </button>
   </footer>
   <script>
     // ——— helpers ———
     const $ = id => document.getElementById(id);
     const showLoader = () => $('loading').style.display = 'block';
     const hideLoader = () => $('loading').style.display = 'none';
+
+    (async () => {
+      try {
+        const r = await fetch('/api/session/info');
+        const data = await r.json();
+        if (!data.user) { location.href = '/pab-login.html'; return; }
+        $('profName').textContent = data.user.nombre;
+      } catch (e) {
+        console.error(e);
+      }
+    })();
 
     // ——— modal timeout ———
     function showTimeModal() { $('modalTime').style.display = 'flex'; }

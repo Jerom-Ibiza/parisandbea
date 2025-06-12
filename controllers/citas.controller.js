@@ -236,12 +236,15 @@ exports.searchAppointments = async (req, res) => {
             endDate
         } = req.query;
 
+        /*  Si no se indica el id_profesional por query, usamos el de la sesión  */
+        const profId = id_profesional || (req.session.user && req.session.user.id_profesional);
+
         let query = 'SELECT * FROM citas WHERE 1 = 1';
         const params = [];
 
-        if (id_profesional) {
+        if (profId) {
             query += ' AND id_profesional = ?';
-            params.push(id_profesional);
+            params.push(profId);
         }
         if (id_paciente) {
             query += ' AND id_paciente = ?';
