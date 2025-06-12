@@ -399,6 +399,8 @@
       display: flex;
       align-items: center;
       gap: 14px;
+      width: 100%;
+      justify-content: space-between;
     }
 
     header .material-icons {
@@ -429,8 +431,12 @@
 
   <header>
     <div id="logoutBtn" style="display:flex;align-items:center;gap:6px;cursor:pointer">
-      <span class="material-icons">arrow_back</span>
-      <span>Logout</span>
+      <span class="material-icons">
+        arrow_back
+      </span>
+      <span>
+        <h1 style="margin:0;font-size:1.2rem;font-weight:700;">Logout</h1>
+      </span>
     </div>
     <div id="profName"></div>
   </header>

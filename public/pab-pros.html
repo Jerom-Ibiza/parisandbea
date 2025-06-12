@@ -48,10 +48,17 @@
             display: flex;
             align-items: center;
             gap: 14px;
+            width: 100%;
+            justify-content: space-between;
         }
 
         header .material-icons {
             font-size: 28px
+        }
+
+        #profName {
+            margin-left: auto;
+            font-weight: 700;
         }
 
         #calendar {
@@ -108,14 +115,31 @@
         .fc-button:hover {
             background: var(--accent-dark) !important
         }
+
+        /* ======= detalles en el modal de la cita ======= */
+        .modal-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
+            color: #444;
+        }
+
+        .modal-detail .material-icons {
+            font-size: 20px;
+            color: var(--accent-dark);
+        }
     </style>
 </head>
 
 <body>
 
     <header>
-        <span class="material-icons" onclick="history.back()" style="cursor:pointer">arrow_back</span>
-        <h1 style="margin:0;font-size:1.2rem">Inicio</h1>
+        <div style="display:flex;align-items:center;gap:6px;">
+            <span class="material-icons" onclick="history.back()" style="cursor:pointer">arrow_back</span>
+            <h1 style="margin:0;font-size:1.2rem">Inicio</h1>
+        </div>
+        <div id="profName"></div>
     </header>
 
     <div id="calendar"></div>
@@ -139,6 +163,7 @@
                     return false;
                 }
                 proId = data.user.id_profesional;
+                document.getElementById('profName').textContent = data.user.nombre;
                 return true;
             } catch (e) {
                 console.error(e);
@@ -214,6 +239,21 @@
                 title: prefill.id ? 'Editar cita' : 'Nueva cita',
                 html: `
       <input id="swal-title" class="swal2-input" placeholder="Título" value="${prefill.title || ''}">
+      <textarea id="swal-desc" class="swal2-textarea" placeholder="Descripción">${prefill.descripcion || ''}</textarea>
+      <input id="swal-persona" class="swal2-input" placeholder="Nombre paciente (opcional)" value="${prefill.persona || ''}">
+      <input id="swal-idpac" class="swal2-input" placeholder="ID paciente (opcional)" value="${prefill.id_paciente || ''}">
+      <select id="swal-estado" class="swal2-select">
+        <option value="pendiente">Pendiente</option>
+        <option value="confirmada">Confirmada</option>
+        <option value="cancelada">Cancelada</option>
+      </select>
+      <select id="swal-notif" class="swal2-select">
+        <option value="ninguna">Ninguna</option>
+        <option value="whatsapp">WhatsApp</option>
+        <option value="sms">SMS</option>
+        <option value="email">Email</option>
+        <option value="telefono">Teléfono</option>
+      </select>
       <input id="swal-start" class="swal2-input" placeholder="Inicio">
       <input id="swal-end"   class="swal2-input" placeholder="Fin">
     `,
@@ -231,10 +271,17 @@
                         defaultDate: prefill.end || null,
                         locale: 'es'
                     });
+                    document.getElementById('swal-estado').value = prefill.estado || 'pendiente';
+                    document.getElementById('swal-notif').value = prefill.notificacion || 'ninguna';
                 },
                 preConfirm: () => {
                     return {
                         title: document.getElementById('swal-title').value,
+                        descripcion: document.getElementById('swal-desc').value,
+                        persona: document.getElementById('swal-persona').value,
+                        id_paciente: document.getElementById('swal-idpac').value,
+                        estado: document.getElementById('swal-estado').value,
+                        notificacion: document.getElementById('swal-notif').value,
                         start: document.getElementById('swal-start').value,
                         end: document.getElementById('swal-end').value
                     };
@@ -254,6 +301,11 @@
                     },
                     body: JSON.stringify({
                         titulo: formValues.title,
+                        descripcion: formValues.descripcion,
+                        persona: formValues.persona,
+                        id_paciente: formValues.id_paciente,
+                        estado: formValues.estado,
+                        notificacion: formValues.notificacion,
                         fecha_hora_inicio: formValues.start,
                         fecha_hora_fin: formValues.end
                     })
@@ -267,6 +319,11 @@
                     },
                     body: JSON.stringify({
                         titulo: formValues.title,
+                        descripcion: formValues.descripcion,
+                        persona: formValues.persona,
+                        id_paciente: formValues.id_paciente,
+                        estado: formValues.estado,
+                        notificacion: formValues.notificacion,
                         fecha_hora_inicio: formValues.start,
                         fecha_hora_fin: formValues.end,
                         id_profesional: proId
@@ -282,8 +339,12 @@
             Swal.fire({
                 title: c.title,
                 html: `
-      <p><b>Inicio:</b> ${c.start.toLocaleString()}</p>
-      <p><b>Fin:</b> ${c.end.toLocaleString()}</p>
+      <div class="modal-detail"><span class="material-icons">schedule</span><span><b>Inicio:</b> ${c.start.toLocaleString()}</span></div>
+      <div class="modal-detail"><span class="material-icons">event</span><span><b>Fin:</b> ${c.end.toLocaleString()}</span></div>
+      <div class="modal-detail"><span class="material-icons">person</span><span><b>Paciente:</b> ${c.extendedProps.persona || '—'}</span></div>
+      <div class="modal-detail"><span class="material-icons">description</span><span><b>Descripción:</b> ${c.extendedProps.descripcion || '—'}</span></div>
+      <div class="modal-detail"><span class="material-icons">info</span><span><b>Estado:</b> ${c.extendedProps.estado || '—'}</span></div>
+      <div class="modal-detail"><span class="material-icons">notifications</span><span><b>Notificación:</b> ${c.extendedProps.notificacion || '—'}</span></div>
     `,
                 showDenyButton: true,
                 showCancelButton: true,
@@ -295,6 +356,11 @@
                     openForm({
                         id: c.id,
                         title: c.title,
+                        descripcion: c.extendedProps.descripcion,
+                        persona: c.extendedProps.persona,
+                        id_paciente: c.extendedProps.id_paciente,
+                        estado: c.extendedProps.estado,
+                        notificacion: c.extendedProps.notificacion,
                         start: c.startStr,
                         end: c.endStr
                     });
