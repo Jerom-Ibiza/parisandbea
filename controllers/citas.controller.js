@@ -233,11 +233,18 @@ exports.searchAppointments = async (req, res) => {
             id_servicio,
             estado,
             startDate,
-            endDate
+            endDate,
+            all
         } = req.query;
 
-        /*  Si no se indica el id_profesional por query, usamos el de la sesión  */
-        const profId = id_profesional || (req.session.user && req.session.user.id_profesional);
+        /*
+         * Si la query incluye `all=true` o `all=1` no filtramos por profesional;
+         * en caso contrario usamos el id indicado o el de la sesión
+         */
+        const allFlag = all === '1' || all === 'true';
+        const profId = allFlag
+            ? null
+            : id_profesional || (req.session.user && req.session.user.id_profesional);
 
         let query = 'SELECT * FROM citas WHERE 1 = 1';
         const params = [];
