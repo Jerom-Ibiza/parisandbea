@@ -162,6 +162,11 @@
                 grid-template-columns: 1fr 1fr;
                 gap: 10px;
             }
+
+            .modal-fields-2col {
+                width: 100%;
+                max-width: 900px;
+            }
         }
     </style>
 </head>
@@ -228,7 +233,8 @@
                 eventClick: onEventClick,
                 editable: true,
                 eventDrop: onEventChange,
-                eventResize: onEventChange
+                eventResize: onEventChange,
+                datesSet: attachTitleListener
             });
             calendar.render();
         });
@@ -431,6 +437,31 @@
                     fecha_hora_fin: info.event.endStr
                 })
             });
+        }
+
+        /* =========== ir a una fecha concreta haciendo clic ========= */
+        function attachTitleListener() {
+            const titleEl = document.querySelector('.fc-toolbar-title');
+            if (!titleEl) return;
+            titleEl.style.cursor = 'pointer';
+            titleEl.onclick = openGotoDate;
+        }
+
+        async function openGotoDate() {
+            const { value: dateStr } = await Swal.fire({
+                title: 'Ir a fecha',
+                html: '<input id="swal-goto-date" class="swal2-input">',
+                focusConfirm: false,
+                didOpen: () => {
+                    flatpickr('#swal-goto-date', {
+                        defaultDate: calendar.getDate(),
+                        locale: 'es',
+                        dateFormat: 'Y-m-d'
+                    });
+                },
+                preConfirm: () => document.getElementById('swal-goto-date').value
+            });
+            if (dateStr) calendar.gotoDate(dateStr);
         }
     </script>
 </body>
