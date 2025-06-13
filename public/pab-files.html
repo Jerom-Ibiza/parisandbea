@@ -489,6 +489,7 @@
 
         body {
           display: grid;
+          grid-template-columns: 280px 1fr;
           grid-template-rows: auto 1fr;
           grid-template-areas:
             "header header"
@@ -507,8 +508,14 @@
           overflow-y: auto;
         }
 
-        .main {
-          grid-area: main;
+        body>header {
+          grid-area: header;
+        }
+
+        .sidebar {
+          grid-area: sidebar;
+          width: 280px;
+          overflow-y: auto;
         }
 
         .main {
