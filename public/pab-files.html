@@ -490,9 +490,10 @@
         body {
           display: grid;
           grid-template-rows: auto 1fr;
-          grid-template-areas: "header header" "sidebar main";
-          grid-template-areas: "sidebar main";
-          height: 100vh;
+          grid-template-areas:
+            "header header"
+            "sidebar main";
+          min-height: 100vh;
           overflow: hidden;
         }
 
@@ -502,6 +503,8 @@
 
         .sidebar {
           grid-area: sidebar;
+          width: 280px;
+          overflow-y: auto;
         }
 
         .main {
@@ -600,10 +603,6 @@
 
   <!-- ======= MAIN ======= -->
   <main class="main">
-    <footer>
-      <span class="material-icons back-btn" id="backBtn">arrow_back</span>
-      <p>Inicio</p>
-    </footer>
     <div class="container"><!-- tabla o formulario inyectados por JS --></div>
 
     <!-- MODAL -->
