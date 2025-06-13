@@ -495,18 +495,8 @@
         grid-template-areas:
           "header header"
           "sidebar main";
-        min-height: 100vh;
+        height: 100vh;
         overflow: hidden;
-      }
-
-      header {
-        grid-area: header;
-      }
-
-      .sidebar {
-        grid-area: sidebar;
-        width: 280px;
-        overflow-y: auto;
       }
 
       body>header {
@@ -521,7 +511,7 @@
 
       .main {
         grid-area: main;
-        overflow: auto;
+        overflow-y: auto;
         padding-bottom: 50px;
         padding-left: 5px;
         padding-right: 5px;
