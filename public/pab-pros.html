@@ -356,22 +356,15 @@
                 const endDate = day + 'T23:59:59';
 
                 const profesionales = await fetch('/api/profesionales/slim').then(r => r.json());
-                const events = [];
-                await Promise.all(profesionales.map(async p => {
-                    const qs = new URLSearchParams({
-                        id_profesional: p.id_profesional,
-                        startDate,
-                        endDate
-                    });
-                    const r = await fetch('/api/citas/search?' + qs.toString());
-                    const data = await r.json();
-                    data.forEach(c => {
-                        events.push({
-                            title: p.nombre + ': ' + c.titulo,
-                            start: c.fecha_hora_inicio,
-                            end: c.fecha_hora_fin
-                        });
-                    });
+                const profMap = {};
+                profesionales.forEach(p => { profMap[p.id_profesional] = p.nombre; });
+
+                const qs = new URLSearchParams({ startDate, endDate });
+                const all = await fetch('/api/citas/all?' + qs.toString()).then(r => r.json());
+                const events = all.map(c => ({
+                    title: (profMap[c.id_profesional] || 'Desconocido') + ': ' + c.titulo,
+                    start: c.fecha_hora_inicio,
+                    end: c.fecha_hora_fin
                 }));
 
                 await Swal.fire({

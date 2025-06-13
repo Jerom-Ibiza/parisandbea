@@ -276,3 +276,34 @@ exports.searchAppointments = async (req, res) => {
         res.status(500).json({ error: 'Error al buscar citas' });
     }
 };
+
+
+/* ─────────────────────────────────────────────────────────────
+ * 6.  Buscar todas las citas sin filtrar por profesional
+ *     (solo por rango de fechas)
+ * ──────────────────────────────────────────────────────────── */
+exports.searchAllAppointments = async (req, res) => {
+    try {
+        const { startDate, endDate } = req.query;
+
+        let query = 'SELECT * FROM citas WHERE 1 = 1';
+        const params = [];
+
+        if (startDate && endDate) {
+            query += ' AND fecha_hora_inicio BETWEEN ? AND ?';
+            params.push(startDate, endDate);
+        } else if (startDate) {
+            query += ' AND fecha_hora_inicio >= ?';
+            params.push(startDate);
+        } else if (endDate) {
+            query += ' AND fecha_hora_inicio <= ?';
+            params.push(endDate);
+        }
+
+        const [rows] = await pool.query(query, params);
+        res.json(rows);
+    } catch (error) {
+        console.error('Error al buscar todas las citas:', error);
+        res.status(500).json({ error: 'Error al buscar citas' });
+    }
+};

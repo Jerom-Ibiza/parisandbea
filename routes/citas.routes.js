@@ -14,6 +14,7 @@ router.delete('/delete/:id', checkAuthOrApiKey, citasController.deleteAppointmen
 
 // Buscar citas
 router.get('/search', checkAuthOrApiKey, citasController.searchAppointments);
+router.get('/all', checkAuthOrApiKey, citasController.searchAllAppointments);
 
 // Obtener cita por ID (al final para no colisionar con /search)
 router.get('/:id', checkAuthOrApiKey, citasController.getAppointmentById);
