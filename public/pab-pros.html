@@ -182,6 +182,10 @@
         <div id="profName"></div>
     </header>
 
+    <div style="text-align:right;margin:10px">
+        <select id="proSelect" style="min-width:150px"></select>
+    </div>
+
     <div id="calendar"></div>
 
     <footer>
@@ -193,6 +197,24 @@
     <script>
         /* ======================= utilidades ======================= */
         let proId = null;
+
+        async function loadProfesionales() {
+            try {
+                const r = await fetch('/api/profesionales/slim');
+                const data = await r.json();
+                const sel = document.getElementById('proSelect');
+                sel.innerHTML = '';
+                data.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id_profesional;
+                    opt.textContent = p.nombre;
+                    sel.appendChild(opt);
+                });
+                sel.value = proId;
+            } catch (e) {
+                console.error(e);
+            }
+        }
 
         async function loadSession() {
             try {
@@ -215,8 +237,9 @@
         const calendarEl = document.getElementById('calendar');
         let calendar;
 
-        loadSession().then(ok => {
+        loadSession().then(async ok => {
             if (!ok) return;
+            await loadProfesionales();
             calendar = new FullCalendar.Calendar(calendarEl, {
                 locale: 'es',
                 initialView: 'timeGridWeek',
@@ -239,6 +262,10 @@
                 datesSet: attachTitleListener
             });
             calendar.render();
+            document.getElementById('proSelect').addEventListener('change', e => {
+                proId = e.target.value;
+                calendar.refetchEvents();
+            });
         });
 
         /* ============== cargar citas (GET /search) ============== */
