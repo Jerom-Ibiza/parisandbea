@@ -237,7 +237,13 @@
             <span class="material-icons">calendar_view_day</span>
             Agendas hoy
         </button>
-        <select id="proSelect" style="min-width:150px"></select>
+        <div style="display:flex;gap:10px;align-items:center;">
+            <select id="proSelect" style="min-width:150px"></select>
+            <button class="btn" id="toggleHoursBtn" type="button">
+                <span class="material-icons" id="toggleHoursIcon">expand_more</span>
+                <span id="toggleHoursText">Mostrar&nbsp;0–7</span>
+            </button>
+        </div>
     </div>
 
     <div id="calendar"></div>
@@ -290,6 +296,7 @@
         /* ----------------- instanciar FullCalendar ---------------- */
         const calendarEl = document.getElementById('calendar');
         let calendar;
+        let earlyHoursShown = false;
 
         loadSession().then(async ok => {
             if (!ok) return;
@@ -297,7 +304,8 @@
             calendar = new FullCalendar.Calendar(calendarEl, {
                 locale: 'es',
                 initialView: 'timeGridWeek',
-                slotDuration: '00:30:00',
+                slotDuration: '01:00:00',
+                slotMinTime: '08:00:00',
                 nowIndicator: true,
                 height: 'auto',
                 headerToolbar: {
@@ -346,26 +354,16 @@
         /* ============= crear cita desde botón flotante ============ */
         document.getElementById('newEventBtn').addEventListener('click', () => openForm());
 
-        document.getElementById('allAgendaBtn').addEventListener('click', openAllAgendasToday);
+        document.getElementById('allAgendaBtn').addEventListener('click', openAllAgendas);
+        document.getElementById('toggleHoursBtn').addEventListener('click', toggleEarlyHours);
+        let profMap = null;
+        let modalCal;
 
-        async function openAllAgendasToday() {
+        async function openAllAgendas() {
             try {
-                const today = new Date();
-                const day = today.toISOString().split('T')[0];
-                const startDate = day + 'T00:00:00';
-                const endDate = day + 'T23:59:59';
-
                 const profesionales = await fetch('/api/profesionales/slim').then(r => r.json());
-                const profMap = {};
+                profMap = {};
                 profesionales.forEach(p => { profMap[p.id_profesional] = p.nombre; });
-
-                const qs = new URLSearchParams({ startDate, endDate });
-                const all = await fetch('/api/citas/all?' + qs.toString()).then(r => r.json());
-                const events = all.map(c => ({
-                    title: (profMap[c.id_profesional] || 'Desconocido') + ': ' + c.titulo,
-                    start: c.fecha_hora_inicio,
-                    end: c.fecha_hora_fin
-                }));
 
                 await Swal.fire({
                     title: 'Agendas de hoy',
@@ -373,12 +371,12 @@
                     width: '90%',
                     didOpen: () => {
                         const modalEl = document.getElementById('allAgendaCalendar');
-                        const modalCal = new FullCalendar.Calendar(modalEl, {
+                        modalCal = new FullCalendar.Calendar(modalEl, {
                             locale: 'es',
                             initialView: 'timeGridDay',
                             slotDuration: '00:30:00',
                             height: 'auto',
-                            events
+                            datesSet: onModalDatesSet
                         });
                         modalCal.render();
                     }
@@ -387,6 +385,34 @@
                 console.error(e);
                 Swal.fire('Error', 'No se pudieron cargar las agendas', 'error');
             }
+        }
+
+        async function onModalDatesSet(info) {
+            try {
+                const endMinus = new Date(info.end.getTime() - 1000);
+                const qs = new URLSearchParams({
+                    startDate: info.start.toISOString(),
+                    endDate: endMinus.toISOString(),
+                    all: '1'
+                });
+                const all = await fetch('/api/citas/search?' + qs.toString()).then(r => r.json());
+                const events = all.map(c => ({
+                    title: (profMap[c.id_profesional] || 'Desconocido') + ': ' + c.titulo,
+                    start: c.fecha_hora_inicio,
+                    end: c.fecha_hora_fin
+                }));
+                modalCal.removeAllEvents();
+                modalCal.addEventSource(events);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function toggleEarlyHours() {
+            earlyHoursShown = !earlyHoursShown;
+            calendar.setOption('slotMinTime', earlyHoursShown ? '00:00:00' : '08:00:00');
+            document.getElementById('toggleHoursIcon').textContent = earlyHoursShown ? 'expand_less' : 'expand_more';
+            document.getElementById('toggleHoursText').textContent = earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7';
         }
 
         /* ============= crear cita clicando en hueco libre ========== */
