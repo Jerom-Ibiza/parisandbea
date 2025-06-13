@@ -180,7 +180,7 @@
       padding: 2rem;
       max-width: 1100px;
       margin: 2.5rem auto;
-      margin-top: 0px;
+      margin-top: 10px;
     }
 
     .table-responsive {
@@ -420,6 +420,10 @@
       font-size: 28px;
     }
 
+    .desktop-header {
+      display: none;
+    }
+
     /* SWEETALERT2 overrides */
     button:where(.swal2-styled):where(.swal2-confirm) {
       background: #add1c5 !important;
@@ -439,6 +443,29 @@
      DESKTOP LAYOUT (≥1200px)
   ====================================================== */
     @media(min-width:1200px) {
+      .desktop-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #add1c5;
+        color: #fff;
+        padding: 14px 10px;
+      }
+
+      .desktop-header .material-icons {
+        font-size: 28px;
+        cursor: pointer;
+      }
+
+      .desktop-header h1 {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+
+      .main>footer {
+        display: none;
+      }
+
       body {
         display: grid;
         grid-template-columns: 280px 1fr;
@@ -507,8 +534,6 @@
 <body>
   <!-- ======= SIDEBAR ======= -->
   <aside class="sidebar">
-    <header><img src="images/recursos/parisandbealogo.png" alt="ParisAndBea Logo"></header>
-
     <button id="tabsToggle" class="tabs-toggle"><span class="material-icons">menu</span></button>
 
     <div class="tabs">
@@ -529,6 +554,10 @@
       <div class="tab" data-folder="images"><i class="material-icons">public</i> Img Web</div>
       <div class="tab" data-folder="images/recursos"><i class="material-icons">language</i> Img Recursos</div>
       <div class="tab" data-folder="password"><i class="material-icons">lock</i> Password</div>
+    </div>
+    <div class="desktop-header">
+      <span class="material-icons back-btn">arrow_back</span>
+      <h1 onclick="history.back()">Inicio</h1>
     </div>
   </aside>
 
@@ -747,9 +776,8 @@
       };
     });
 
-    /* -------------- Volver al inicio -------------- */
-    document.getElementById('backBtn').onclick = () => location.href = '/inicio-consulta.html';
     /* -------------- Hamburguesa -------------- */
+    document.querySelectorAll('.back-btn').forEach(btn => btn.onclick = () => location.href = '/inicio-consulta.html');
     document.getElementById('tabsToggle').onclick = function () {
       document.querySelector('.tabs').classList.toggle('show');
       this.classList.toggle('open');

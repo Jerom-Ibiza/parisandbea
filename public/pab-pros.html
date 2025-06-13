@@ -49,7 +49,14 @@
             align-items: center;
             gap: 14px;
             width: 100%;
-            justify-content: space-between;
+            position: relative;
+        }
+
+        .header-logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 30px;
         }
 
         header .material-icons {
@@ -129,6 +136,33 @@
             font-size: 20px;
             color: var(--accent-dark);
         }
+
+        /* ======= campos de los formularios (nueva/editar) ======= */
+        .modal-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .modal-field .material-icons {
+            font-size: 20px;
+            color: var(--accent-dark);
+        }
+
+        .modal-field .swal2-input,
+        .modal-field .swal2-select,
+        .modal-field .swal2-textarea {
+            flex: 1;
+        }
+
+        @media (min-width: 1200px) {
+            .modal-fields-2col {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 
@@ -137,8 +171,9 @@
     <header>
         <div style="display:flex;align-items:center;gap:6px;">
             <span class="material-icons" onclick="history.back()" style="cursor:pointer">arrow_back</span>
-            <h1 style="margin:0;font-size:1.2rem">Inicio</h1>
+            <h1 style="margin:0;font-size:1.2rem" onclick="history.back()">Inicio</h1>
         </div>
+        <img src="images/recursos/pabw.png" alt="logo" class="header-logo">
         <div id="profName"></div>
     </header>
 
@@ -238,24 +273,26 @@
             const { value: formValues } = await Swal.fire({
                 title: prefill.id ? 'Editar cita' : 'Nueva cita',
                 html: `
-      <input id="swal-title" class="swal2-input" placeholder="Título" value="${prefill.title || ''}">
-      <textarea id="swal-desc" class="swal2-textarea" placeholder="Descripción">${prefill.descripcion || ''}</textarea>
-      <input id="swal-persona" class="swal2-input" placeholder="Nombre paciente (opcional)" value="${prefill.persona || ''}">
-      <input id="swal-idpac" class="swal2-input" placeholder="ID paciente (opcional)" value="${prefill.id_paciente || ''}">
-      <select id="swal-estado" class="swal2-select">
-        <option value="pendiente">Pendiente</option>
-        <option value="confirmada">Confirmada</option>
-        <option value="cancelada">Cancelada</option>
-      </select>
-      <select id="swal-notif" class="swal2-select">
-        <option value="ninguna">Ninguna</option>
-        <option value="whatsapp">WhatsApp</option>
-        <option value="sms">SMS</option>
-        <option value="email">Email</option>
-        <option value="telefono">Teléfono</option>
-      </select>
-      <input id="swal-start" class="swal2-input" placeholder="Inicio">
-      <input id="swal-end"   class="swal2-input" placeholder="Fin">
+      <div class="modal-fields-2col">
+        <div class="modal-field"><span class="material-icons">title</span><input id="swal-title" class="swal2-input" placeholder="Título" value="${prefill.title || ''}"></div>
+        <div class="modal-field"><span class="material-icons">description</span><textarea id="swal-desc" class="swal2-textarea" placeholder="Descripción">${prefill.descripcion || ''}</textarea></div>
+        <div class="modal-field"><span class="material-icons">person</span><input id="swal-persona" class="swal2-input" placeholder="Nombre" value="${prefill.persona || ''}"></div>
+        <div class="modal-field"><span class="material-icons">badge</span><input id="swal-idpac" class="swal2-input" placeholder="ID paciente (opcional)" value="${prefill.id_paciente || ''}"></div>
+        <div class="modal-field"><span class="material-icons">schedule</span><input id="swal-start" class="swal2-input" placeholder="Inicio"></div>
+        <div class="modal-field"><span class="material-icons">info</span><select id="swal-estado" class="swal2-select">
+            <option value="pendiente">Pendiente</option>
+            <option value="confirmada">Confirmada</option>
+            <option value="cancelada">Cancelada</option>
+        </select></div>
+        <div class="modal-field"><span class="material-icons">event</span><input id="swal-end" class="swal2-input" placeholder="Fin"></div>
+        <div class="modal-field"><span class="material-icons">notifications</span><select id="swal-notif" class="swal2-select">
+            <option value="ninguna">Ninguna</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="sms">SMS</option>
+            <option value="email">Email</option>
+            <option value="telefono">Teléfono</option>
+        </select></div>
+      </div>
     `,
                 focusConfirm: false,
                 didOpen: () => {

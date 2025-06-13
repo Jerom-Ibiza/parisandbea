@@ -400,7 +400,14 @@
       align-items: center;
       gap: 14px;
       width: 100%;
-      justify-content: space-between;
+      position: relative;
+    }
+
+    .header-logo {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 30px;
     }
 
     header .material-icons {
@@ -438,11 +445,11 @@
         <h1 style="margin:0;font-size:1.2rem;font-weight:700;">Logout</h1>
       </span>
     </div>
+    <img src="images/recursos/pabw.png" alt="logo" class="header-logo">
     <div id="profName"></div>
   </header>
 
   <div class="wrapper">
-    <img src="images/recursos/parisandbealogo.png" alt="Logo" class="logo" />
     <div class="main-section">
       <!-- fila mic + stop -->
       <div class="mic-row">
