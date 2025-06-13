@@ -36,6 +36,33 @@
       line-height: 1.6
     }
 
+    header {
+      background: #add1c5;
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      position: relative;
+    }
+
+    .header-logo {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 30px;
+    }
+
+    header .material-icons {
+      font-size: 28px;
+    }
+
+    .profName {
+      margin-left: auto;
+      font-weight: 700;
+    }
+
     a {
       text-decoration: none;
       color: inherit
@@ -53,13 +80,27 @@
     }
 
     .sidebar header {
-      padding: 2.5rem 1rem 1rem;
-      text-align: center
+      padding: 1.5rem 1rem 1rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
     }
 
     .sidebar header img {
-      max-width: 150px
+      max-width: 150px;
     }
+
+    .sidebar header .material-icons {
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .sidebar header .profName {
+      font-weight: 600;
+    }
+
 
     .tabs {
       display: flex;
@@ -420,10 +461,6 @@
       font-size: 28px;
     }
 
-    .desktop-header {
-      display: none;
-    }
-
     /* SWEETALERT2 overrides */
     button:where(.swal2-styled):where(.swal2-confirm) {
       background: #add1c5 !important;
@@ -443,99 +480,103 @@
      DESKTOP LAYOUT (≥1200px)
   ====================================================== */
     @media(min-width:1200px) {
-      .desktop-header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #add1c5;
-        color: #fff;
-        padding: 14px 10px;
-      }
-
-      .desktop-header .material-icons {
-        font-size: 28px;
-        cursor: pointer;
-      }
-
-      .desktop-header h1 {
-        font-size: 1.2rem;
-        margin: 0;
-      }
-
       .main>footer {
         display: none;
+
+        .sidebar header {
+          display: none;
+        }
+
+        body {
+          display: grid;
+          grid-template-rows: auto 1fr;
+          grid-template-areas: "header header" "sidebar main";
+          grid-template-areas: "sidebar main";
+          height: 100vh;
+          overflow: hidden;
+        }
+
+        header {
+          grid-area: header;
+        }
+
+        .sidebar {
+          grid-area: sidebar;
+        }
+
+        .main {
+          grid-area: main;
+        }
+
+        .main {
+          grid-area: main;
+          overflow: auto;
+          padding-bottom: 50px;
+          padding-left: 5px;
+          padding-right: 5px;
+        }
+
+        footer {
+          margin-bottom: 0.2rem;
+        }
       }
 
-      body {
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        grid-template-areas: "sidebar main";
-        height: 100vh;
-        overflow: hidden
+      @media(min-width:769px) {
+        .actions button {
+          margin-right: 25px;
+          margin-left: 25px;
+        }
       }
 
-      .main {
-        grid-area: main;
-        overflow: auto;
-        padding-bottom: 50px;
-        padding-left: 5px;
-        padding-right: 5px;
-      }
-
-      footer {
-        margin-bottom: 0.2rem;
-      }
-    }
-
-    @media(min-width:769px) {
-      .actions button {
-        margin-right: 25px;
-        margin-left: 25px;
-      }
-    }
-
-    /* ======================================================
+      /* ======================================================
      MOBILE TWEAKS
   ====================================================== */
-    @media(max-width:768px) {
-      .tabs {
-        flex-direction: column
+      @media(max-width:768px) {
+        .tabs {
+          flex-direction: column
+        }
+
+        .tab {
+          justify-content: center
+        }
+
+        .file-list th,
+        .file-list td {
+          padding: .75rem
+        }
+
+        .file-list th:nth-child(1),
+        .file-list td:nth-child(1) {
+          width: 50px
+        }
       }
 
-      .tab {
-        justify-content: center
-      }
+      @media(max-width:450px) {
+        .tab {
+          font-size: .9rem;
+          padding: .75rem 1rem
+        }
 
-      .file-list th,
-      .file-list td {
-        padding: .75rem
+        .password-form {
+          margin: 1.5rem auto;
+          padding: 1.5rem
+        }
       }
-
-      .file-list th:nth-child(1),
-      .file-list td:nth-child(1) {
-        width: 50px
-      }
-    }
-
-    @media(max-width:450px) {
-      .tab {
-        font-size: .9rem;
-        padding: .75rem 1rem
-      }
-
-      .password-form {
-        margin: 1.5rem auto;
-        padding: 1.5rem
-      }
-    }
   </style>
 </head>
 
 <body>
+  <header>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span class="material-icons back-btn">arrow_back</span>
+      <h1 class="back-btn" style="margin:0;font-size:1.2rem">Inicio</h1>
+    </div>
+    <img src="images/recursos/pabw.png" alt="logo" class="header-logo">
+    <div class="profName"></div>
+  </header>
   <!-- ======= SIDEBAR ======= -->
   <aside class="sidebar">
     <button id="tabsToggle" class="tabs-toggle"><span class="material-icons">menu</span></button>
-
     <div class="tabs">
       <div class="tab active" data-folder="documentos"><i class="material-icons">description</i> Documentos</div>
       <div class="tab" data-folder="attachments_consulta"><i class="material-icons">attach_file</i>
@@ -554,10 +595,6 @@
       <div class="tab" data-folder="images"><i class="material-icons">public</i> Img Web</div>
       <div class="tab" data-folder="images/recursos"><i class="material-icons">language</i> Img Recursos</div>
       <div class="tab" data-folder="password"><i class="material-icons">lock</i> Password</div>
-    </div>
-    <div class="desktop-header">
-      <span class="material-icons back-btn">arrow_back</span>
-      <h1 onclick="history.back()">Inicio</h1>
     </div>
   </aside>
 
@@ -587,6 +624,20 @@
     /* =========================================================
        PAB-FILES — script principal
     ========================================================= */
+    async function loadSession() {
+      try {
+        const r = await fetch('/api/session/info');
+        const data = await r.json();
+        if (!data.user) { location.href = '/pab-login.html'; return false; }
+        document.querySelectorAll('.profName').forEach(el => el.textContent = data.user.nombre);
+        return true;
+      } catch (e) {
+        console.error(e);
+        location.href = '/pab-login.html';
+        return false;
+      }
+    }
+
     let currentFolder = 'documentos';
 
     const isServicios = () => currentFolder === 'images/servicios';
@@ -785,7 +836,9 @@
     };
 
     /* -------------- Init -------------- */
-    document.addEventListener('DOMContentLoaded', showFileList);
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (await loadSession()) showFileList();
+    });
   </script>
 </body>
 
