@@ -230,6 +230,8 @@
                 },
                 events: fetchEvents,
                 dateClick: onDateClick,
+                select: onSelect,
+                selectable: true,
                 eventClick: onEventClick,
                 editable: true,
                 eventDrop: onEventChange,
@@ -272,6 +274,14 @@
                     { timeZone: 'local', format: 'iso' } // añade 30 min
                 )
             });
+        }
+
+        function onSelect(info) {
+            openForm({
+                start: info.startStr,
+                end: info.endStr
+            });
+            calendar.unselect();
         }
 
         /* =================== abrir formulario ===================== */
@@ -437,6 +447,31 @@
                     fecha_hora_fin: info.event.endStr
                 })
             });
+        }
+
+        /* =========== ir a una fecha concreta haciendo clic ========= */
+        function attachTitleListener() {
+            const titleEl = document.querySelector('.fc-toolbar-title');
+            if (!titleEl) return;
+            titleEl.style.cursor = 'pointer';
+            titleEl.onclick = openGotoDate;
+        }
+
+        async function openGotoDate() {
+            const { value: dateStr } = await Swal.fire({
+                title: 'Ir a fecha',
+                html: '<input id="swal-goto-date" class="swal2-input">',
+                focusConfirm: false,
+                didOpen: () => {
+                    flatpickr('#swal-goto-date', {
+                        defaultDate: calendar.getDate(),
+                        locale: 'es',
+                        dateFormat: 'Y-m-d'
+                    });
+                },
+                preConfirm: () => document.getElementById('swal-goto-date').value
+            });
+            if (dateStr) calendar.gotoDate(dateStr);
         }
 
         /* =========== ir a una fecha concreta haciendo clic ========= */
