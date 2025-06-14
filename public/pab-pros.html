@@ -218,6 +218,14 @@
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, .1);
         }
+
+        @media (min-width: 1200px) {
+
+            .fc .fc-timegrid-slot,
+            .fc .fc-timegrid-slot-label-frame {
+                height: 30px;
+            }
+        }
     </style>
 </head>
 
@@ -306,6 +314,7 @@
                 initialView: 'timeGridWeek',
                 slotDuration: '01:00:00',
                 slotMinTime: '08:00:00',
+                allDaySlot: false,
                 nowIndicator: true,
                 height: 'auto',
                 headerToolbar: {
@@ -376,6 +385,7 @@
                             initialView: 'timeGridDay',
                             slotDuration: '01:00:00',
                             slotMinTime: earlyHoursShown ? '00:00:00' : '08:00:00',
+                            allDaySlot: false,
                             height: 'auto',
                             datesSet: onModalDatesSet
                         });
