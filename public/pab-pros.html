@@ -70,20 +70,12 @@
 
         #calendar {
             flex: 1 0 auto;
-            max-width: 1000px;
+            max-width: 1300px;
             margin: 20px auto;
             background: #fff;
             padding: 10px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, .1);
-        }
-
-        footer {
-            flex: 0 0 auto;
-            width: 100%;
-            padding: 24px 20px;
-            display: flex;
-            justify-content: center;
         }
 
         .btn {
@@ -219,11 +211,24 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, .1);
         }
 
+        .fc .fc-timegrid-slot,
+        .fc .fc-timegrid-slot-label-frame {
+            height: 25px;
+        }
+
+        @media (min-width: 800px) {
+
+            .fc .fc-timegrid-slot,
+            .fc .fc-timegrid-slot-label-frame {
+                height: 60px;
+            }
+        }
+
         @media (min-width: 1200px) {
 
             .fc .fc-timegrid-slot,
             .fc .fc-timegrid-slot-label-frame {
-                height: 30px;
+                height: 41px;
             }
         }
     </style>
@@ -255,12 +260,6 @@
     </div>
 
     <div id="calendar"></div>
-
-    <footer>
-        <button class="btn" id="newEventBtn">
-            <span class="material-icons">add</span> Nueva cita
-        </button>
-    </footer>
 
     <script>
         /* ======================= utilidades ======================= */
@@ -317,8 +316,15 @@
                 allDaySlot: false,
                 nowIndicator: true,
                 height: 'auto',
+                customButtons: {
+                    newEvent: {
+                        text: 'Nueva cita',
+                        click: () => openForm()
+                    }
+                },
                 headerToolbar: {
                     left: 'prev,next today',
+                    left: 'prev,next today newEvent',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
@@ -360,8 +366,7 @@
             } catch (err) { console.error(err); fail(err); }
         }
 
-        /* ============= crear cita desde botón flotante ============ */
-        document.getElementById('newEventBtn').addEventListener('click', () => openForm());
+        /* ============= crear cita (botón toolbar) ========= */
 
         document.getElementById('allAgendaBtn').addEventListener('click', openAllAgendas);
         document.getElementById('toggleHoursBtn').addEventListener('click', toggleEarlyHours);
@@ -376,7 +381,14 @@
 
                 await Swal.fire({
                     title: 'Agendas de hoy',
-                    html: '<div id="allAgendaCalendar"></div>',
+                    html: `
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+        <button class="btn" id="modalToggleHoursBtn" type="button">
+          <span class="material-icons" id="modalToggleHoursIcon">${earlyHoursShown ? 'expand_less' : 'expand_more'}</span>
+          <span id="modalToggleHoursText">${earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7'}</span>
+        </button>
+      </div>
+      <div id="allAgendaCalendar"></div>`,
                     width: '90%',
                     didOpen: () => {
                         const modalEl = document.getElementById('allAgendaCalendar');
@@ -390,6 +402,8 @@
                             datesSet: onModalDatesSet
                         });
                         modalCal.render();
+                        document.getElementById('modalToggleHoursBtn')
+                            .addEventListener('click', toggleEarlyHours);
                     }
                 });
             } catch (e) {
@@ -401,8 +415,15 @@
         function toggleEarlyHours() {
             earlyHoursShown = !earlyHoursShown;
             calendar.setOption('slotMinTime', earlyHoursShown ? '00:00:00' : '08:00:00');
+            if (modalCal) {
+                modalCal.setOption('slotMinTime', earlyHoursShown ? '00:00:00' : '08:00:00');
+            }
             document.getElementById('toggleHoursIcon').textContent = earlyHoursShown ? 'expand_less' : 'expand_more';
             document.getElementById('toggleHoursText').textContent = earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7';
+            const mIcon = document.getElementById('modalToggleHoursIcon');
+            if (mIcon) mIcon.textContent = earlyHoursShown ? 'expand_less' : 'expand_more';
+            const mText = document.getElementById('modalToggleHoursText');
+            if (mText) mText.textContent = earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7';
         }
 
         async function onModalDatesSet(info) {
@@ -429,8 +450,15 @@
         function toggleEarlyHours() {
             earlyHoursShown = !earlyHoursShown;
             calendar.setOption('slotMinTime', earlyHoursShown ? '00:00:00' : '08:00:00');
+            if (modalCal) {
+                modalCal.setOption('slotMinTime', earlyHoursShown ? '00:00:00' : '08:00:00');
+            }
             document.getElementById('toggleHoursIcon').textContent = earlyHoursShown ? 'expand_less' : 'expand_more';
             document.getElementById('toggleHoursText').textContent = earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7';
+            const mIcon = document.getElementById('modalToggleHoursIcon');
+            if (mIcon) mIcon.textContent = earlyHoursShown ? 'expand_less' : 'expand_more';
+            const mText = document.getElementById('modalToggleHoursText');
+            if (mText) mText.textContent = earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7';
         }
 
         /* ============= crear cita clicando en hueco libre ========== */
