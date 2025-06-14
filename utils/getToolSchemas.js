@@ -421,6 +421,51 @@ module.exports = (LOCAL_FUNCTIONS = {}) => {
         additionalProperties: false
       }
     });
+  /* ---------- CITAS ---------- */
+  if (LOCAL_FUNCTIONS.add_cita)
+    tools.push({
+      type: 'function',
+      name: 'add_cita',
+      description: 'Crea una cita nueva',
+      parameters: {
+        type: 'object',
+        required: ['titulo', 'fecha_hora_inicio', 'fecha_hora_fin'],
+        properties: {
+          titulo: { type: 'string' },
+          descripcion: { type: 'string' },
+          fecha_hora_inicio: { type: 'string', format: 'date-time' },
+          fecha_hora_fin: { type: 'string', format: 'date-time' },
+          persona: { type: 'string' },
+          id_paciente: { type: 'integer' },
+          estado: { type: 'string', enum: ['pendiente', 'confirmada', 'cancelada'] },
+          ubicacion: { type: 'string' },
+          notificacion: { type: 'string' },
+          id_profesional: { type: 'integer' },
+          id_servicio: { type: 'integer' }
+        },
+        additionalProperties: false
+      }
+    });
+
+  if (LOCAL_FUNCTIONS.search_citas)
+    tools.push({
+      type: 'function',
+      name: 'search_citas',
+      description: 'Busca citas por profesional, paciente o rango de fechas',
+      parameters: {
+        type: 'object',
+        properties: {
+          id_profesional: { type: 'integer' },
+          id_paciente: { type: 'integer' },
+          id_servicio: { type: 'integer' },
+          estado: { type: 'string', enum: ['pendiente', 'confirmada', 'cancelada'] },
+          startDate: { type: 'string', format: 'date-time' },
+          endDate: { type: 'string', format: 'date-time' },
+          all: { type: 'boolean' }
+        },
+        additionalProperties: false
+      }
+    });
 
   /* ---------- BORRADOR PDF CHUNKED ---------- */
   if (LOCAL_FUNCTIONS.start_document)

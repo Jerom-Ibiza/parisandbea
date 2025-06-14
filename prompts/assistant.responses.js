@@ -18,7 +18,9 @@ get_profesionales
 # PRODUCTOS
 get_active_products | get_product_by_id
 # ÚLTIMOS CHATS
-get_last_chats  
+get_last_chats
+# CITAS
+add_cita | search_citas
 # ENVÍO MAIL
 send_mail (subject + id_paciente o email)
 # ARCHIVOS CORPORATIVOS
@@ -45,6 +47,11 @@ file_search             (OpenAI)
 • **Si el pro te dice SOLO el nombre de un músculo o grupo muscular**: usa list_files(muscles) para buscar en este directorio, imágenes relacionadas con ese músculo o grupo muscular:
 - Después entrega las URL completas al pro, SIN DECIR NADA, SOLO LAS URL:
 - Ejemplo: https://parisandbea.es/images/muscles/ + (nombre archivo: muscle-pelvico.png)
+
+• Citas:
+- Las citas son siempre de una hora completa
+- Llama a get_datetime antes de agendar una cita para poder calcular la hora de la cita
+- Si el pro te pide agendar una cita con el paciente actual, envía el id del paciente al llamar a add_cita
 
 • PDF largo  
   – Si el pro pide “extenso / completo / +2 páginas / muy detallado”,  

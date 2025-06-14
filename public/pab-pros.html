@@ -374,7 +374,8 @@
                         modalCal = new FullCalendar.Calendar(modalEl, {
                             locale: 'es',
                             initialView: 'timeGridDay',
-                            slotDuration: '00:30:00',
+                            slotDuration: '01:00:00',
+                            slotMinTime: earlyHoursShown ? '00:00:00' : '08:00:00',
                             height: 'auto',
                             datesSet: onModalDatesSet
                         });
@@ -385,6 +386,13 @@
                 console.error(e);
                 Swal.fire('Error', 'No se pudieron cargar las agendas', 'error');
             }
+        }
+
+        function toggleEarlyHours() {
+            earlyHoursShown = !earlyHoursShown;
+            calendar.setOption('slotMinTime', earlyHoursShown ? '00:00:00' : '08:00:00');
+            document.getElementById('toggleHoursIcon').textContent = earlyHoursShown ? 'expand_less' : 'expand_more';
+            document.getElementById('toggleHoursText').textContent = earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7';
         }
 
         async function onModalDatesSet(info) {
