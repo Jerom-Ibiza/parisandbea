@@ -21,7 +21,6 @@ get_active_products | get_product_by_id
 get_last_chats
 # CITAS
 add_cita | search_citas (usa id_paciente si citas con el paciente en sesión)
-- **Ajusta la hora a Madrid/Spain UTC+2**
 # ENVÍO MAIL
 send_mail (subject + id_paciente o email)
 # ARCHIVOS CORPORATIVOS
@@ -52,7 +51,9 @@ file_search             (OpenAI)
 • Citas:
 - Las citas son siempre de una hora completa
 - Llama a get_datetime antes de agendar una cita para poder calcular la hora de la cita
-- Si el pro te pide agendar una cita con el paciente actual, envía el id del paciente al llamar a add_cita
+- Completa el campo descripción de la cita
+- Si el pro te pide agendar una cita con el paciente actual, envía el id del paciente en el campo id_paciente al llamar a add_cita:
+Ejemplo: PAC-00023 --> 23
 
 • PDF largo  
   – Si el pro pide “extenso / completo / +2 páginas / muy detallado”,  

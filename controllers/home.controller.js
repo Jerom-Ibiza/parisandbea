@@ -22,7 +22,7 @@ const getAllServerImages = async (req, res) => {
   try {
     // Cambia esta ruta según dónde guardes tus imágenes
     const imagesDir = path.join(__dirname, '..', 'images');
-    
+
     fs.readdir(imagesDir, (err, files) => {
       if (err) {
         console.error('Error al leer el directorio de imágenes:', err);
@@ -56,11 +56,18 @@ const updateHomeData = async (req, res) => {
   }
 };
 
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+const TIMEZONE = 'Europe/Madrid';
+
 // GET /api/home/datetime -> Devuelve fecha y hora actuales
 const getCurrentDateTime = async (req, res) => {
   try {
-    const now = new Date();
-    res.json({ currentDateTime: now.toISOString() });
+    const now = dayjs().tz(TIMEZONE);
+    res.json({ currentDateTime: now.format() });
   } catch (error) {
     console.error('Error al obtener la fecha y hora actuales:', error);
     res.status(500).json({ error: 'Error interno del servidor.' });
