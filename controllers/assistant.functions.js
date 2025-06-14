@@ -637,6 +637,26 @@ const LOCAL_FUNCTIONS = {
     if (new Date(fecha_hora_fin) <= new Date(fecha_hora_inicio))
       throw new Error('La fecha de fin debe ser posterior a la de inicio');
 
+    const patientId =
+      id_paciente || (req.session.patient && req.session.patient.id_paciente) || null;
+
+    let personaFinal = persona || null;
+    if (!personaFinal && patientId) {
+      const [p] = await pool.query(
+        'SELECT nombre, apellidos FROM pacientes WHERE id_paciente = ?',
+        [patientId]
+      );
+      if (p.length) personaFinal = `${p[0].nombre} ${p[0].apellidos}`;
+    }
+
+    let ubicacionFinal = ubicacion || null;
+    if (!ubicacionFinal) {
+      const [home] = await pool.query(
+        'SELECT direccion_centro FROM home WHERE id_home = 1'
+      );
+      if (home.length) ubicacionFinal = home[0].direccion_centro;
+    }
+
     const [overlap] = await pool.query(
       `SELECT COUNT(*) AS n
          FROM citas
@@ -660,10 +680,10 @@ const LOCAL_FUNCTIONS = {
         descripcion || null,
         fecha_hora_inicio,
         fecha_hora_fin,
-        persona || null,
-        id_paciente || null,
+        personaFinal,
+        patientId,
         estado || 'pendiente',
-        ubicacion || null,
+        ubicacionFinal,
         notificacion || 'ninguna',
         profId,
         id_servicio || null

@@ -20,7 +20,7 @@ get_active_products | get_product_by_id
 # ÚLTIMOS CHATS
 get_last_chats
 # CITAS
-add_cita | search_citas
+add_cita | search_citas (usa id_paciente si citas con el paciente en sesión)
 # ENVÍO MAIL
 send_mail (subject + id_paciente o email)
 # ARCHIVOS CORPORATIVOS
