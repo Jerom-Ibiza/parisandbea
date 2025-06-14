@@ -11,6 +11,11 @@ const { getAllProfesionales } = require('./profesionales.controller');
 const { getCurrentDateTime } = require('./home.controller');
 const { getLastChats } = require('./chats.controller');
 const { listFiles } = require('./files.controller');
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(utc); dayjs.extend(timezone);
+const TIMEZONE = 'Europe/Madrid';
 const {
   startDraft,
   appendChunk,

@@ -21,6 +21,7 @@ get_active_products | get_product_by_id
 get_last_chats
 # CITAS
 add_cita | search_citas (usa id_paciente si citas con el paciente en sesión)
+- **Ajusta la hora a Madrid/Spain UTC+2**
 # ENVÍO MAIL
 send_mail (subject + id_paciente o email)
 # ARCHIVOS CORPORATIVOS
