@@ -20,6 +20,10 @@
   <meta name="theme-color" content="#276040"><!-- color de la barra en Android -->
 
   <style>
+    :root {
+      --panel-ratio: 0.5;
+    }
+
     /* ───────────────────  RESET / LAYOUT BÁSICO ─────────────────── */
     html,
     body {
@@ -210,12 +214,17 @@
     }
 
     .info-panel {
-      flex: 0 0 auto;
-      max-height: 35vh
+      flex: 0 0 calc(var(--panel-ratio) * 100%);
+      max-height: none;
     }
 
     .chat-panel {
-      flex: 1 1 auto
+      flex: 1 1 calc((1 - var(--panel-ratio)) * 100%);
+    }
+
+    #divider {
+      flex: 0 0 auto;
+      background: #aed3c1;
     }
 
     /* ─────── estilos propios de los bloques (dt/dd & títulos) ───── */
@@ -465,14 +474,23 @@
 
       .info-panel,
       .chat-panel {
-        flex: 1 1 50%;
-        max-width: 50%;
         height: auto;
-        margin-bottom: 30px
+        margin-bottom: 30px;
       }
 
       .info-panel {
-        max-height: none
+        flex: 0 0 calc(var(--panel-ratio) * 100%);
+        max-width: calc(var(--panel-ratio) * 100%);
+      }
+
+      .chat-panel {
+        flex: 1 1 calc((1 - var(--panel-ratio)) * 100%);
+        max-width: calc((1 - var(--panel-ratio)) * 100%);
+      }
+
+      #divider {
+        width: 6px;
+        cursor: col-resize;
       }
 
       /* 2. header & bottom-bar fijas al pie */
@@ -755,6 +773,11 @@
       .info-panel {
         padding: 1px 10px;
       }
+
+      #divider {
+        height: 6px;
+        cursor: row-resize;
+      }
     }
 
     /* ───────────────────  MEDIA QUERY DESKTOP ≥ 1200px ───────────── */
@@ -832,6 +855,8 @@
     <div id="infoPanel" class="panel info-panel">
       <div id="mainData">Cargando…</div>
     </div>
+
+    <div id="divider"></div>
 
     <!-- Chat, asistente y logs -->
     <div id="chatPanel" class="panel chat-panel">
@@ -932,6 +957,39 @@
   <script>
     /* ------------------------------------------------ utilidades básicas ------------------------------------------------ */
     const $id = id => document.getElementById(id);
+
+    /* ---------- divisor ajustable de paneles ---------- */
+    const divider = $id('divider');
+    const panels = $id('panels');
+    function setRatio(r) {
+      r = Math.max(0.2, Math.min(0.8, r));
+      document.documentElement.style.setProperty('--panel-ratio', r);
+    }
+    function startDrag(e) {
+      e.preventDefault();
+      const horizontal = window.matchMedia('(min-width:1200px)').matches;
+      const startPos = e.touches ? (horizontal ? e.touches[0].clientX : e.touches[0].clientY) : (horizontal ? e.clientX : e.clientY);
+      const rect = panels.getBoundingClientRect();
+      const startRatio = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--panel-ratio')) || 0.5;
+      const move = ev => {
+        const pos = ev.touches ? (horizontal ? ev.touches[0].clientX : ev.touches[0].clientY) : (horizontal ? ev.clientX : ev.clientY);
+        const delta = pos - startPos;
+        const size = horizontal ? rect.width : rect.height;
+        setRatio((startRatio * size + delta) / size);
+      };
+      const stop = () => {
+        document.removeEventListener('mousemove', move);
+        document.removeEventListener('touchmove', move);
+        document.removeEventListener('mouseup', stop);
+        document.removeEventListener('touchend', stop);
+      };
+      document.addEventListener('mousemove', move);
+      document.addEventListener('touchmove', move);
+      document.addEventListener('mouseup', stop);
+      document.addEventListener('touchend', stop);
+    }
+    divider?.addEventListener('mousedown', startDrag);
+    divider?.addEventListener('touchstart', startDrag);
 
     /* ---------- overlay asistente: mostrar / ocultar ---------- */
     function showAssistantImg() {
