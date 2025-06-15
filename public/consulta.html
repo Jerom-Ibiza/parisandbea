@@ -221,7 +221,8 @@
       font-size: 15px;
       line-height: 1.4;
       overflow-y: auto;
-      min-height: 0
+      min-height: 0;
+      position: relative
     }
 
     .info-panel {
@@ -236,6 +237,19 @@
     #divider {
       flex: 0 0 auto;
       background: #aed3c1;
+    }
+
+    .panel-mask {
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease
+    }
+
+    .panel-mask.show {
+      opacity: 1;
     }
 
     /* ─────── estilos propios de los bloques (dt/dd & títulos) ───── */
@@ -885,6 +899,7 @@
     <!-- Datos del paciente -->
     <div id="infoPanel" class="panel info-panel">
       <div id="mainData">Cargando…</div>
+      <div class="panel-mask" id="infoMask"></div>
     </div>
 
     <div id="divider"></div>
@@ -896,6 +911,7 @@
                  background:#aed3c1;color:#fff;font-weight:600;cursor:pointer">
         Guardar conversación
       </button>
+      <div class="panel-mask" id="chatMask"></div>
     </div>
   </div>
 
@@ -993,9 +1009,19 @@
     /* ---------- divisor ajustable de paneles ---------- */
     const divider = $id('divider');
     const panels = $id('panels');
+    const infoMask = $id('infoMask');
+    const chatMask = $id('chatMask');
+
+    function updateMasks() {
+      const r = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--panel-ratio')) || 0.5;
+      const threshold = 0.22;
+      if (infoMask) infoMask.classList.toggle('show', r < threshold);
+      if (chatMask) chatMask.classList.toggle('show', (1 - r) < threshold);
+    }
     function setRatio(r) {
       r = Math.max(0, Math.min(1, r));
       document.documentElement.style.setProperty('--panel-ratio', r);
+      updateMasks();
     }
     function startDrag(e) {
       e.preventDefault();
@@ -1488,10 +1514,10 @@
           ${row('<span class="material-symbols-outlined">fingerprint</span> ID', p.id_paciente)}
           ${row('<span class="material-symbols-outlined">shield_person</span> LOPD', p.lopd_estado === 'firmado' ? '✅' : '❌')}
           ${row('<span class="material-symbols-outlined">early_on</span> Nacim.', fDate(p.fecha_nacimiento))}
-          ${row('<span class="material-symbols-outlined">id_card</span> DNI', p.dni)}
-          ${row('<span class="material-symbols-outlined">send</span>  Email', p.email)}
-          ${row('<span class="material-symbols-outlined">mobile_hand</span> Teléfono', p.telefono)}
           ${row('<span class="material-symbols-outlined">transgender</span> Género', p.genero)}
+          ${row('<span class="material-symbols-outlined">id_card</span> DNI', p.dni)}
+          ${row('<span class="material-symbols-outlined">mobile_hand</span> Teléfono', p.telefono)}
+          ${row('<span class="material-symbols-outlined">send</span>  Email', p.email)}
           ${row('<span class="material-symbols-outlined">home_pin</span> Dirección', p.direccion)}</dl>`;
         if (h) {
           html += title('medical_services', 'Historial clínico');
