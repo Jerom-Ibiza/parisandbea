@@ -25,9 +25,9 @@ function buildTools(req) {
   return tools;
 }
 
-function ask(input, tools) {
+function ask(input, tools, model = 'gpt-4.1-mini') {
   return openai.responses.create({
-    model: 'gpt-4.1-mini',
+    model,
     instructions: prompt,
     input,
     tools,
@@ -60,7 +60,7 @@ function sanitiseHistory(hist) {
 /* --------------------------- /chat ------------------------------- */
 exports.chat = async (req, res) => {
   try {
-    const { message, images = [] } = req.body || {};
+    const { message, images = [], model } = req.body || {};
     if (!message) return res.status(400).json({ error: 'Falta "message"' });
     if (!req.session.user ||
       !req.session.patient) return res.status(403).json({ error: 'Sin sesi�n v�lida' });
@@ -82,7 +82,7 @@ exports.chat = async (req, res) => {
     history.push(userEntry);
 
     /* -- PRIMERA LLAMADA ----------------- */
-    let rsp = await ask(sanitiseHistory(history), buildTools(req));
+    let rsp = await ask(sanitiseHistory(history), buildTools(req), model);
 
 
     /* -- LOOP HERRAMIENTAS --------------- */
@@ -108,7 +108,7 @@ exports.chat = async (req, res) => {
         });
       }
 
-      rsp = await ask(sanitiseHistory(history), buildTools(req));
+      rsp = await ask(sanitiseHistory(history), buildTools(req), model);
       await sleep(180);
     }
 

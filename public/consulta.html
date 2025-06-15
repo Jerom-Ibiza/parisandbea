@@ -175,6 +175,11 @@
       background: #a12525
     }
 
+    #btnModelO3.active {
+      background: #276040;
+      color: #fff;
+    }
+
     @keyframes pulse {
       0% {
         box-shadow: 0 0 0 0 rgba(224, 65, 65, .6)
@@ -971,6 +976,7 @@
     </button>
     <input id="filePicker" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.gif,.heic" multiple
       style="display:none">
+    <button id="btnModelO3" class="btn-round btn-small" title="Usar modelo o3">pro</button>
     <button id="btnTalk" class="btn-round" title="Hablar con el asistente">
       <img src="images/recursos/voice_icon.png" style="max-width:30px" alt="Logo" /></button>
   </div>
@@ -1155,6 +1161,7 @@
         message: msg,
         ...(isImg ? { images: [url] } : {})
       };
+      if (useModelO3) body.model = 'GPT-4o';
 
       ensureLoader();
       try {
@@ -1186,6 +1193,7 @@
       if (window.sessionImages.length) {
         body.images = [...window.sessionImages];      // copia defensiva
       }
+      if (useModelO3) body.model = 'GPT-4o';
       return body;
     }
 
@@ -1263,6 +1271,7 @@
     const safeRemoveLoader = () => removeLoader();
 
     async function sendToAssistant(body) {
+      if (useModelO3) body.model = 'GPT-4o';
       ensureLoader();
       try {
         const r = await fetch('/api/assistant/chat', {
@@ -1694,6 +1703,9 @@
     /* ------------------------------------------------ botón HABLAR (voz ↔ assistant) ---------------------------------- */
     const btnTalk = $id('btnTalk');
     const btnStop = $id('btnStopTTS');     // mismo botón sirve para “parar voz / cancelar”
+    const btnModelO3 = $id('btnModelO3');
+
+    let useModelO3 = false;
 
     let talking = false;                // ¿estamos grabando pregunta?
     let recVoice, chunksVoice = [];
@@ -1797,6 +1809,7 @@
           const blob = new Blob(chunksVoice, { type: mime });
           const form = new FormData();
           form.append('audio', blob, 'pregunta' + ext);
+          if (useModelO3) form.append('model', 'GPT-4o');
 
           ensureLoader();  // spinner
           try {
@@ -1845,6 +1858,11 @@
     modalAsk.addEventListener('click', e => {
       if (e.target.id === 'modalAsk') modalAsk.style.display = 'none';
     });
+
+    btnModelO3.onclick = () => {
+      useModelO3 = !useModelO3;
+      btnModelO3.classList.toggle('active', useModelO3);
+    };
 
     // ---------- enviar texto al asistente ----------
     async function sendText(msg) {
