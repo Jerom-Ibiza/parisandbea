@@ -994,7 +994,7 @@
     const divider = $id('divider');
     const panels = $id('panels');
     function setRatio(r) {
-      r = Math.max(0.2, Math.min(0.8, r));
+      r = Math.max(0, Math.min(1, r));
       document.documentElement.style.setProperty('--panel-ratio', r);
     }
     function startDrag(e) {
