@@ -1140,27 +1140,24 @@
     let currentBlock = 'historial';
 
     /* ---------- linkify con 🔍 y 📌 ---------- */
-    const linkify = txt =>
-      txt.replace(/(https?:\/\/[^\s]+)/g, url => {
-        const isImg = /\.(jpe?g|png|webp|gif|bmp|svg|heic)$/i.test(url);
-        const isStored = /\/attachments_consulta\//i.test(url);  // ya guardado
-        const showPin = !isStored && !isImg;                   // pin solo para tmp-PDF
-        const iconProbe = `<span class="probe" data-url="${url}" title="Analizar">🔍</span>`;
-        const iconPin = showPin ? `<button class="btnSaveAttach" data-tmp="${url.split('/').pop()}" title="Guardar">📌</button>` : '';
+    const linkify = txt => {
+      const processLine = line =>
+        line.replace(/(https?:\/\/[^\s]+)/g, url => {
+          const isImg = /\.(jpe?g|png|webp|gif|bmp|svg|heic)$/i.test(url);
+          const isStored = /\/attachments_consulta\//i.test(url); // ya guardado
+          const showPin = !isStored && !isImg; // pin solo para tmp-PDF
+          const iconProbe = `<span class="probe" data-url="${url}" title="Analizar">🔍</span>`;
+          const iconPin = showPin ? `<button class="btnSaveAttach" data-tmp="${url.split('/').pop()}" title="Guardar">📌</button>` : '';
 
-        if (isImg) {
-          return `
-        <div class="thumb-wrap">
-          <a href="${url}" target="_blank" rel="noopener"><img src="${url}" class="thumb" /></a>
-          ${iconProbe}${iconPin}
-        </div>`;
-        }
-        // PDF / Word u otros
-        return `<div class="file-wrap">
-              <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>
-              ${iconProbe}${iconPin}
-            </div>`;
-      });
+          if (isImg) {
+            return `<div class="thumb-wrap"><a href="${url}" target="_blank" rel="noopener"><img src="${url}" class="thumb" /></a>${iconProbe}${iconPin}</div>`;
+          }
+          // PDF / Word u otros
+          return `<div class="file-wrap"><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>${iconProbe}${iconPin}</div>`;
+        });
+
+      return txt.split(/\n+/).map(processLine).join('<br>');
+    };
 
     /* ------- envía mensaje silencioso ------- */
     async function safeJson(res) {
