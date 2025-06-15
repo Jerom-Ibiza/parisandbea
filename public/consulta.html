@@ -28,7 +28,8 @@
     html,
     body {
       height: 100%;
-      margin: 0
+      margin: 0;
+      overscroll-behavior-y: contain;
     }
 
     body {
@@ -1470,12 +1471,12 @@
         html += title('account_circle', 'Datos personales');
         html += `<dl>
           ${row('<span class="material-icons-outlined">login</span> Alta', fDate(p.fecha_registro))}
-          ${row('<span class="material-symbols-outlined">key</span> ID', p.id_paciente)}
+          ${row('<span class="material-symbols-outlined">fingerprint</span> ID', p.id_paciente)}
           ${row('<span class="material-symbols-outlined">shield_person</span> LOPD', p.lopd_estado === 'firmado' ? '✅' : '❌')}
           ${row('<span class="material-symbols-outlined">early_on</span> Nacim.', fDate(p.fecha_nacimiento))}
           ${row('<span class="material-symbols-outlined">id_card</span> DNI', p.dni)}
-          ${row('<span class="material-symbols-outlined">mail</span>  Email', p.email)}
-          ${row('<span class="material-symbols-outlined">call</span> Teléfono', p.telefono)}
+          ${row('<span class="material-symbols-outlined">send</span>  Email', p.email)}
+          ${row('<span class="material-symbols-outlined">mobile_hand</span> Teléfono', p.telefono)}
           ${row('<span class="material-symbols-outlined">transgender</span> Género', p.genero)}
           ${row('<span class="material-symbols-outlined">home_pin</span> Dirección', p.direccion)}</dl>`;
         if (h) {
