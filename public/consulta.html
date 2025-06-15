@@ -1166,7 +1166,7 @@
         message: msg,
         ...(isImg ? { images: [url] } : {})
       };
-      if (useModelO3) body.model = 'gpt-4o';
+      if (useModelO3) body.model = 'gpt-4.1';
 
       ensureLoader();
       try {
@@ -1198,7 +1198,7 @@
       if (window.sessionImages.length) {
         body.images = [...window.sessionImages];      // copia defensiva
       }
-      if (useModelO3) body.model = 'gpt-4o';
+      if (useModelO3) body.model = 'gpt-4.1';
       return body;
     }
 
@@ -1276,7 +1276,7 @@
     const safeRemoveLoader = () => removeLoader();
 
     async function sendToAssistant(body) {
-      if (useModelO3) body.model = 'gpt-4o';
+      if (useModelO3) body.model = 'gpt-4.1';
       ensureLoader();
       try {
         const r = await fetch('/api/assistant/chat', {
@@ -1814,7 +1814,7 @@
           const blob = new Blob(chunksVoice, { type: mime });
           const form = new FormData();
           form.append('audio', blob, 'pregunta' + ext);
-          if (useModelO3) form.append('model', 'gpt-4o');
+          if (useModelO3) form.append('model', 'gpt-4.1');
 
           ensureLoader();  // spinner
           try {
