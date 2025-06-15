@@ -196,7 +196,7 @@
       margin: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       min-height: 0
         /* puede contraerse */
     }
@@ -468,7 +468,7 @@
       /* 1. paneles lado a lado */
       #panels {
         flex-direction: row;
-        gap: 16px;
+        gap: 10px;
         margin-top: 0
       }
 
@@ -491,6 +491,9 @@
       #divider {
         width: 6px;
         cursor: col-resize;
+        height: 50%;
+        margin-top: 13%;
+        border-radius: 5px;
       }
 
       /* 2. header & bottom-bar fijas al pie */
@@ -506,7 +509,7 @@
         transform: translateX(-50%);
         width: 100%;
         max-width: 520px;
-        z-index: 20
+        z-index: 20;
       }
 
       header {
@@ -570,7 +573,7 @@
         width: auto;
         max-width: none;
         padding: 0 24px;
-        background: #efefef;
+        background: transparent;
         gap: 16px;
         z-index: 30;
       }
@@ -699,6 +702,10 @@
       /* thumb  y  track        */
     }
 
+    .chat-panel {
+      border-bottom-left-radius: 15px;
+    }
+
     /* Estilo fijo para el contenedor de datos */
     #mainData {
       font-size: 22px;
@@ -742,6 +749,11 @@
       /* fundido al mostrarse           */
     }
 
+    .info-panel {
+      padding: 1px 10px;
+      border-bottom-right-radius: 15px;
+    }
+
     /* ───────────────────  MEDIA QUERY DESKTOP ≥ 1200px ───────────── */
     @media (max-width:1200px) {
 
@@ -772,11 +784,19 @@
 
       .info-panel {
         padding: 1px 10px;
+        border-bottom-right-radius: 0px;
+      }
+
+      .chat-panel {
+        border-bottom-left-radius: 0px;
       }
 
       #divider {
         height: 6px;
         cursor: row-resize;
+        width: 50%;
+        margin: auto;
+        border-radius: 5px;
       }
     }
 
