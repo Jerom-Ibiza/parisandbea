@@ -76,6 +76,8 @@
             padding: 10px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, .1);
+            width: 100%;
+            overflow-x: auto;
         }
 
         .btn {
@@ -200,6 +202,15 @@
                 gap: 10px;
                 align-items: stretch;
             }
+
+            .agenda-toolbar>* {
+                width: 100%;
+            }
+
+            #proSelect,
+            .agenda-toolbar .btn {
+                width: 100%;
+            }
         }
 
         #allAgendaCalendar {
@@ -229,6 +240,32 @@
             .fc .fc-timegrid-slot,
             .fc .fc-timegrid-slot-label-frame {
                 height: 38px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .fc-header-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .fc-header-toolbar .fc-toolbar-chunk {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .fc-header-toolbar .fc-toolbar-chunk:first-child {
+                order: 2;
+            }
+
+            .fc-header-toolbar .fc-toolbar-chunk:nth-child(2) {
+                order: 1;
+            }
+
+            .fc-header-toolbar .fc-toolbar-chunk:last-child {
+                order: 3;
             }
         }
     </style>

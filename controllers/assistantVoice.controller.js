@@ -1,20 +1,20 @@
 /* ───────── controllers/assistantVoice.controller.js ───────── */
-const fs      = require('fs');
-const path    = require('path');
-const multer  = require('multer');
-const OpenAI  = require('openai');
-const logger  = require('../logger');
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
+const OpenAI = require('openai');
+const logger = require('../logger');
 const assistantCtl = require('./assistantResponses.controller');
 
 /* carpeta temporal */
 const TMP = path.join(__dirname, '..', 'tmp');
-if (!fs.existsSync(TMP)) fs.mkdirSync(TMP, { recursive:true });
+if (!fs.existsSync(TMP)) fs.mkdirSync(TMP, { recursive: true });
 
 const upload = multer({ dest: TMP });
 const openai = new OpenAI();
 
 /* util: borrar fichero cuando acabe */
-const safeUnlink = f => fs.unlink(f, () => {});
+const safeUnlink = f => fs.unlink(f, () => { });
 
 exports.handleVoice = [
   upload.single('audio'),
@@ -42,7 +42,7 @@ exports.handleVoice = [
       });
       safeUnlink(realPath);
 
-      logger.info('[voice] texto: ' + text.slice(0,80) + '…');
+      logger.info('[voice] texto: ' + text.slice(0, 80) + '…');
 
       // 3. delegar a Responses API
       req.body.message = text;
