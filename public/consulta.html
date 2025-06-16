@@ -1192,7 +1192,10 @@
         message: msg,
         ...(isImg ? { images: [url] } : {})
       };
-      if (useModelO3) body.model = 'gpt-4.1';
+      if (useModelO3) {
+        body.model = 'o3';
+        body.noSearch = true;
+      }
 
       ensureLoader();
       try {
@@ -1224,7 +1227,10 @@
       if (window.sessionImages.length) {
         body.images = [...window.sessionImages];      // copia defensiva
       }
-      if (useModelO3) body.model = 'gpt-4.1';
+      if (useModelO3) {
+        body.model = 'o3';
+        body.noSearch = true;
+      }
       return body;
     }
 
@@ -1302,7 +1308,10 @@
     const safeRemoveLoader = () => removeLoader();
 
     async function sendToAssistant(body) {
-      if (useModelO3) body.model = 'gpt-4.1';
+      if (useModelO3) {
+        body.model = 'o3';
+        body.noSearch = true;
+      }
       ensureLoader();
       try {
         const r = await fetch('/api/assistant/chat', {
@@ -1840,7 +1849,10 @@
           const blob = new Blob(chunksVoice, { type: mime });
           const form = new FormData();
           form.append('audio', blob, 'pregunta' + ext);
-          if (useModelO3) form.append('model', 'gpt-4.1');
+          if (useModelO3) {
+            form.append('model', 'o3');
+            form.append('noSearch', 'true');
+          }
 
           ensureLoader();  // spinner
           try {

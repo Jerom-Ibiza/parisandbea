@@ -1,9 +1,9 @@
 /* utils/getToolSchemas.js � esquema detallado */
 
-module.exports = (LOCAL_FUNCTIONS = {}) => {
-  const tools = [
-    { type: 'web_search' }                                       // 0 - b�squeda web
-  ];
+module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
+  const { web_search = true } = opts;
+  const tools = [];
+  if (web_search) tools.push({ type: 'web_search' });
 
   /* helper sin argumentos */
   const noArgs = { type: 'object', properties: {} };

@@ -14,8 +14,8 @@ const openai = new OpenAI();
 /* --------- helpers --------- */
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-function buildTools(req) {
-  const tools = getTools(LOCAL_FUNCTIONS);
+function buildTools(req, noSearch) {
+  const tools = getTools(LOCAL_FUNCTIONS, { web_search: !noSearch });
   if (req.session?.vectorStoreId) {
     tools.push({
       type: 'file_search',
@@ -60,7 +60,7 @@ function sanitiseHistory(hist) {
 /* --------------------------- /chat ------------------------------- */
 exports.chat = async (req, res) => {
   try {
-    const { message, images = [], model } = req.body || {};
+    const { message, images = [], model, noSearch } = req.body || {};
     if (!message) return res.status(400).json({ error: 'Falta "message"' });
     if (!req.session.user ||
       !req.session.patient) return res.status(403).json({ error: 'Sin sesi�n v�lida' });
@@ -82,7 +82,7 @@ exports.chat = async (req, res) => {
     history.push(userEntry);
 
     /* -- PRIMERA LLAMADA ----------------- */
-    let rsp = await ask(sanitiseHistory(history), buildTools(req), model);
+    let rsp = await ask(sanitiseHistory(history), buildTools(req, !!noSearch), model);
 
 
     /* -- LOOP HERRAMIENTAS --------------- */
@@ -108,7 +108,7 @@ exports.chat = async (req, res) => {
         });
       }
 
-      rsp = await ask(sanitiseHistory(history), buildTools(req), model);
+      rsp = await ask(sanitiseHistory(history), buildTools(req, !!noSearch), model);
       await sleep(180);
     }
 
