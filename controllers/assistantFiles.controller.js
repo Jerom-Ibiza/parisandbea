@@ -23,8 +23,8 @@ exports.registerFile = async (req, res) => {
       tmpName,
       tmpname,
       tmp_name,
-      filename,           // a veces la key del uploader
-      file,               // por si acaso
+      filename,
+      file,
       origName,
       originalName
     } = req.body || {};
@@ -101,7 +101,9 @@ exports.saveAttachment = async (req, res) => {
     // 1) Si viene image_url, lo derive:
     if (!tmpName && image_url) {
       // extrae 'tmp-123.webp' de '/tmp/tmp-123.webp'
-      tmpName = path.basename(new URL(image_url, 'http://dummy').pathname);
+      tmpName = decodeURIComponent(
+        path.basename(new URL(image_url, 'http://dummy').pathname)
+      );
     }
 
     // 2) Si no hay tmpName todavía, pruebe con origName
@@ -167,7 +169,8 @@ exports.ingestAttachment = async (req, res) => {
     if (!filepath) return res.status(400).json({ error: 'Falta filepath' });
 
     // 1) localiza el fichero en disco
-    const abs = path.join(__dirname, '..', filepath.replace(/^[\\/]/, ''));
+    const cleanPath = decodeURIComponent(filepath).replace(/^[\\/]/, '');
+    const abs = path.join(__dirname, '..', cleanPath);
     if (!fs.existsSync(abs))
       return res.status(404).json({ error: 'No existe el archivo' });
 
@@ -202,7 +205,8 @@ exports.ingestFile = async (req, res) => {
     const { filepath } = req.body || {};
     if (!filepath) return res.status(400).json({ ok: false, error: 'Falta filepath' });
 
-    const abs = path.join(__dirname, '..', filepath);
+    const cleanPath = decodeURIComponent(filepath).replace(/^[\\/]/, '');
+    const abs = path.join(__dirname, '..', cleanPath);
     if (!fs.existsSync(abs)) return res.status(404).json({ ok: false, error: 'No existe el archivo' });
 
     /* 1· subimos el archivo a la Files API (si no está ya) */
