@@ -260,20 +260,36 @@
     .info-panel dt {
       font-weight: 700;
       float: left;
-      width: 165px;
+      width: 185px;
       clear: left;
       white-space: nowrap;
-      color: #276040;
+      background: #bee7d3;
+      color: #fff;
+      border-radius: 10px;
+      text-align: justify;
+      padding-left: 15px;
+      margin-right: 20px;
     }
 
     .info-panel dd {
-      margin: 0 0 6px 165px
+      margin: 0 0 6px 0;
+      text-align: justify;
+      padding-left: 15px;
     }
 
     /* filas alternas en bloques de info */
     .info-panel dt:nth-of-type(odd),
     .info-panel dd:nth-of-type(odd) {
       background: #f1f1f1;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: justify;
+    }
+
+    /* filas alternas en bloques de info */
+    .info-panel dt:nth-of-type(odd) {
+      color: #fff;
+      background: #aed3c1;
     }
 
     .section-title {
@@ -292,9 +308,10 @@
 
     .info-panel .section-title {
       color: white;
-      background: #aed3c1;
-      padding: 4px;
-      border-radius: 10px;
+      background: #ccc;
+      padding: 6px;
+      border-radius: 15px;
+      padding-left: 100px;
     }
 
     /* ───────────────────  ESTADOS DE MENSAJES / LOG ─────────────── */
@@ -419,7 +436,7 @@
     .probe,
     .research {
       cursor: pointer;
-      margin-left: 4px
+      margin-left: 25px
     }
 
     .probe:hover,
@@ -738,9 +755,13 @@
       border-bottom-left-radius: 15px;
     }
 
+    .material-symbols-outlined {
+      vertical-align: sub;
+    }
+
     /* Estilo fijo para el contenedor de datos */
     #mainData {
-      font-size: 22px;
+      font-size: 20px;
       line-height: 1.8;
     }
 
@@ -801,13 +822,9 @@
       }
 
       .info-panel dt {
-        color: #276040;
         font-size: 22px;
-      }
-
-      .info-panel dt:nth-of-type(odd),
-      .info-panel dd:nth-of-type(odd) {
-        background: #f1f1f1;
+        padding: 2px;
+        padding-left: 10px;
       }
 
       .assistant-overlay {
@@ -842,7 +859,7 @@
 
       .info-panel dt {
         font-size: 15px;
-        width: 120px;
+        width: 135px;
         line-height: 1.4;
       }
 
