@@ -1925,15 +1925,6 @@
 
       ensureLoader();
       try {
-        const r = await fetch('/api/assistant/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(buildAssistantBody(msg))
-        });
-        const raw = await r.text();
-        const j = JSON.parse(raw);
-        if (!j.ok) throw new Error(j.error || 'Error');
-
         await handleAssistantResponse(j);
       } catch (err) {
         safeRemoveLoader();

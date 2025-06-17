@@ -232,14 +232,27 @@
 
     table.file-list {
       width: 100%;
-      border-collapse: collapse
+      border-collapse: collapse;
+      table-layout: fixed
     }
 
     .file-list th,
     .file-list td {
       padding: 0.5rem;
       text-align: center;
-      border: 1px solid #eee
+      border: 1px solid #eee;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .file-list th:first-child,
+    .file-list td:first-child {
+      width: 40px
+    }
+
+    .file-list th:last-child,
+    .file-list td:last-child {
+      width: 90px
     }
 
     .file-list th {
@@ -248,7 +261,7 @@
     }
 
     .file-name {
-      cursor: pointer;
+      display: block;
       color: #007BFF;
       white-space: nowrap;
       overflow: hidden;
