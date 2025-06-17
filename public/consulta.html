@@ -416,12 +416,14 @@
       transform: scale(1.15)
     }
 
-    .probe {
+    .probe,
+    .research {
       cursor: pointer;
       margin-left: 4px
     }
 
-    .probe:hover {
+    .probe:hover,
+    .research:hover {
       filter: brightness(1.2)
     }
 
@@ -1098,17 +1100,23 @@
         return;
       }
 
-      /* ---------- 2 · ANALIZAR adjunto permanente (🔍) ---------- */
-      const probe = e.target.closest('.probe');
+      /* ---------- 2 · ANALIZAR adjunto permanente (🔍/🔬) ---------- */
+      const probe = e.target.closest('.probe, .research');
       if (!probe) return;
 
       const url = probe.dataset.url;
       if (!url) return;
 
       const isImg = /\.(jpe?g|png|webp|gif|bmp|svg|heic)$/i.test(url);
+      const isResearch = probe.classList.contains('research');
       const userQ = inpMsg.value.trim() ||
-        (isImg ? 'Describe brevemente esta imagen.'
-          : 'Hazme un breve resumen de este documento.');
+        (isImg
+          ? isResearch
+            ? 'Analiza cuidadosamente esta imagen y dame una descripción técnica detallada.'
+            : 'Describe brevemente esta imagen.'
+          : isResearch
+            ? 'Analiza cuidadosamente este documento y dame una descripción técnica detallada.'
+            : 'Hazme un breve resumen de este documento.');
 
       /* limpiar textarea y volcar pregunta */
       inpMsg.value = '';
@@ -1278,13 +1286,14 @@
           const showProbe = isTmp;                 // solo para archivos en tmp
           const showPin = isTmp && !isImg;         // pin solo para tmp-PDF
           const iconProbe = showProbe ? `<span class="probe" data-url="${url}" title="Analizar">🔍</span>` : '';
+          const iconResearch = showProbe ? `&nbsp;<span class="research" data-url="${url}" title="Análisis técnico">🔬</span>` : '';
           const iconPin = showPin ? `<button class="btnSaveAttach" data-tmp="${url.split('/').pop()}" title="Guardar">📌</button>` : '';
 
           if (isImg) {
-            return `<div class="thumb-wrap">${iconPin}<a href="${url}" target="_blank" rel="noopener"><img src="${url}" class="thumb" /></a>${iconProbe}</div>`;
+            return `<div class="thumb-wrap">${iconPin}<a href="${url}" target="_blank" rel="noopener"><img src="${url}" class="thumb" /></a>${iconProbe}${iconResearch}</div>`;
           }
           // PDF / Word u otros
-          return `<div class="file-wrap">${iconPin}<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>${iconProbe}</div>`;
+          return `<div class="file-wrap">${iconPin}<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>${iconProbe}${iconResearch}</div>`;
         });
 
       return txt.split(/\n+/).map(processLine).join('<br>');
@@ -2024,12 +2033,13 @@
     function addAttachmentToLog({ fileName, tmpName, isImg }) {
       const url = `${location.origin}/tmp/${tmpName}`;
       const iconProbe = `<span class="probe" data-url="${url}" title="Analizar">🔍</span>`;
+      const iconResearch = `&nbsp;<span class="research" data-url="${url}" title="Análisis técnico">🔬</span>`;
       const html = `
     <div class="feedback success attach" data-tmp="${tmpName}">
       <button class="btnSaveAttach" data-tmp="${tmpName}"
               title="Guardar en ficha del paciente">📌</button>
       ${fileName} adjuntado
-      ${iconProbe}
+      ${iconProbe}${iconResearch}
       ${isImg ? `<br><img src="/tmp/${tmpName}" class="thumb">` : ''}
     </div>`;
       log.insertAdjacentHTML('beforeend', html);
