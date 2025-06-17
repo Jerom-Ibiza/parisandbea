@@ -1312,6 +1312,57 @@
         body.model = 'o3';
         body.noSearch = true;
       }
+      if (useModelO3) {
+        ensureLoader();
+        try {
+          const r = await fetch('/api/assistant/chat/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+            credentials: 'include'
+          });
+
+          const reader = r.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          let full = '';
+          const div = document.createElement('div');
+          div.className = 'feedback msg-assist';
+          log.appendChild(div);
+          chatChanged = true;
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            let parts = buffer.split(/\n\n/);
+            buffer = parts.pop();
+            for (const p of parts) {
+              const line = p.trim();
+              if (!line.startsWith('data:')) continue;
+              const token = line.slice(5).trim();
+              if (token === '[DONE]') {
+                safeRemoveLoader();
+                div.innerHTML = linkify(full);
+                log.scrollTop = log.scrollHeight;
+                return;
+              }
+              full += token;
+              div.innerHTML = linkify(full);
+              log.scrollTop = log.scrollHeight;
+            }
+          }
+          safeRemoveLoader();
+        } catch (err) {
+          safeRemoveLoader();
+          log.insertAdjacentHTML(
+            'beforeend', `<div class="feedback error">${linkify(err.message)}</div>`
+          );
+          chatChanged = true; log.scrollTop = log.scrollHeight;
+        }
+        return;
+      }
+
+      // ----- streaming con modelo gpt-4.1-mini -----
       ensureLoader();
       try {
         const r = await fetch('/api/assistant/chat', {
@@ -1923,9 +1974,8 @@
       chatChanged = true;
       log.scrollTop = log.scrollHeight;
 
-      ensureLoader();
       try {
-        await handleAssistantResponse(j);
+        await sendToAssistant(buildAssistantBody(msg));
       } catch (err) {
         safeRemoveLoader();
         log.insertAdjacentHTML(
