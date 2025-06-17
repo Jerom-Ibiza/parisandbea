@@ -1107,6 +1107,10 @@
       const url = probe.dataset.url;
       if (!url) return;
 
+      /* quitar iconos 🔍/🔬 tras pulsar uno de ellos */
+      const wrapper = probe.closest('.thumb-wrap, .file-wrap, .attach');
+      wrapper?.querySelectorAll('.probe, .research').forEach(el => el.remove());
+
       const isImg = /\.(jpe?g|png|webp|gif|bmp|svg|heic)$/i.test(url);
       const isResearch = probe.classList.contains('research');
       const userQ = inpMsg.value.trim() ||
