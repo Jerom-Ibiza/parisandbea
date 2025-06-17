@@ -931,10 +931,16 @@
     <!-- Chat, asistente y logs -->
     <div id="chatPanel" class="panel chat-panel">
       <div id="log"></div>
-      <button id="btnSaveChat" style="display:none;margin:15px;padding:7px 22px;border:none;border-radius:10px;
+      <div style="display:flex">
+        <button id="btnSaveChat" style="display:none;margin:15px;padding:7px 22px;border:none;border-radius:10px;
                  background:#aed3c1;color:#fff;font-weight:600;cursor:pointer">
-        Guardar conversación
-      </button>
+          <span class="material-symbols-outlined">folder_open</span>
+        </button>
+        <button id="btnReload" style="display:none;margin:15px;padding:7px 22px;border:none;border-radius:10px;
+                 background:#aed3c1;color:#fff;font-weight:600;cursor:pointer" title="Recargar página">
+          <span class="material-icons-outlined">refresh</span>
+        </button>
+      </div>
       <div class="panel-mask" id="chatMask"></div>
     </div>
   </div>
@@ -1632,8 +1638,11 @@
     /* ------------------------------------------------ grabación --------------------------------------------------------- */
     const btnRec = $id('btnRecord'), log = $id('log');
     const btnSaveChat = $id('btnSaveChat');
+    const btnReload = $id('btnReload');
     const updateSaveBtn = () => {
-      btnSaveChat.style.display = log.childElementCount ? 'block' : 'none';
+      const show = log.childElementCount ? 'block' : 'none';
+      btnSaveChat.style.display = show;
+      btnReload.style.display = show;
     };
     updateSaveBtn();
     new MutationObserver(updateSaveBtn).observe(log, { childList: true });
@@ -1960,9 +1969,8 @@
       chatChanged = true;
       log.scrollTop = log.scrollHeight;
 
-      ensureLoader();
       try {
-        await handleAssistantResponse(j);
+        await sendToAssistant(buildAssistantBody(msg));
       } catch (err) {
         safeRemoveLoader();
         log.insertAdjacentHTML(
@@ -2043,6 +2051,11 @@
           confirmButtonColor: '#a12525'
         });
       }
+    };
+
+    /* ---------- RECARGAR LA PÁGINA ---------- */
+    $id('btnReload').onclick = () => {
+      location.reload(true);
     };
 
     /* =======================  SUBIDA DE ARCHIVOS  ======================= */
