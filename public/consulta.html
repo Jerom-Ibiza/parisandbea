@@ -1348,13 +1348,9 @@
 
     /* ------- spinner helpers ------- */
     const ensureLoader = () => $id('spin') || addLoader();
-    const safeRemoveLoader = () => removeLoader(); º
+    const safeRemoveLoader = () => removeLoader();
 
-    async function sendToAssistant(body) {
-      if (useModelO3) {
-        body.model = 'o3';
-        body.noSearch = true;
-      }
+    async function sendToAssistantClassic(body) {
       ensureLoader();
       try {
         const r = await fetch('/api/assistant/chat', {
@@ -1374,6 +1370,80 @@
           'beforeend', `<div class="feedback error">${linkify(err.message)}</div>`
         );
         chatChanged = true; log.scrollTop = log.scrollHeight;
+      }
+    }
+
+    async function sendToAssistantStream(body) {
+      ensureLoader();
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'feedback msg-assist';
+      msgDiv.style.whiteSpace = 'pre-wrap';
+      log.appendChild(msgDiv);
+      chatChanged = true;
+      log.scrollTop = log.scrollHeight;
+
+      let full = '';
+      let audioUrl = null;
+      try {
+        const r = await fetch('/api/assistant/chat-stream', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+          credentials: 'include'
+        });
+        if (!r.ok) throw new Error(await r.text());
+        const reader = r.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let buffer = '';
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          let parts = buffer.split(/\n\n/);
+          buffer = parts.pop();
+          for (const p of parts) {
+            if (!p.trim()) continue;
+            const lines = p.split('\n');
+            let event = 'data';
+            let data = '';
+            for (const line of lines) {
+              if (line.startsWith('event:')) event = line.slice(6).trim();
+              else if (line.startsWith('data:')) data += line.slice(5);
+            }
+            if (event === 'data') {
+              const chunk = data.replace(/\\n/g, '\n');
+              full += chunk;
+              msgDiv.textContent += chunk;
+              log.scrollTop = log.scrollHeight;
+            } else if (event === 'audio') {
+              audioUrl = data.trim();
+            } else if (event === 'error') {
+              throw new Error(data.trim());
+            }
+          }
+        }
+        safeRemoveLoader();
+        msgDiv.innerHTML = linkify(full);
+        log.scrollTop = log.scrollHeight;
+        if (confRE.test(full)) await loadSession();
+        if (audioUrl) playTTS(audioUrl);
+      } catch (err) {
+        msgDiv.remove();
+        safeRemoveLoader();
+        log.insertAdjacentHTML(
+          'beforeend', `<div class="feedback error">${linkify(err.message)}</div>`
+        );
+        chatChanged = true; log.scrollTop = log.scrollHeight;
+      }
+    }
+
+    async function sendToAssistant(body) {
+      if (useModelO3) {
+        body.model = 'o3';
+        body.noSearch = true;
+        await sendToAssistantClassic(body);
+      } else {
+        await sendToAssistantStream(body);
       }
     }
 

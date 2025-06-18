@@ -3,12 +3,14 @@
    Devuelve las respuestas del asistente en streaming (SSE, token a token)
    Modelo por defecto: gpt-4.1-mini
    ------------------------------------------------------------------------- */
-
+const fs = require('fs');
+const path = require('path');
 const OpenAI = require('openai');
 const logger = require('../logger');
 const prompt = require('../prompts/assistant.responses');
 const { LOCAL_FUNCTIONS } = require('./assistant.functions');
 const getTools = require('../utils/getToolSchemas');
+const ttsOAI = require('../utils/openaiTTS');
 
 const openai = new OpenAI();
 
@@ -114,6 +116,14 @@ exports.chatStream = async (req, res) => {
         }
 
         /* ----- fin del stream ----- */
+        /* ----- TTS y fin del stream ----- */
+        try {
+            const voice = (req.session.user?.voz || 'alloy').trim();
+            const mp3Path = await ttsOAI(fullText, voice);
+            const audioUrl = '/tmp/' + path.basename(mp3Path);
+            res.write(`event:audio\ndata:${audioUrl}\n\n`);
+            setTimeout(() => fs.unlink(mp3Path, () => { }), 10 * 60 * 1000);
+        } catch (e) { logger.error('[TTS] ' + e.message); }
         res.write('event:done\ndata:[DONE]\n\n');
         res.end();
 
