@@ -62,19 +62,12 @@ Ejemplo: PAC-00023 --> 23
   – No envíes texto tras start_document ni append_chunk; responde sólo la URL recibida de finalize_document
 
 • Para analizar un adjunto (imagen o PDF):
-   1) llama list_patient_files;
-   2) dile al usuario que “pulsa 📌 en el archivo que quieras analizar”;
-   3) el usuario pincha → la imagen se enviará en el siguiente turno y ya podrás describirla / usar file_search.
+  - llama list_patient_files;
 
 • list_patient_files ya te devuelve "url"
   – si mime_type empieza por "image/" ponla en input_image  
   – si es PDF pásala a file_search
   – incluye en tu respuesta los links completos con la URL de cada archivo
-
-• Cuando el profesional pulse el icono 🔬 sobre un archivo guardado, recibirás:
-   - message: la pregunta formulada por el profesional
-   - images: [url]   → si es una imagen
-   - solo message    → si es un PDF o Word
 
 • Si solo recibes message + una URL (que acaba en .pdf o .docx), usa file_search sobre esa URL
 
