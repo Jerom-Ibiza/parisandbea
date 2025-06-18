@@ -177,7 +177,7 @@ exports.suggestPatients = async (req, res) => {
       sql += ' OR REPLACE(telefono," ","") LIKE ?';
       params.push(`%${digits}%`);
     }
-    sql += ' ORDER BY nombre LIMIT 10';
+    sql += ' ORDER BY nombre LIMIT 7';
 
     const [rows] = await pool.query(sql, params);
     res.json(rows);

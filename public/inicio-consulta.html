@@ -18,7 +18,13 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
-    /* ——— layout / wrapper ——— */
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      overscroll-behavior-y: contain;
+    }
+
     body {
       display: flex;
       flex-direction: column;
@@ -26,14 +32,14 @@
       justify-content: center;
       min-height: 100vh;
       background: #efefef;
-      margin: 0;
-      font-family: "Raleway", sans-serif
+      font-family: "Raleway",
+        sans-serif
     }
 
     .wrapper {
       width: 100%;
       max-width: 420px;
-      padding: 40px 20px;
+      padding: 40px 20px 0px;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
@@ -153,7 +159,7 @@
 
     .results-table {
       width: 100%;
-      border-collapse: collapse;
+      border-radius: 15px;
       margin-top: 12px;
     }
 
@@ -162,6 +168,8 @@
       padding: 8px;
       border: 1px solid #e0e0e0;
       text-align: left;
+      border-radius: 15px;
+      height: 50px;
     }
 
     .results-table tr:hover {
@@ -177,7 +185,7 @@
       color: #fff;
       font-weight: 700;
       padding: 14px;
-      border-radius: 18px;
+      border-radius: 15px;
       text-decoration: none;
       box-shadow: 0 3px 6px rgba(0, 0, 0, .1)
     }
@@ -240,22 +248,6 @@
       color: #fff;
       font-weight: 700;
       cursor: pointer
-    }
-
-    /* ——— botón Logout en footer ——— */
-    .logout-button {
-      background: #add1c5;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background .3s, transform .2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'Raleway', sans-serif;
     }
 
     .logout-button:hover {
@@ -330,18 +322,18 @@
       font-size: 22px;
     }
 
-    /* ===== móvil ≤ 480 px ===== */
-    @media (max-width:480px) {
+    /* ===== pantallas < 1200 px ===== */
+    @media (max-width:1199px) {
       .page-footer {
         flex-wrap: wrap;
-        /* permite que los tres botones salten de línea */
+        /* permite que los botones salten de línea */
         gap: 12px;
         padding: 24px 16px;
       }
 
       .footer-btn {
-        flex: 1 1 100%;
-        /* cada botón ocupa el ancho completo */
+        flex: 1 1 calc(50% - 12px);
+        /* dos columnas */
         justify-content: center;
         /* centra icono + texto */
       }
@@ -367,7 +359,7 @@
       .manual-box {
         max-width: 340px;
         grid-area: manual;
-        margin-top: 7px;
+        margin-top: 15px;
       }
 
       .mic-row {
@@ -508,7 +500,7 @@
     </div>
   </div>
   <div id="screensaver"></div>
-  <!-- ===== FOOTER con los dos botones ===== -->
+  <!-- ===== FOOTER con los botones ===== -->
   <footer class="page-footer">
     <a href="/pab-pros.html" class="footer-btn" id="agendaBtn">
       <span class="material-icons">event</span> Agenda
@@ -518,6 +510,9 @@
     </a>
     <button id="registerBtn" class="footer-btn">
       <span class="material-icons">person_add</span> Inscripción
+    </button>
+    <button id="reloadBtn" class="footer-btn" title="Recargar página">
+      <span class="material-icons">refresh</span>
     </button>
   </footer>
   <script>
@@ -722,6 +717,11 @@
       } catch (e) {
         console.error(e);
       }
+    });
+
+    // ——— Recargar página ———
+    document.getElementById('reloadBtn').addEventListener('click', () => {
+      location.reload(true);
     });
 
     /* ─── Screensaver por inactividad ─── */
