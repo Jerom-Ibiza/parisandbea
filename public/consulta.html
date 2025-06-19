@@ -934,11 +934,15 @@
       <div style="display:flex">
         <button id="btnSaveChat" style="display:none;margin:15px;padding:7px 22px;border:none;border-radius:10px;
                  background:#aed3c1;color:#fff;font-weight:600;cursor:pointer">
-          <span class="material-symbols-outlined">folder_open</span>
+          <span class="material-symbols-outlined">file_save</span>
+        </button>
+        <button id="btnResumen" style="margin:15px;padding:7px 22px;border:none;border-radius:10px;
+                 background:#aed3c1;color:#fff;font-weight:600;cursor:pointer" title="Resumen del paciente">
+          <span class="material-symbols-outlined">article_person</span>
         </button>
         <button id="btnReload" style="display:none;margin:15px;padding:7px 22px;border:none;border-radius:10px;
                  background:#aed3c1;color:#fff;font-weight:600;cursor:pointer" title="Recargar página">
-          <span class="material-icons-outlined">refresh</span>
+          <span class="material-symbols-outlined">refresh</span>
         </button>
       </div>
       <div class="panel-mask" id="chatMask"></div>
@@ -1754,6 +1758,7 @@
     /* ------------------------------------------------ grabación --------------------------------------------------------- */
     const btnRec = $id('btnRecord'), log = $id('log');
     const btnSaveChat = $id('btnSaveChat');
+    const btnResumen = $id('btnResumen');
     const btnReload = $id('btnReload');
     const updateSaveBtn = () => {
       const show = log.childElementCount ? 'block' : 'none';
@@ -2170,6 +2175,11 @@
           confirmButtonColor: '#a12525'
         });
       }
+    };
+
+    /* ---------- RESUMEN DETALLADO DEL PACIENTE ---------- */
+    $id('btnResumen').onclick = () => {
+      sendText('Haz un resumen detallado del paciente');
     };
 
     /* ---------- RECARGAR LA PÁGINA ---------- */
