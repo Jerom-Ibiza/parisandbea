@@ -37,6 +37,8 @@ app.use((req, res, next) => {
 // Servir estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/tmp', express.static(path.join(__dirname, 'tmp')));
+app.use('/attachments_consulta',
+  express.static(path.join(__dirname, 'attachments_consulta')));
 
 // Rutas estáticas especiales
 app.use('/documentos/consentimientos', express.static(path.join(__dirname, 'documentos', 'consentimientos')));
