@@ -175,11 +175,12 @@ exports.handleVoiceStream = [
                 } catch (e) { logger.error('[TTS] ' + e.message); }
             }
 
-            res.write('event:done\ndata:[DONE]\n\n');
-            res.end();
-
             history.push({ role: 'assistant', content: fullText });
             req.session.respHistory = history.slice(-30);
+            await new Promise(r => req.session.save(r));
+
+            res.write('event:done\ndata:[DONE]\n\n');
+            res.end();
 
         } catch (err) {
             logger.error('[voiceStream] ' + err.stack);
