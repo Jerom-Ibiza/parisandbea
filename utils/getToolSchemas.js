@@ -22,27 +22,6 @@ module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
     });
 
   /* ---------- HISTORIAL ---------- */
-  if (LOCAL_FUNCTIONS.add_historial)
-    tools.push({
-      type: 'function', name: 'add_historial',
-      description: 'Crea historial si no existe',
-      parameters: {
-        type: 'object', required: ['motivo_consulta'],
-        properties: {
-          motivo_consulta: { type: 'string' },
-          fecha_inicio_problema: { type: 'string', format: 'date' },
-          antecedentes_personales: { type: 'string' },
-          antecedentes_familiares: { type: 'string' },
-          tratamientos_previos: { type: 'string' },
-          medicacion_actual: { type: 'string' },
-          alergias: { type: 'string' },
-          habitos_vida: { type: 'string' },
-          profesion: { type: 'string' }
-        },
-        additionalProperties: false
-      }
-    });
-
   if (LOCAL_FUNCTIONS.update_historial)
     tools.push({
       type: 'function', name: 'update_historial',
@@ -64,34 +43,6 @@ module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
     });
 
   /* ---------- EVALUACI�N ---------- */
-  if (LOCAL_FUNCTIONS.add_evaluacion)
-    tools.push({
-      type: 'function', name: 'add_evaluacion',
-      description: 'Registra una evaluaci�n completa',
-      parameters: {
-        type: 'object',
-        required: ['fecha_evaluacion', 'diagnostico'],
-        properties: {
-          fecha_evaluacion: { type: 'string', format: 'date' },
-          dolor_localizacion: { type: 'string' },
-          dolor_intensidad: { type: 'string', enum: ['Leve', 'Moderado', 'Severo'] },
-          dolor_tipo: { type: 'string' },
-          dolor_irradia: { type: 'boolean' },
-          dolor_descripcion: { type: 'string' },
-          inspeccion_visual: { type: 'string' },
-          palpacion: { type: 'string' },
-          movilidad_articular: { type: 'string' },
-          pruebas_funcionales: { type: 'string' },
-          valoracion_neurologica: { type: 'string' },
-          valoracion_postural: { type: 'string' },
-          evaluacion_funcional: { type: 'string' },
-          diagnostico: { type: 'string' },
-          objetivos_terapeuticos: { type: 'string' }
-        },
-        additionalProperties: false
-      }
-    });
-
   if (LOCAL_FUNCTIONS.update_evaluacion)
     tools.push({
       type: 'function', name: 'update_evaluacion',
@@ -116,31 +67,6 @@ module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
     });
 
   /* ---------- TRATAMIENTO ---------- */
-  if (LOCAL_FUNCTIONS.add_tratamiento)
-    tools.push({
-      type: 'function', name: 'add_tratamiento',
-      description: 'Crea un tratamiento nuevo',
-      parameters: {
-        type: 'object',
-        required: ['fecha_inicio', 'tecnicas_aplicadas', 'frecuencia_sesiones', 'duracion_sesion'],
-        properties: {
-          fecha_inicio: { type: 'string', format: 'date' },
-          fecha_fin: { type: 'string', format: 'date' },
-          tecnicas_aplicadas: { type: 'string' },
-          frecuencia_sesiones: { type: 'string' },
-          duracion_sesion: { type: 'string' },
-          recomendaciones: { type: 'string' },
-          estado: { type: 'string', enum: ['Activo', 'Finalizado', 'Suspendido'] },
-          suplemento_prescrito: { type: 'string', description: 'Nombre comercial del suplemento (vacío si no hay)' },
-          capsulas_por_bote: { type: 'integer' },
-          dosis_diaria: { type: 'number' },
-          fecha_inicio_suplementacion: { type: 'string', format: 'date' },
-          dias_alerta: { type: 'integer' }
-        },
-        additionalProperties: false
-      }
-    });
-
   if (LOCAL_FUNCTIONS.update_tratamiento)
     tools.push({
       type: 'function', name: 'update_tratamiento',
@@ -169,25 +95,6 @@ module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
     });
 
   /* ---------- SESI�N ---------- */
-  if (LOCAL_FUNCTIONS.add_sesion)
-    tools.push({
-      type: 'function', name: 'add_sesion',
-      description: 'A�ade una sesi�n al tratamiento activo',
-      parameters: {
-        type: 'object',
-        required: ['fecha_sesion', 'hora_sesion', 'tecnicas_utilizadas'],
-        properties: {
-          fecha_sesion: { type: 'string', format: 'date' },
-          hora_sesion: { type: 'string', pattern: '^\\d{2}:\\d{2}$' },
-          tecnicas_utilizadas: { type: 'string' },
-          evolucion: { type: 'string' },
-          modificaciones_tratamiento: { type: 'string' },
-          observaciones: { type: 'string' }
-        },
-        additionalProperties: false
-      }
-    });
-
   if (LOCAL_FUNCTIONS.update_sesion)
     tools.push({
       type: 'function',

@@ -116,15 +116,6 @@ const LOCAL_FUNCTIONS = {
   },
 
   /* ────────── HISTORIAL ────────── */
-  async add_historial(args, req) {
-    const id_paciente = req.session.patient.id_paciente;
-    await pool.query(
-      'INSERT INTO historial_clinico SET ? ON DUPLICATE KEY UPDATE ?',
-      [{ ...args, id_paciente }, { ...args }]
-    );
-    return { ok: true, message: 'Historial clínico registrado correctamente' };
-  },
-
   async update_historial({ campo, valor }, req) {
     const allowed = ['motivo_consulta', 'fecha_inicio_problema', 'antecedentes_personales',
       'antecedentes_familiares', 'tratamientos_previos', 'medicacion_actual', 'alergias',
@@ -142,13 +133,6 @@ const LOCAL_FUNCTIONS = {
   },
 
   /* ────────── EVALUACIONES ────────── */
-  async add_evaluacion(args, req) {
-    const id_paciente = req.session.patient.id_paciente;
-    const id_profesional = req.session.user.id_profesional;
-    await pool.query('INSERT INTO evaluaciones SET ?', { ...args, id_paciente, id_profesional });
-    return { ok: true, message: 'Evaluación registrada correctamente' };
-  },
-
   async update_evaluacion({ campo, valor }, req) {
     const allowed = ['fecha_evaluacion', 'dolor_localizacion', 'dolor_intensidad', 'dolor_tipo',
       'dolor_irradia', 'dolor_descripcion', 'inspeccion_visual', 'palpacion', 'movilidad_articular',
@@ -179,13 +163,6 @@ const LOCAL_FUNCTIONS = {
   },
 
   /* ────────── TRATAMIENTOS ────────── */
-  async add_tratamiento(args, req) {
-    const id_paciente = req.session.patient.id_paciente;
-    const id_profesional = req.session.user.id_profesional;
-    await pool.query('INSERT INTO tratamientos SET ?', { ...args, id_paciente, id_profesional });
-    return { ok: true, message: 'Tratamiento registrado correctamente' };
-  },
-
   async update_tratamiento({ campo, valor }, req) {
     const allowed = ['fecha_inicio', 'fecha_fin', 'tecnicas_aplicadas', 'frecuencia_sesiones',
       'duracion_sesion', 'recomendaciones', 'estado', 'suplemento_prescrito', 'capsulas_por_bote',
@@ -215,22 +192,6 @@ const LOCAL_FUNCTIONS = {
   },
 
   /* ────────── SESIONES ────────── */
-  async add_sesion(args, req) {
-    const id_profesional = req.session.user.id_profesional;
-    const id_paciente = req.session.patient.id_paciente;
-
-    const [rows] = await pool.query(
-      `SELECT id_tratamiento FROM tratamientos
-       WHERE id_paciente = ? ORDER BY fecha_inicio DESC, id_tratamiento DESC LIMIT 1`,
-      [id_paciente]);
-    if (!rows.length) throw new Error('El paciente no tiene tratamientos');
-
-    await pool.query('INSERT INTO sesiones SET ?', {
-      ...args, id_tratamiento: rows[0].id_tratamiento, id_profesional
-    });
-    return { ok: true, message: 'Sesión registrada correctamente' };
-  },
-
   async update_sesion({ campo, valor }, req) {
     /* columnas que SÍ se pueden tocar */
     const allowed = [
