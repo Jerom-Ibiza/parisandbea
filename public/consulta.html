@@ -1432,6 +1432,67 @@
       safeRemoveLoader();
     }
 
+    async function sendVoiceStream(form) {
+      ensureLoader();
+      const r = await fetch('/api/assistant/voice-stream', {
+        method: 'POST',
+        credentials: 'include',
+        body: form
+      });
+      const reader = r.body.getReader();
+      const dec = new TextDecoder();
+      let buffer = '';
+      let full = '';
+      let div = null;
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += dec.decode(value, { stream: true });
+        let idx;
+        while ((idx = buffer.indexOf('\n\n')) >= 0) {
+          const chunk = buffer.slice(0, idx);
+          buffer = buffer.slice(idx + 2);
+          if (!chunk) continue;
+          if (chunk.startsWith('event:')) {
+            const lines = chunk.split('\n');
+            const ev = lines[0].slice(6).trim();
+            const data = (lines[1] || '').replace(/^data:/, '').trim();
+            if (ev === 'question') {
+              log.insertAdjacentHTML(
+                'beforeend',
+                `<div class="feedback msg-user">${linkify(data)}</div>`
+              );
+              chatChanged = true;
+              div = document.createElement('div');
+              div.className = 'feedback msg-assist';
+              log.appendChild(div);
+              log.scrollTop = log.scrollHeight;
+            } else if (ev === 'audio') {
+              playTTS(data);
+            } else if (ev === 'done') {
+              safeRemoveLoader();
+            } else if (ev === 'error') {
+              safeRemoveLoader();
+              log.insertAdjacentHTML(
+                'beforeend', `<div class="feedback error">${linkify(data)}</div>`
+              );
+            }
+          } else if (chunk.startsWith('data:')) {
+            const txt = chunk.slice(5).replace(/\\n/g, '\n');
+            full += txt;
+            if (!div) {
+              div = document.createElement('div');
+              div.className = 'feedback msg-assist';
+              log.appendChild(div);
+            }
+            div.innerHTML = linkify(full);
+            log.scrollTop = log.scrollHeight;
+          }
+        }
+      }
+      safeRemoveLoader();
+    }
+
     /* ------- gestor recursivo de respuestas ------- */
     async function handleAssistantResponse(j, silent = false, depth = 0) {
       if (depth > 3) {            // evita bucle infinito
@@ -1957,24 +2018,26 @@
 
           ensureLoader();  // spinner
           try {
-            const r = await fetch('/api/assistant/voice', {
-              method: 'POST',
-              credentials: 'include',
-              body: form
-            });
-            const j = await safeJson(r);
-            if (!j.ok) throw new Error(j.error || 'Error desconocido');
+            if (useModelO3) {
+              const r = await fetch('/api/assistant/voice', {
+                method: 'POST',
+                credentials: 'include',
+                body: form
+              });
+              const j = await safeJson(r);
+              if (!j.ok) throw new Error(j.error || 'Error desconocido');
 
-            // mostrar pregunta transcrita
-            if (j.question) {
-              log.insertAdjacentHTML(
-                'beforeend',
-                `<div class="feedback msg-user">${linkify(j.question)}</div>`
-              );
-              chatChanged = true;
+              if (j.question) {
+                log.insertAdjacentHTML(
+                  'beforeend',
+                  `<div class="feedback msg-user">${linkify(j.question)}</div>`
+                );
+                chatChanged = true;
+              }
+              await handleAssistantResponse(j);
+            } else {
+              await sendVoiceStream(form);
             }
-            // manejar respuesta
-            await handleAssistantResponse(j);
 
           } catch (err) {
             removeLoader();
@@ -1982,7 +2045,6 @@
               'beforeend',
               `<div class="feedback error">${linkify(err.message)}</div>`
             );
-            if (j?.audioUrl) playTTS(j.audioUrl);
           } finally {
             if (!currentAudio) btnStop.style.display = 'none';
           }
