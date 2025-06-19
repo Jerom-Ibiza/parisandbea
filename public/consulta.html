@@ -1161,7 +1161,9 @@
           window.sessionImages.push(url);
           if (window.sessionImages.length > 5) window.sessionImages.shift();
         }
-        await sendToAssistant({ message: userQ, images: [...window.sessionImages] });
+        const bodyImg = { message: userQ, images: [...window.sessionImages] };
+        if (useModelO3) await sendToAssistant(bodyImg);
+        else await sendToAssistantStream(bodyImg);
         return;
       }
 
@@ -1192,7 +1194,9 @@
         log.scrollTop = log.scrollHeight;
 
         // 3) ahora sí haz la pregunta al asistente
-        await sendToAssistant({ message: userQ });
+        const bodyDoc = { message: userQ };
+        if (useModelO3) await sendToAssistant(bodyDoc);
+        else await sendToAssistantStream(bodyDoc);
 
       } catch (err) {
         safeRemoveLoader();
@@ -1375,6 +1379,57 @@
         );
         chatChanged = true; log.scrollTop = log.scrollHeight;
       }
+    }
+
+    async function sendToAssistantStream(body) {
+      ensureLoader();
+      const opts = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        credentials: 'include'
+      };
+      const r = await fetch('/api/assistant/chat-stream', opts);
+      const reader = r.body.getReader();
+      const dec = new TextDecoder();
+      let buffer = '';
+      let full = '';
+      const div = document.createElement('div');
+      div.className = 'feedback msg-assist';
+      log.appendChild(div);
+      chatChanged = true;
+      log.scrollTop = log.scrollHeight;
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += dec.decode(value, { stream: true });
+        let idx;
+        while ((idx = buffer.indexOf('\n\n')) >= 0) {
+          const chunk = buffer.slice(0, idx);
+          buffer = buffer.slice(idx + 2);
+          if (!chunk) continue;
+          if (chunk.startsWith('event:')) {
+            const lines = chunk.split('\n');
+            const ev = lines[0].slice(6).trim();
+            const data = (lines[1] || '').replace(/^data:/, '').trim();
+            if (ev === 'audio') playTTS(data);
+            else if (ev === 'done') {
+              safeRemoveLoader();
+            } else if (ev === 'error') {
+              safeRemoveLoader();
+              log.insertAdjacentHTML(
+                'beforeend', `<div class="feedback error">${linkify(data)}</div>`
+              );
+            }
+          } else if (chunk.startsWith('data:')) {
+            const txt = chunk.slice(5).replace(/\\n/g, '\n');
+            full += txt;
+            div.innerHTML = linkify(full);
+            log.scrollTop = log.scrollHeight;
+          }
+        }
+      }
+      safeRemoveLoader();
     }
 
     /* ------- gestor recursivo de respuestas ------- */
@@ -1970,7 +2025,9 @@
       log.scrollTop = log.scrollHeight;
 
       try {
-        await sendToAssistant(buildAssistantBody(msg));
+        const body = buildAssistantBody(msg);
+        if (useModelO3) await sendToAssistant(body);
+        else await sendToAssistantStream(body);
       } catch (err) {
         safeRemoveLoader();
         log.insertAdjacentHTML(

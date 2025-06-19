@@ -5,7 +5,10 @@
    ------------------------------------------------------------------------- */
 
 const OpenAI = require('openai');
+const fs = require('fs');
+const path = require('path');
 const logger = require('../logger');
+const ttsOAI = require('../utils/openaiTTS');
 const prompt = require('../prompts/assistant.responses');
 const { LOCAL_FUNCTIONS } = require('./assistant.functions');
 const getTools = require('../utils/getToolSchemas');
@@ -76,48 +79,92 @@ exports.chatStream = async (req, res) => {
         res.setHeader('X-Accel-Buffering', 'no');
         res.flushHeaders();                       // envía ya las cabeceras
 
-        /* ---------------------------------------------------------------------
-           Llamada en streaming a la Responses API de OpenAI
-           ------------------------------------------------------------------- */
-        const stream = await openai.responses.create({
+        /* ------------------------------------------------------------------
+           Primera llamada sin streaming para detectar tool_calls
+           ----------------------------------------------------------------- */
+        let rsp = await openai.responses.create({
             model,
             instructions: prompt,
             input: sanitiseHistory(history),
             tools: buildTools(req, !!noSearch),
-            tool_choice: 'auto',
+            tool_choice: 'auto'
+        });
+
+        for (let step = 0; step < 4; step++) {
+            const calls = (rsp.output || []).filter(o => o.type === 'function_call');
+            if (!calls.length) break;
+
+            for (const call of calls) {
+                const fn = LOCAL_FUNCTIONS[call.name];
+                if (!fn) continue;
+
+                let args = {};
+                try { args = JSON.parse(call.arguments || '{}'); }
+                catch { logger.warn('[parseArgs] ' + call.arguments); }
+
+                let result;
+                try { result = await fn(args, req); }
+                catch (e) { result = { error: e.message }; }
+
+                history.push({
+                    role: 'user',
+                    content: `Resultado de ${call.name}: ${JSON.stringify(result)}`
+                });
+            }
+
+            rsp = await openai.responses.create({
+                model,
+                instructions: prompt,
+                input: sanitiseHistory(history),
+                tools: buildTools(req, !!noSearch),
+                tool_choice: 'auto'
+            });
+            await sleep(180);
+        }
+
+        /* ------------------------------------------------------------------
+           Segunda llamada en streaming (tool_choice:none) para texto final
+           ----------------------------------------------------------------- */
+        const stream = await openai.responses.create({
+            model,
+            instructions: prompt,
+            input: sanitiseHistory(history),
+            tool_choice: 'none',
             stream: true
         });
 
-        /* ---------------------------------------------------------------------
-           Procesamos los eventos del stream y los reenviamos al cliente
-           ------------------------------------------------------------------- */
         let fullText = '';
 
         for await (const event of stream) {
             /* ── texto incremental ── */
-            if (
-                event.type === 'response.text.delta' ||
-                event.type === 'response.output_text.delta'   // por si tu modelo usa este
-            ) {
-                const chunk =
-                    typeof event.delta === 'string'
-                        ? event.delta                // formato actual (string)
-                        : event.delta?.text || '';   // formato antiguo (objeto)
-
-                if (!chunk) continue;            // ignora vacíos
+            if (event.type === 'response.text.delta' ||
+                event.type === 'response.output_text.delta') {
+                const chunk = typeof event.delta === 'string'
+                    ? event.delta
+                    : (event.delta?.text || '');
+                if (!chunk) continue;
 
                 fullText += chunk;
                 res.write(`data:${chunk.replace(/\n/g, '\\n')}\n\n`);
             }
 
-            /* ── aquí podrías procesar otros eventos (tool_calls…) ── */
+        }
+        /* --- TTS (opcional) --- */
+        const shortAck = /^ *((registro|actualizaci[o�]n|historial|evaluaci[o�]n|tratamiento|sesi[o�]n)\s+realizada?\s+correctamente\.?) *$/i
+            .test(fullText);
+        if (!shortAck && fullText && fullText !== '[Sin respuesta]') {
+            try {
+                const voice = (req.session.user?.voz || 'alloy').trim();
+                const mp3Path = await ttsOAI(fullText, voice);
+                const audioUrl = '/tmp/' + path.basename(mp3Path);
+                setTimeout(() => fs.unlink(mp3Path, () => { }), 10 * 60 * 1000);
+                res.write(`event:audio\ndata:${audioUrl}\n\n`);
+            } catch (e) { logger.error('[TTS] ' + e.message); }
         }
 
-        /* ----- fin del stream ----- */
         res.write('event:done\ndata:[DONE]\n\n');
         res.end();
 
-        /* ----- guarda el historial (máx 30) ----- */
         history.push({ role: 'assistant', content: fullText });
         req.session.respHistory = history.slice(-30);
 
