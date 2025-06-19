@@ -1,0 +1,883 @@
+    :root {
+        --panel-ratio: 0.5;
+    }
+
+    /* ───────────────────  RESET / LAYOUT BÁSICO ─────────────────── */
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        overscroll-behavior-y: contain;
+    }
+
+    body {
+        background: #efefef;
+        font-family: "Raleway", sans-serif;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden
+            /* evita scroll del body  */
+    }
+
+    /* ───────────────────  CABECERA (móvil) ──────────────────────── */
+    header {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 620px;
+        margin: auto;
+        padding: 18px 20px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        border-bottom: 3px solid #aed3c1;
+        background: #efefef;
+        margin-bottom: 5px
+    }
+
+    header img {
+        width: 28px
+    }
+
+    header .info {
+        flex: 1
+    }
+
+    header .info h1 {
+        font-size: 20px;
+        margin: 0
+    }
+
+    header .info h2 {
+        font-size: 17px;
+        font-weight: 500;
+        margin: 2px 0 0;
+        color: #444
+    }
+
+    /* ───────────────────  SELECTOR DE BLOQUE ────────────────────── */
+    .block-selector {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 620px;
+        margin: auto;
+        padding: 8px 4px;
+        display: flex;
+        justify-content: space-around;
+        gap: 6px;
+        background: transparent;
+    }
+
+    .chip {
+        flex: 1;
+        padding: 8px 4px;
+        border: 2px solid #aed3c1;
+        border-radius: 12px;
+        background: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: .15s
+    }
+
+    .chip.active {
+        background: #aed3c1;
+        color: #fff
+    }
+
+    .chip.hidden {
+        display: none
+    }
+
+    /* ───────────────────  BOTONERA INFERIOR (móvil) ─────────────── */
+    .bottom-bar {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 620px;
+        margin: auto;
+        padding: 14px 0;
+        display: flex;
+        justify-content: space-around;
+        gap: 16px;
+        background: #efefef
+    }
+
+    .btn-round,
+    .btn-small {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background .2s, transform .15s;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, .15)
+    }
+
+    .btn-round {
+        width: 60px;
+        height: 60px;
+        background: #aed3c1;
+        border: 2px solid transparent
+    }
+
+    .btn-small {
+        width: 60px;
+        height: 60px
+    }
+
+    .btn-round .material-icons-outlined {
+        font-size: 24px;
+        color: #fff
+    }
+
+    .btn-small .material-icons-outlined {
+        font-size: 20px
+    }
+
+    .btn-round:active {
+        transform: scale(.94)
+    }
+
+    .btn-round.recording {
+        background: #4482ff;
+        animation: pulse 1s infinite
+    }
+
+    .btn-round.talking {
+        background: #4482ff;
+        animation: pulse 1s infinite
+    }
+
+    #btnStopTTS {
+        background: #a12525
+    }
+
+    #btnModelO3 {
+        color: #fff;
+        scale: 0.8;
+    }
+
+    #btnModelO3.active {
+        background: #276040;
+        color: #fff;
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(224, 65, 65, .6)
+        }
+
+        70% {
+            box-shadow: 0 0 0 12px rgba(224, 65, 65, 0)
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(224, 65, 65, 0)
+        }
+    }
+
+    /* ───────────────────  WRAPPER & PANELES ─────────────────────── */
+    #panels {
+        flex: 1 1 auto;
+        width: 100%;
+        max-width: 1900px;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 0
+            /* puede contraerse */
+    }
+
+    .info-panel,
+    .chat-panel {
+        background: #fff;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, .08);
+        padding: 18px 22px;
+        box-sizing: border-box;
+        font-size: 15px;
+        line-height: 1.4;
+        overflow-y: auto;
+        min-height: 0;
+        position: relative
+    }
+
+    .info-panel {
+        flex: 0 0 calc(var(--panel-ratio) * 100%);
+        max-height: none;
+    }
+
+    .chat-panel {
+        flex: 1 1 calc((1 - var(--panel-ratio)) * 100%);
+    }
+
+    #divider {
+        flex: 0 0 auto;
+        background: #aed3c1;
+    }
+
+    .panel-mask {
+        position: absolute;
+        inset: 0;
+        background: #fff;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease
+    }
+
+    .panel-mask.show {
+        opacity: 1;
+    }
+
+    /* ─────── estilos propios de los bloques (dt/dd & títulos) ───── */
+    .info-panel dl {
+        margin: 0
+    }
+
+    .info-panel dt {
+        font-weight: 700;
+        float: left;
+        width: 185px;
+        clear: left;
+        white-space: nowrap;
+        background: #bee7d3;
+        color: #fff;
+        border-radius: 10px;
+        text-align: justify;
+        padding-left: 15px;
+        margin-right: 20px;
+    }
+
+    .info-panel dd {
+        margin: 0 0 6px 0;
+        text-align: justify;
+        padding-left: 15px;
+    }
+
+    /* filas alternas en bloques de info */
+    .info-panel dt:nth-of-type(odd),
+    .info-panel dd:nth-of-type(odd) {
+        background: #f1f1f1;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: justify;
+    }
+
+    /* filas alternas en bloques de info */
+    .info-panel dt:nth-of-type(odd) {
+        color: #fff;
+        background: #aed3c1;
+    }
+
+    .section-title {
+        margin: 18px 0 10px;
+        font-weight: 1000;
+        font-size: 18px;
+        border-bottom: 1px solid #aed3c1;
+        display: flex;
+        align-items: center;
+        gap: 6px
+    }
+
+    .section-title .material-icons-outlined {
+        font-size: 20px;
+    }
+
+    .info-panel .section-title {
+        color: white;
+        background: #ccc;
+        padding: 6px;
+        border-radius: 15px;
+        padding-left: 100px;
+    }
+
+    /* ───────────────────  ESTADOS DE MENSAJES / LOG ─────────────── */
+    .feedback {
+        padding: 8px 10px;
+        border-radius: 8px;
+        margin-bottom: 6px;
+        font-size: 22px !important
+    }
+
+    .msg-user {
+        background: #e1efff;
+        color: #13417b;
+        border-left: 6px solid #3b7bff
+    }
+
+    .msg-assist {
+        background: #d5f6e3;
+        color: #276040;
+        border-left: 6px solid #28a56a
+    }
+
+    /* ─── 3 · Burbujas de chat: usuario a la derecha ─── */
+    .msg-user {
+        margin-left: auto;
+        /* empuja la burbuja a la derecha */
+        text-align: right;
+        /* texto alineado al borde derecho */
+
+        /* quitamos la barrita azul de la izquierda y la
+     movemos al lado contrario para que haga de “punta” */
+        border-left: none;
+        border-right: 6px solid #3b7bff;
+
+        /* forma típica de bocadillo: vértice en la derecha-arriba */
+        border-radius: 12px 0 12px 12px;
+    }
+
+    /* opcional: redondeo complementario en la burbuja del asistente */
+    .msg-assist {
+        border-radius: 0 12px 12px 12px;
+    }
+
+    .success {
+        background: #d5f6e3;
+        color: #276040
+    }
+
+    .error {
+        background: #ffd6d6;
+        color: #a12525
+    }
+
+    .loader {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #555
+    }
+
+    .loader::before {
+        content: '';
+        width: 20px;
+        height: 20px;
+        border: 3px solid #aed3c1;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(1turn)
+        }
+    }
+
+    .feedback a {
+        word-break: break-all;
+        overflow-wrap: anywhere
+    }
+
+    .feedback img.thumb {
+        max-width: 140px;
+        height: auto;
+        border-radius: 6px;
+        cursor: pointer;
+        display: block;
+        margin: 6px 0
+    }
+
+    /* ───────────────────  ICONOS EN THUMBS / ADJUNTOS ───────────── */
+    .thumb-wrap,
+    .file-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px
+    }
+
+    .btnSaveAttach,
+    .pin,
+    .lens {
+        cursor: pointer;
+        font-size: 18px;
+        margin-left: 6px;
+        color: #276040;
+        background: none;
+        border: none
+    }
+
+    .btnSaveAttach.start {
+        margin-left: 0;
+        margin-right: 6px
+    }
+
+    .btnSaveAttach:hover,
+    .pin:hover,
+    .lens:hover {
+        transform: scale(1.15)
+    }
+
+    .probe,
+    .research {
+        cursor: pointer;
+        margin-left: 25px
+    }
+
+    .probe:hover,
+    .research:hover {
+        filter: brightness(1.2)
+    }
+
+    /* ───────────────────  MODAL GUÍA ────────────────────────────── */
+    #modalGuide {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, .55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        pointer-events: none
+    }
+
+    #modalGuide .panel {
+        width: 90%;
+        max-width: 400px;
+        background: #fff;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, .25);
+        animation: pop .25s ease-out;
+        pointer-events: auto
+    }
+
+    #modalGuide h3 {
+        margin: 0 0 12px;
+        font-size: 24px;
+        text-align: center;
+        color: #276040
+    }
+
+    #modalGuide ul {
+        margin: 0;
+        padding-left: 0;
+        font-size: 29px;
+        line-height: 1.3;
+        list-style: none;
+    }
+
+    #modalGuide li {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+
+    #modalGuide li .material-symbols-outlined {
+        font-size: 38px;
+    }
+
+    @keyframes pop {
+        0% {
+            transform: scale(.8);
+            opacity: 0
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1
+        }
+    }
+
+    /* ---------- Modal escribir al asistente ---------- */
+    #modalAsk .panel textarea {
+        font-size: 18px;
+        line-height: 1.45;
+    }
+
+    /* ───────────────────  MEDIA QUERY DESKTOP ≥ 1200px ───────────── */
+    @media (min-width:1200px) {
+
+        /* 1. paneles lado a lado */
+        #panels {
+            flex-direction: row;
+            gap: 10px;
+            margin-top: 0
+        }
+
+        .info-panel,
+        .chat-panel {
+            height: auto;
+            margin-bottom: 30px;
+        }
+
+        .info-panel {
+            flex: 0 0 calc(var(--panel-ratio) * 100%);
+            max-width: calc(var(--panel-ratio) * 100%);
+        }
+
+        .chat-panel {
+            flex: 1 1 calc((1 - var(--panel-ratio)) * 100%);
+            max-width: calc((1 - var(--panel-ratio)) * 100%);
+        }
+
+        #divider {
+            width: 6px;
+            cursor: col-resize;
+            height: 50%;
+            margin-top: 13%;
+            border-radius: 5px;
+        }
+
+        /* 2. header & bottom-bar fijas al pie */
+        body {
+            padding-bottom: calc(60px + 16px + 60px)
+        }
+
+        /* bottom-bar + gap + header */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 520px;
+            z-index: 20;
+        }
+
+        header {
+            position: fixed;
+            bottom: calc(60px + 16px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 1900px;
+            z-index: 20
+        }
+
+        /* 3. block-selector fijo encima del header */
+        .block-selector {
+            position: fixed;
+            bottom: calc(30px + 16px + 60px);
+            /* bottom-bar + gap + header */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 450px;
+            z-index: 20;
+            background: transparent
+        }
+
+        /* dejamos espacio al nuevo “footer” */
+        body {
+            padding-bottom: 60px;
+
+        }
+
+        header,
+        .bottom-bar,
+        .block-selector {
+            height: 60px;
+        }
+
+        /* — logo + profesional/paciente — */
+        header {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            transform: none;
+            /* anulamos el translateX */
+            max-width: none;
+            /* se adapta al contenido */
+            width: auto;
+            padding: 0 24px;
+            border-bottom: none;
+            background: #efefef;
+            z-index: 30;
+        }
+
+        /* — 5 botones de acción — */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            /* centrado absoluto */
+            width: auto;
+            max-width: none;
+            padding: 0 24px;
+            background: transparent;
+            gap: 16px;
+            z-index: 30;
+        }
+
+        /* — chips de bloque — */
+        .block-selector {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: auto;
+            transform: none;
+            width: auto;
+            max-width: none;
+            padding: 0 24px;
+            background: #efefef;
+            justify-content: flex-end;
+            gap: 8px;
+            z-index: 30;
+        }
+
+        /* los chips ya no necesitan flex:1 */
+        .block-selector .chip {
+            flex: none;
+        }
+
+        header .info {
+            margin-bottom: 25px;
+        }
+
+        header img {
+            margin-bottom: 25px;
+        }
+
+        .bottom-bar {
+            margin-bottom: 15px;
+        }
+
+        .chip {
+            min-width: 90px;
+            margin-bottom: 25px;
+        }
+
+        /* 1 · El modal crece y se ensancha */
+        #modalGuide .panel {
+            width: 95%;
+            max-width: none;
+            /* sin tope fijo */
+            padding: 30px 40px;
+            /* respira un poco más */
+        }
+
+        /* 2 · El título del modal algo mayor */
+        #modalGuide h3 {
+            font-size: 32px;
+        }
+
+        /* 3 · Lista en dos columnas, con texto grande */
+        #modalGuide ul {
+            column-count: 2;
+            /* ¡dos columnas!  */
+            column-gap: 60px;
+            /* separación amplia */
+            font-size: 40px;
+            /* ↑ tamaño de texto */
+            line-height: 1.55;
+            padding-left: 0;
+        }
+
+        /* 4 · Evita que un ítem se parta entre columnas */
+        #modalGuide ul li {
+            break-inside: avoid;
+        }
+
+        #modalAsk .panel {
+            max-width: 700px;
+            width: 60%;
+        }
+
+    }
+
+    /* ───────────────────  ANIMACIONES / UTILIDADES ─────────────── */
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(224, 65, 65, .6)
+        }
+
+        70% {
+            box-shadow: 0 0 0 12px rgba(224, 65, 65, 0)
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(224, 65, 65, 0)
+        }
+    }
+
+    /* ─── 4 · Scrollbars estilizadas en los paneles ─── */
+
+    /* WebKit / Blink (Chrome, Edge, Opera, Brave, Safari) */
+    .info-panel::-webkit-scrollbar,
+    .chat-panel::-webkit-scrollbar {
+        width: 6px;
+        /* grosor vertical        */
+        height: 6px;
+        /* grosor horizontal (por si acaso) */
+    }
+
+    .info-panel::-webkit-scrollbar-thumb,
+    .chat-panel::-webkit-scrollbar-thumb {
+        background: #c7d8d1;
+        /* verde grisáceo suave    */
+        border-radius: 3px;
+    }
+
+    .info-panel::-webkit-scrollbar-track,
+    .chat-panel::-webkit-scrollbar-track {
+        background: transparent;
+        /* sin canal visible   */
+    }
+
+    /* Firefox */
+    .info-panel,
+    .chat-panel {
+        scrollbar-width: thin;
+        /* grosor ≈ 6 px          */
+        scrollbar-color: #c7d8d1 transparent;
+        /* thumb  y  track        */
+    }
+
+    .chat-panel {
+        border-bottom-left-radius: 15px;
+    }
+
+    .material-symbols-outlined {
+        vertical-align: sub;
+    }
+
+    /* Estilo fijo para el contenedor de datos */
+    #mainData {
+        font-size: 20px;
+        line-height: 1.8;
+    }
+
+    /* ---------- asistente “escuchando” ---------- */
+    .assistant-img {
+        max-width: 300px;
+        display: block;
+        margin: 12px auto;
+        opacity: 0;
+        /* punto de partida invisible  */
+        transition: opacity 1s ease;
+    }
+
+    .assistant-img.show {
+        /* se añade por JS */
+        opacity: 1;
+        /* hace el fundido */
+    }
+
+    /* ---------- overlay asistente “escuchando” ---------- */
+    .assistant-overlay {
+        position: fixed;
+        /* flotante respecto a la ventana */
+        bottom: 90px;
+        /* ≈ por encima de la botonera    */
+        right: 20px;
+        max-width: 300px;
+        opacity: 0;
+        transition: opacity 1s ease;
+        pointer-events: none;
+        /* ignorar clics                  */
+        z-index: 1200;
+        /* por encima de todo tu UI       */
+    }
+
+    .assistant-overlay.show {
+        opacity: 1;
+        /* fundido al mostrarse           */
+    }
+
+    .info-panel {
+        padding: 1px 10px;
+        border-bottom-right-radius: 15px;
+    }
+
+    /* ───────────────────  MEDIA QUERY DESKTOP ≥ 1200px ───────────── */
+    @media (max-width:1200px) {
+
+        .btn-round,
+        .btn-small {
+            width: 45px;
+            height: 45px;
+        }
+
+        #mainData,
+        .feedback {
+            font-size: 12px;
+        }
+
+        .info-panel dt {
+            font-size: 22px;
+            padding: 2px;
+            padding-left: 10px;
+        }
+
+        .assistant-overlay {
+            bottom: 124px;
+        }
+
+        .info-panel {
+            padding: 1px 10px;
+            border-bottom-right-radius: 0px;
+        }
+
+        .chat-panel {
+            border-bottom-left-radius: 0px;
+        }
+
+        #divider {
+            height: 6px;
+            cursor: row-resize;
+            width: 50%;
+            margin: auto;
+            border-radius: 5px;
+        }
+    }
+
+    /* ───────────────────  MEDIA QUERY DESKTOP ≥ 1200px ───────────── */
+    @media (max-width:768px) {
+
+        #mainData,
+        .feedback {
+            font-size: 17px;
+        }
+
+        .info-panel dt {
+            font-size: 15px;
+            width: 135px;
+            line-height: 1.4;
+        }
+
+        .info-panel {
+            padding: 1px 10px;
+            line-height: 1.4;
+        }
+
+        .info-panel dd {
+            margin: 0 0 6px 0px;
+        }
+
+        #modalGuide .panel Specificity: (1, 1, 0) {
+            width: 100%;
+        }
+
+        .material-symbols-outlined {
+            vertical-align: bottom;
+        }
+
+    }
+
+    /* ───────────────────  SCREENSAVER ───────────────────────── */
+    #screensaver {
+        position: fixed;
+        inset: 0;
+        background: #000;
+        display: none;
+        z-index: 9999;
+    }
+
+    #screensaver img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity 1s ease;
+    }
+
+    #screensaver img.active {
+        opacity: 1;
+    }
