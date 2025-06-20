@@ -236,61 +236,237 @@
                 height: 25px;
             }
 
-            @media (min-width: 800px) {
+        }
 
-                .fc .fc-timegrid-slot,
-                .fc .fc-timegrid-slot-label-frame {
-                    height: 60px;
-                }
+        /* -------------------------------------------------- */
+        /* 1) Altura fija para TODAS las pantallas (móvil y desktop) */
+        /* -------------------------------------------------- */
+
+        @media (max-width: 768px) {
+
+            .fc .fc-timegrid-slot,
+            .fc .fc-timegrid-slot-label-frame {
+                height: 45px;
             }
 
-            @media (min-width: 1200px) {
-
-                .fc .fc-timegrid-slot,
-                .fc .fc-timegrid-slot-label-frame {
-                    height: 38px;
-                }
+            /* 1) Toolbar en columna, con hueco entre filas */
+            .fc .fc-header-toolbar {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 0 10px;
+                /* opcional: algo de almohadillado */
             }
 
-            @media (max-width: 600px) {
-                .fc-header-toolbar {
-                    flex-direction: column;
-                    align-items: stretch;
-                    gap: 8px;
-                }
-
-                .fc-header-toolbar .fc-toolbar-chunk {
-                    width: 100%;
-                    display: flex;
-                    justify-content: center;
-                }
-
-                .fc-header-toolbar .fc-toolbar-chunk:first-child {
-                    order: 2;
-                }
-
-                .fc-header-toolbar .fc-toolbar-chunk:nth-child(2) {
-                    order: 1;
-                }
-
-                .fc-header-toolbar .fc-toolbar-chunk:last-child {
-                    order: 3;
-                }
+            /* 2) Cada chunk ocupa 100%, botones centrados y envueltos */
+            .fc .fc-header-toolbar .fc-toolbar-chunk {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 6px;
             }
 
-            /* ======== buscador paciente en modal ======== */
-            .search-results div {
-                padding: 6px 8px;
-                cursor: pointer;
+            /* 3) Reordenamos los chunks: 
+      chunk 1 = botones prev/next/today/newEvent
+      chunk 2 = título
+      chunk 3 = vistas (month/week/day)
+  */
+            .fc .fc-header-toolbar .fc-toolbar-chunk:nth-child(1) {
+                order: 1;
             }
 
-            .search-results div:hover {
-                background: #f5f5f5;
+            .fc .fc-header-toolbar .fc-toolbar-chunk:nth-child(2) {
+                order: 3;
             }
 
-            header img {
-                width: auto;
+            .fc .fc-header-toolbar .fc-toolbar-chunk:nth-child(3) {
+                order: 2;
             }
+
+            /* 4) Reducir padding de los botones para que entren mejor */
+            .fc .fc-button {
+                padding: 6px 8px !important;
+                font-size: 0.85rem;
+                min-width: auto !important;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1199px) {
+
+            .fc .fc-timegrid-slot,
+            .fc .fc-timegrid-slot-label-frame {
+                height: 60px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+
+            .fc .fc-timegrid-slot,
+            .fc .fc-timegrid-slot-label-frame {
+                height: 36px;
+            }
+        }
+
+        /* ======== buscador paciente en modal ======== */
+        .search-results div {
+            padding: 6px 8px;
+            cursor: pointer;
+        }
+
+        .search-results div:hover {
+            background: #f5f5f5;
+        }
+
+        header img {
+            width: auto;
+        }
+
+        header img {
+            margin-bottom: 0;
+        }
+
+        header {
+            max-width: 100%;
+        }
+
+        /* 1) Recuperamos el scroll vertical del body */
+        body {
+            overflow-y: auto;
+        }
+
+        /* ============================= */
+        /* 1) ESTILOS DEL MODAL AGENDATOR */
+        /* ============================= */
+
+        /* Panel base */
+        #modalAg .panel {
+            width: 90vw;
+            /* 90% de la ventana */
+            max-width: 900px;
+            /* opcional, para no pasarse */
+            padding-top: 40px;
+            /* espacio extra arriba para el botón ✖ */
+            position: relative;
+        }
+
+
+        /* Hacemos que el chat (agLog) esté siempre debajo del cierre */
+        #agLog {
+            width: 100%;
+            flex: none;
+            /* que no crezca en altura automáticamente */
+            margin-top: 10px;
+            /* separarlo del X */
+            max-height: calc(80vh - 140px);
+            /* entra en pantalla */
+            overflow-y: auto;
+        }
+
+        /* ============================= */
+        /* 2) BOTONES VOZ / STOP REDONDOS */
+        /* ============================= */
+
+        /* Botón hablar */
+        #btnAgTalk {
+            width: 56px;
+            height: 56px;
+            padding: 0;
+            border-radius: 50%;
+            background: #aed3c1;
+            background-size: 24px 24px;
+            border: none;
+            cursor: pointer;
+            transition: transform .3s, box-shadow .3s;
+        }
+
+        /* Latido (pulse) en azul mientras se graba */
+        @keyframes pulse-blue {
+            0% {
+                box-shadow: 0 0 0 0 rgba(68, 130, 255, .6);
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(68, 130, 255, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(68, 130, 255, 0);
+            }
+        }
+
+        /* Cuando btnAgTalk tiene la clase “talking” hace pulso */
+        #btnAgTalk.talking {
+            animation: pulse-blue 1s infinite;
+            transform: scale(1.1);
+            background: #4482ff;
+        }
+
+        /* Botón stop / cancelar */
+        #btnAgStop {
+            display: none;
+            /* oculto hasta activar */
+            width: 56px;
+            height: 56px;
+            padding: 0 8px;
+            border-radius: 50%;
+            background: #a12525;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: transform .2s;
+        }
+
+        /* Cuando esté activo, muéstralo con texto “Cancelar” */
+        #btnAgStop.active {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            content: "Cancelar";
+        }
+
+        /* Pequeño efecto al presionar */
+        #btnAgTalk:active,
+        #btnAgStop:active {
+            transform: scale(0.94);
+        }
+
+        /* ============================= */
+        /* 3) ADAPTACIONES MÓVIL (<1200px) */
+        /* ============================= */
+        @media (max-width: 1199px) {
+            #modalAg .panel {
+                width: 90%;
+                max-width: none;
+                padding-top: 30px;
+            }
+
+            #agLog {
+                max-height: 50vh;
+            }
+        }
+
+        /* chat a pantalla completa dentro del modal */
+        #modalAg .chat-panel {
+            max-width: none !important;
+            width: 100% !important;
+        }
+
+        /* Modal al 90 % del viewport y sin la X */
+        #modalAg .panel {
+            width: 90vw;
+            /* ocupa casi toda la pantalla */
+            max-width: 900px;
+            /* pon el tope que quieras */
+            padding-top: 24px;
+            /* dejamos margen arriba */
+        }
+
+        /* Oculta el botón de cierre */
+        #btnAgClose {
+            display: none;
+        }
     </style>
 </head>
 
@@ -328,9 +504,9 @@
     <div id="modalAg"
         style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center">
         <div class="panel"
-            style="background:#fff;padding:20px;border-radius:14px;max-width:600px;width:90%;display:flex;flex-direction:column;gap:14px;pointer-events:auto;position:relative;">
-            <button id="btnAgClose" class="btn" style="position:absolute;top:6px;right:6px;">✖</button>
-            <div id="agLog" class="chat-panel" style="max-height:300px;overflow:auto"></div>
+            style="background:#fff;padding:20px;border-radius:14px;width:90%;display:flex;flex-direction:column;gap:14px;pointer-events:auto;position:relative;">
+            <button id="btnAgClose" style="position:absolute;top:6px;right:6px;z-index:2; color: #5b5b5b">✖</button>
+            <div id="agLog" class="chat-panel" style="max-height:300px;overflow:auto;flex:1;width:100%;"></div>
             <div class="manual-box" style="gap:6px;align-items:center;">
                 <input id="agSearch" type="text" placeholder="Buscar paciente…" autocomplete="off"
                     style="flex:1;padding:6px;border:2px solid #aed3c1;border-radius:8px;">
@@ -341,9 +517,11 @@
             <textarea id="agInput" placeholder="Escribe…"
                 style="width:100%;min-height:80px;padding:8px;border:2px solid #aed3c1;border-radius:8px;"></textarea>
             <div style="display:flex;gap:10px;justify-content:flex-end;align-items:center;">
-                <button id="btnAgStop" class="btn" style="display:none">Stop</button>
-                <button id="btnAgTalk" class="btn">🎤</button>
-                <button id="btnAgSend" class="btn">Enviar</button>
+                <button id="btnAgStop" class="btn-round" style="display:none">Cancel</button>
+                <button id="btnAgTalk" class="btn-round" title="Hablar con el asistente">
+                    <img src="images/recursos/voice_icon.png" style="max-width:30px" alt="Logo" /></button>
+                <button id="btnAgSend" class="btn-round"><span class="material-symbols-outlined"
+                        style="color: white;">send</span></button>
             </div>
         </div>
     </div>
@@ -781,6 +959,22 @@
             });
             if (dateStr) calendar.gotoDate(dateStr);
         }
+        const talkBtn = document.getElementById('btnAgTalk');
+        const stopBtn = document.getElementById('btnAgStop');
+
+        talkBtn.addEventListener('click', () => {
+            // Arranca grabación
+            talkBtn.classList.add('listening');
+            stopBtn.classList.add('active');
+            // …tu lógica de SpeechRecognition…
+        });
+
+        stopBtn.addEventListener('click', () => {
+            // Detén grabación
+            talkBtn.classList.remove('listening');
+            stopBtn.classList.remove('active');
+            // …envía el audio…
+        });
     </script>
     <script src="js/agendator.js"></script>
 </body>
