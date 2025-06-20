@@ -114,21 +114,14 @@ btnAgTalk.onclick = async () => {
         recAg = new MediaRecorder(stream, options);
         chunksAg = [];
         recAg.ondataavailable = e => chunksAg.push(e.data);
-        recAg.start(1000);
-        talkingAg = true;
-        btnTalkAg.classList.add('talking');
-        btnStopAg.style.display = 'flex';
-    } else {
-        recAg.stop();
-        talkingAg = false;
-        btnTalkAg.classList.remove('talking');
         recAg.onstop = async () => {
             const mime = recAg.mimeType || 'audio/webm';
             const ext = mime.includes('mp4') ? '.mp4' : '.webm';
             const blob = new Blob(chunksAg, { type: mime });
             const form = new FormData();
             form.append('audio', blob, 'ask' + ext);
-            const r = await fetch('/api/assistant/voice-stream', { method: 'POST', credentials: 'include', body: form });
+            form.append('id_paciente', selectedPatient || '');
+            const r = await fetch('/api/agendator/voice-stream', { method: 'POST', credentials: 'include', body: form });
             const reader = r.body.getReader();
             const dec = new TextDecoder();
             let buf = '';
@@ -154,6 +147,14 @@ btnAgTalk.onclick = async () => {
                 }
             }
         };
+        recAg.start(1000);
+        talkingAg = true;
+        btnTalkAg.classList.add('talking');
+        btnStopAg.style.display = 'flex';
+    } else {
+        talkingAg = false;
+        btnTalkAg.classList.remove('talking');
+        recAg.stop();
         btnStopAg.style.display = 'none';
     }
 };
