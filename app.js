@@ -37,6 +37,8 @@ app.use((req, res, next) => {
 // Servir estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/tmp', express.static(path.join(__dirname, 'tmp')));
+app.use('/attachments_consulta',
+  express.static(path.join(__dirname, 'attachments_consulta')));
 
 // Rutas estáticas especiales
 app.use('/documentos/consentimientos', express.static(path.join(__dirname, 'documentos', 'consentimientos')));
@@ -118,6 +120,9 @@ app.use('/api/viafirma', viafirmaRoutes);
 
 const citasRoutes = require('./routes/citas.routes');
 app.use('/api/citas', citasRoutes);
+
+const agendatorRoutes = require('./routes/agendator.routes');
+app.use('/api/agendator', agendatorRoutes);
 
 const ONE_HOUR = 60 * 60 * 1000;
 

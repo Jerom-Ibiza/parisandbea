@@ -287,6 +287,10 @@
             <span class="material-icons">calendar_view_day</span>
             Agendas hoy
         </button>
+        <button class="btn" id="btnOpenAg" type="button">
+            <span class="material-icons">chat</span>
+            Agendator
+        </button>
         <div style="display:flex;gap:10px;align-items:center;">
             <select id="proSelect" style="min-width:150px"></select>
             <button class="btn" id="toggleHoursBtn" type="button">
@@ -297,6 +301,21 @@
     </div>
 
     <div id="calendar"></div>
+
+    <div id="modalAg"
+        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center">
+        <div class="panel"
+            style="background:#fff;padding:20px;border-radius:14px;max-width:600px;width:90%;display:flex;flex-direction:column;gap:14px;pointer-events:auto;">
+            <div id="agLog" style="max-height:300px;overflow:auto"></div>
+            <textarea id="agInput" placeholder="Escribe…"
+                style="width:100%;min-height:80px;padding:8px;border:2px solid #aed3c1;border-radius:8px;"></textarea>
+            <div style="display:flex;gap:10px;justify-content:flex-end;align-items:center;">
+                <button id="btnAgStop" class="btn" style="display:none">Stop</button>
+                <button id="btnAgTalk" class="btn">🎤</button>
+                <button id="btnAgSend" class="btn">Enviar</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         /* ======================= utilidades ======================= */
@@ -732,6 +751,7 @@
             if (dateStr) calendar.gotoDate(dateStr);
         }
     </script>
+    <script src="js/agendator.js"></script>
 </body>
 
 </html>

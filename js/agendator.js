@@ -1,0 +1,129 @@
+const $ = id => document.getElementById(id);
+const modalAg = $('modalAg');
+const logAg = $('agLog');
+const inpAg = $('agInput');
+const btnSendAg = $('btnAgSend');
+const btnTalkAg = $('btnAgTalk');
+const btnStopAg = $('btnAgStop');
+
+let recAg, chunksAg = [];
+let talkingAg = false;
+let currentAudio = null;
+
+function playTTS(url) {
+    currentAudio?.pause();
+    currentAudio = new Audio(url);
+    currentAudio.addEventListener('ended', cleanup);
+    currentAudio.addEventListener('pause', cleanup);
+    currentAudio.play().catch(() => { });
+    btnStopAg.style.display = 'flex';
+}
+function cleanup() {
+    if (!currentAudio) return;
+    fetch(currentAudio.src, { method: 'DELETE' });
+    currentAudio = null;
+    btnStopAg.style.display = talkingAg ? 'flex' : 'none';
+}
+
+btnStopAg.onclick = () => {
+    if (currentAudio) { currentAudio.pause(); return; }
+    if (talkingAg) { recAg.stop(); talkingAg = false; btnTalkAg.classList.remove('talking'); btnStopAg.style.display = 'none'; }
+};
+
+$('btnOpenAg').onclick = () => { modalAg.style.display = 'flex'; inpAg.focus(); };
+modalAg.addEventListener('click', e => { if (e.target.id === 'modalAg') modalAg.style.display = 'none'; });
+
+btnSendAg.onclick = () => sendText(inpAg.value);
+
+inpAg.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendText(inpAg.value); } });
+
+async function sendText(msg) {
+    msg = msg.trim();
+    if (!msg) return;
+    inpAg.value = '';
+    modalAg.style.display = 'none';
+    logAg.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${msg}</div>`);
+    logAg.scrollTop = logAg.scrollHeight;
+    const opts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg }), credentials: 'include' };
+    const r = await fetch('/api/agendator/chat-stream', opts);
+    const reader = r.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    let full = '';
+    const div = document.createElement('div');
+    div.className = 'feedback msg-assist';
+    logAg.appendChild(div);
+    logAg.scrollTop = logAg.scrollHeight;
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        let idx;
+        while ((idx = buf.indexOf('\n\n')) >= 0) {
+            const chunk = buf.slice(0, idx); buf = buf.slice(idx + 2);
+            if (!chunk) continue;
+            if (chunk.startsWith('event:')) {
+                const lines = chunk.split('\n');
+                const ev = lines[0].slice(6).trim();
+                const data = (lines[1] || '').replace(/^data:/, '').trim();
+                if (ev === 'audio') playTTS(data);
+            } else if (chunk.startsWith('data:')) {
+                const txt = chunk.slice(5).replace(/\\n/g, '\n');
+                full += txt; div.textContent = full; logAg.scrollTop = logAg.scrollHeight;
+            }
+        }
+    }
+}
+
+btnAgTalk.onclick = async () => {
+    if (!talkingAg) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        let options = {};
+        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) options.mimeType = 'audio/webm;codecs=opus';
+        else options.mimeType = 'video/mp4';
+        recAg = new MediaRecorder(stream, options);
+        chunksAg = [];
+        recAg.ondataavailable = e => chunksAg.push(e.data);
+        recAg.start(1000);
+        talkingAg = true;
+        btnTalkAg.classList.add('talking');
+        btnStopAg.style.display = 'flex';
+    } else {
+        recAg.stop();
+        talkingAg = false;
+        btnTalkAg.classList.remove('talking');
+        recAg.onstop = async () => {
+            const mime = recAg.mimeType || 'audio/webm';
+            const ext = mime.includes('mp4') ? '.mp4' : '.webm';
+            const blob = new Blob(chunksAg, { type: mime });
+            const form = new FormData();
+            form.append('audio', blob, 'ask' + ext);
+            const r = await fetch('/api/assistant/voice-stream', { method: 'POST', credentials: 'include', body: form });
+            const reader = r.body.getReader();
+            const dec = new TextDecoder();
+            let buf = '';
+            let full = '';
+            let div = null;
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                buf += dec.decode(value, { stream: true });
+                let idx;
+                while ((idx = buf.indexOf('\n\n')) >= 0) {
+                    const chunk = buf.slice(0, idx); buf = buf.slice(idx + 2);
+                    if (!chunk) continue;
+                    if (chunk.startsWith('event:')) {
+                        const lines = chunk.split('\n');
+                        const ev = lines[0].slice(6).trim();
+                        const data = (lines[1] || '').replace(/^data:/, '').trim();
+                        if (ev === 'question') { logAg.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${data}</div>`); div = document.createElement('div'); div.className = 'feedback msg-assist'; logAg.appendChild(div); logAg.scrollTop = logAg.scrollHeight; }
+                        else if (ev === 'audio') playTTS(data);
+                    } else if (chunk.startsWith('data:')) {
+                        const txt = chunk.slice(5).replace(/\\n/g, '\n'); full += txt; if (!div) { div = document.createElement('div'); div.className = 'feedback msg-assist'; logAg.appendChild(div); } div.textContent = full; logAg.scrollTop = logAg.scrollHeight;
+                    }
+                }
+            }
+        };
+        btnStopAg.style.display = 'none';
+    }
+};

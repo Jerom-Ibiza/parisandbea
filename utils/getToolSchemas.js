@@ -374,6 +374,45 @@ module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
       }
     });
 
+  if (LOCAL_FUNCTIONS.update_cita)
+    tools.push({
+      type: 'function',
+      name: 'update_cita',
+      description: 'Edita una cita existente',
+      parameters: {
+        type: 'object',
+        required: ['id_cita'],
+        properties: {
+          id_cita: { type: 'integer' },
+          titulo: { type: 'string' },
+          descripcion: { type: 'string' },
+          fecha_hora_inicio: { type: 'string', format: 'date-time' },
+          fecha_hora_fin: { type: 'string', format: 'date-time' },
+          persona: { type: 'string' },
+          id_paciente: { type: 'integer' },
+          estado: { type: 'string', enum: ['pendiente', 'confirmada', 'cancelada'] },
+          ubicacion: { type: 'string' },
+          notificacion: { type: 'string' },
+          id_profesional: { type: 'integer' },
+          id_servicio: { type: 'integer' }
+        },
+        additionalProperties: false
+      }
+    });
+
+  if (LOCAL_FUNCTIONS.delete_cita)
+    tools.push({
+      type: 'function',
+      name: 'delete_cita',
+      description: 'Elimina una cita por id',
+      parameters: {
+        type: 'object',
+        required: ['id_cita'],
+        properties: { id_cita: { type: 'integer' } },
+        additionalProperties: false
+      }
+    });
+
   /* ---------- BORRADOR PDF CHUNKED ---------- */
   if (LOCAL_FUNCTIONS.start_document)
     tools.push({
