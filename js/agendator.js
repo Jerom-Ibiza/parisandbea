@@ -5,10 +5,16 @@ const inpAg = $('agInput');
 const btnSendAg = $('btnAgSend');
 const btnTalkAg = $('btnAgTalk');
 const btnStopAg = $('btnAgStop');
+const btnCloseAg = $('btnAgClose');
+const inpSearchAg = $('agSearch');
+const resSearchAg = $('agResults');
+
+let selectedPatient = null;
 
 let recAg, chunksAg = [];
 let talkingAg = false;
 let currentAudio = null;
+let typingAg;
 
 function playTTS(url) {
     currentAudio?.pause();
@@ -30,21 +36,45 @@ btnStopAg.onclick = () => {
     if (talkingAg) { recAg.stop(); talkingAg = false; btnTalkAg.classList.remove('talking'); btnStopAg.style.display = 'none'; }
 };
 
-$('btnOpenAg').onclick = () => { modalAg.style.display = 'flex'; inpAg.focus(); };
-modalAg.addEventListener('click', e => { if (e.target.id === 'modalAg') modalAg.style.display = 'none'; });
+$('btnOpenAg').onclick = () => { modalAg.style.display = 'flex'; inpAg.focus(); resSearchAg.style.display = 'none'; };
+btnCloseAg.onclick = () => { modalAg.style.display = 'none'; };
+modalAg.addEventListener('click', e => { if (e.target.id === 'modalAg') { modalAg.style.display = 'none'; resSearchAg.style.display = 'none'; } });
 
 btnSendAg.onclick = () => sendText(inpAg.value);
 
 inpAg.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendText(inpAg.value); } });
 
+inpSearchAg.addEventListener('input', () => {
+    clearTimeout(typingAg);
+    const q = inpSearchAg.value.trim();
+    if (!q) { resSearchAg.style.display = 'none'; return; }
+    typingAg = setTimeout(() => fetchSearch(q), 300);
+});
+
+async function fetchSearch(q) {
+    try {
+        const r = await fetch('/api/voice/suggest?q=' + encodeURIComponent(q));
+        const arr = await r.json();
+        resSearchAg.innerHTML = arr.map(p => `<div data-id="${p.id_paciente}">${p.nombre} ${p.apellidos} ${p.dni ? ('(' + p.dni + ')') : ''}</div>`).join('');
+        resSearchAg.style.display = 'block';
+    } catch { }
+}
+
+resSearchAg.addEventListener('click', e => {
+    const div = e.target.closest('div[data-id]');
+    if (!div) return;
+    selectedPatient = Number(div.dataset.id);
+    inpSearchAg.value = div.textContent;
+    resSearchAg.style.display = 'none';
+});
+
 async function sendText(msg) {
     msg = msg.trim();
     if (!msg) return;
     inpAg.value = '';
-    modalAg.style.display = 'none';
     logAg.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${msg}</div>`);
     logAg.scrollTop = logAg.scrollHeight;
-    const opts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg }), credentials: 'include' };
+    const opts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg, id_paciente: selectedPatient }), credentials: 'include' };
     const r = await fetch('/api/agendator/chat-stream', opts);
     const reader = r.body.getReader();
     const dec = new TextDecoder();

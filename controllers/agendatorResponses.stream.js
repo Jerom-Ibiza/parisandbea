@@ -34,9 +34,12 @@ function buildTools(req, noSearch) {
 
 exports.chatStream = async (req, res) => {
     try {
-        const { message, model = 'gpt-4.1-mini', noSearch } = req.body || {};
+        const { message, model = 'gpt-4.1-mini', noSearch, id_paciente } = req.body || {};
         if (!message) return res.status(400).end('Falta "message"');
         if (!req.session.user) return res.status(403).end('Sin sesión válida');
+        if (typeof id_paciente !== 'undefined') {
+            req.session.agSelectedPatient = id_paciente ? Number(id_paciente) : null;
+        }
         const history = req.session.agendaHist || [];
         history.push({ role: 'user', content: [{ type: 'input_text', text: message }] });
 
@@ -46,9 +49,14 @@ exports.chatStream = async (req, res) => {
         res.setHeader('X-Accel-Buffering', 'no');
         res.flushHeaders();
 
+        const prof = req.session.user;
+        let instructions = `${prompt}\nID_PROFESIONAL:${prof.id_profesional}`;
+        if (prof.preferencias) instructions += `\nPREFERENCIAS_PRO:\n${prof.preferencias}`;
+        if (req.session.agSelectedPatient) instructions += `\nID_PACIENTE_SELECCIONADO:${req.session.agSelectedPatient}`;
+
         let rsp = await openai.responses.create({
             model,
-            instructions: prompt,
+            instructions,
             input: sanitiseHistory(history),
             tools: buildTools(req, !!noSearch),
             tool_choice: 'auto'
@@ -69,7 +77,7 @@ exports.chatStream = async (req, res) => {
             }
             rsp = await openai.responses.create({
                 model,
-                instructions: prompt,
+                instructions,
                 input: sanitiseHistory(history),
                 tools: buildTools(req, !!noSearch),
                 tool_choice: 'auto'
@@ -79,7 +87,7 @@ exports.chatStream = async (req, res) => {
 
         const stream = await openai.responses.create({
             model,
-            instructions: prompt,
+            instructions,
             input: sanitiseHistory(history),
             tool_choice: 'none',
             stream: true
