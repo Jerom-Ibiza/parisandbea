@@ -361,6 +361,8 @@
             max-height: calc(80vh - 140px);
             /* entra en pantalla */
             overflow-y: auto;
+            border: solid 2px #aed3c1;
+            border-radius: 15px;
         }
 
         /* ============================= */
@@ -467,6 +469,156 @@
         #btnAgClose {
             display: none;
         }
+
+        /* Contenedor de resultados */
+        .search-results {
+            position: absolute;
+            top: calc(100% + 4px);
+            /* justo debajo del input */
+            left: 0;
+            right: 0;
+            max-height: 240px;
+            /* límite de alto con scroll */
+            overflow-y: auto;
+            background: #ffffff;
+            /* fondo blanco puro */
+            border: 1px solid #ddd;
+            /* borde sutil */
+            border-radius: 8px;
+            /* esquinas suaves */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            /* sombra ligera */
+            z-index: 1002;
+        }
+
+        /* Cada opción */
+        .search-results div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* si añades iconos */
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        /* Hover y selección */
+        .search-results div:hover,
+        .search-results div.selected {
+            background: var(--accent);
+            /* tu color principal */
+            color: #fff;
+        }
+
+        /* Scrollbar estilizada (WebKit) */
+        .search-results::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .search-results::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .search-results::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        /* === 1) Wrapper para el input + clear === */
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            /* ajústalo a tu gusto */
+            margin-bottom: 8px;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 12px 40px 12px 12px;
+            /* espacio para el botón */
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .search-wrapper input:focus {
+            outline: none;
+            border-color: var(--accent-dark);
+            box-shadow: 0 0 0 3px rgba(174, 211, 193, 0.4);
+        }
+
+        /* Botón clear estilizado */
+        .clear-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: #ddd;
+            color: #666;
+            font-size: 1.2rem;
+            line-height: 1;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: background .2s, opacity .2s;
+        }
+
+        .clear-btn:hover {
+            background: #bbb;
+            opacity: 1;
+        }
+
+        /* === 2) Dropdown de resultados === */
+        .search-results {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            max-height: 300px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            z-index: 1002;
+        }
+
+        /* Cada fila más alta y con padding cómodo */
+        .search-results div {
+            min-height: 48px;
+            /* altura mínima para target táctil */
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            color: #333;
+            cursor: pointer;
+            transition: background .2s, color .2s;
+        }
+
+        /* Hover / selección */
+        .search-results div:hover,
+        .search-results div.selected {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Scrollbar sutil */
+        .search-results::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .search-results::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
     </style>
 </head>
 
@@ -508,14 +660,18 @@
             <button id="btnAgClose" style="position:absolute;top:6px;right:6px;z-index:2; color: #5b5b5b">✖</button>
             <div id="agLog" class="chat-panel" style="max-height:300px;overflow:auto;flex:1;width:100%;"></div>
             <div class="manual-box" style="gap:6px;align-items:center;">
-                <input id="agSearch" type="text" placeholder="Buscar paciente…" autocomplete="off"
-                    style="flex:1;padding:6px;border:2px solid #aed3c1;border-radius:8px;">
+                <!-- HTML: envuelve tu input y añade el botón clear -->
+                <div class="search-wrapper">
+                    <input id="agSearch" type="text" placeholder="Buscar paciente…" autocomplete="off">
+                    <button id="btnClearSearch" class="clear-btn" aria-label="Limpiar búsqueda">&times;</button>
+                    <div id="agResults" class="search-results"></div>
+                </div>
                 <div id="agResults" class="search-results"
                     style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ccc;border-radius:8px;z-index:1001;display:none;">
                 </div>
             </div>
             <textarea id="agInput" placeholder="Escribe…"
-                style="width:100%;min-height:80px;padding:8px;border:2px solid #aed3c1;border-radius:8px;"></textarea>
+                style="width:100%;min-height:80px;padding:8px;border:2px solid #aed3c1;border-radius:15px;"></textarea>
             <div style="display:flex;gap:10px;justify-content:flex-end;align-items:center;">
                 <button id="btnAgStop" class="btn-round" style="display:none">Cancel</button>
                 <button id="btnAgTalk" class="btn-round" title="Hablar con el asistente">
@@ -974,6 +1130,13 @@
             talkBtn.classList.remove('listening');
             stopBtn.classList.remove('active');
             // …envía el audio…
+        });
+
+        document.getElementById('btnClearSearch').addEventListener('click', () => {
+            const inp = document.getElementById('agSearch');
+            inp.value = '';
+            document.getElementById('agResults').style.display = 'none';
+            inp.focus();
         });
     </script>
     <script src="../js/agendator.js"></script>
