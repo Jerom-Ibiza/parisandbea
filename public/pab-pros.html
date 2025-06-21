@@ -216,8 +216,7 @@
                     width: 100%;
                 }
 
-                #proSelect,
-                #toggleHoursBtn {
+                #proSelect {
                     width: 100%;
                 }
             }
@@ -644,10 +643,6 @@
         </button>
         <div style="display:flex;gap:10px;align-items:center;">
             <select id="proSelect" style="min-width:150px"></select>
-            <button class="btn" id="toggleHoursBtn" type="button">
-                <span class="material-icons" id="toggleHoursIcon">expand_more</span>
-                <span id="toggleHoursText">Mostrar&nbsp;0–7</span>
-            </button>
         </div>
     </div>
 
@@ -741,13 +736,16 @@
                     newEvent: {
                         text: 'Nueva cita',
                         click: () => openForm()
+                    },
+                    toggleHours: {
+                        text: 'Mostrar 0-7',
+                        click: toggleEarlyHours
                     }
                 },
                 headerToolbar: {
-                    left: 'prev,next today',
                     left: 'prev,next today newEvent',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: 'dayGridMonth,toggleHours,timeGridWeek,timeGridDay'
                 },
                 events: fetchEvents,
                 dateClick: onDateClick,
@@ -790,7 +788,6 @@
         /* ============= crear cita (botón toolbar) ========= */
 
         document.getElementById('allAgendaBtn').addEventListener('click', openAllAgendas);
-        document.getElementById('toggleHoursBtn').addEventListener('click', toggleEarlyHours);
         let profMap = null;
         let modalCal;
 
@@ -839,8 +836,8 @@
             if (modalCal) {
                 modalCal.setOption('slotMinTime', earlyHoursShown ? '00:00:00' : '08:00:00');
             }
-            document.getElementById('toggleHoursIcon').textContent = earlyHoursShown ? 'expand_less' : 'expand_more';
-            document.getElementById('toggleHoursText').textContent = earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7';
+            const fcBtn = document.querySelector('.fc-toggleHours-button');
+            if (fcBtn) fcBtn.textContent = earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7';
             const mIcon = document.getElementById('modalToggleHoursIcon');
             if (mIcon) mIcon.textContent = earlyHoursShown ? 'expand_less' : 'expand_more';
             const mText = document.getElementById('modalToggleHoursText');
@@ -866,20 +863,6 @@
             } catch (err) {
                 console.error(err);
             }
-        }
-
-        function toggleEarlyHours() {
-            earlyHoursShown = !earlyHoursShown;
-            calendar.setOption('slotMinTime', earlyHoursShown ? '00:00:00' : '08:00:00');
-            if (modalCal) {
-                modalCal.setOption('slotMinTime', earlyHoursShown ? '00:00:00' : '08:00:00');
-            }
-            document.getElementById('toggleHoursIcon').textContent = earlyHoursShown ? 'expand_less' : 'expand_more';
-            document.getElementById('toggleHoursText').textContent = earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7';
-            const mIcon = document.getElementById('modalToggleHoursIcon');
-            if (mIcon) mIcon.textContent = earlyHoursShown ? 'expand_less' : 'expand_more';
-            const mText = document.getElementById('modalToggleHoursText');
-            if (mText) mText.textContent = earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7';
         }
 
         /* ============= crear cita clicando en hueco libre ========== */
@@ -1064,31 +1047,6 @@
                     fecha_hora_fin: info.event.endStr
                 })
             });
-        }
-
-        /* =========== ir a una fecha concreta haciendo clic ========= */
-        function attachTitleListener() {
-            const titleEl = document.querySelector('.fc-toolbar-title');
-            if (!titleEl) return;
-            titleEl.style.cursor = 'pointer';
-            titleEl.onclick = openGotoDate;
-        }
-
-        async function openGotoDate() {
-            const { value: dateStr } = await Swal.fire({
-                title: 'Ir a fecha',
-                html: '<input id="swal-goto-date" class="swal2-input">',
-                focusConfirm: false,
-                didOpen: () => {
-                    flatpickr('#swal-goto-date', {
-                        defaultDate: calendar.getDate(),
-                        locale: 'es',
-                        dateFormat: 'Y-m-d'
-                    });
-                },
-                preConfirm: () => document.getElementById('swal-goto-date').value
-            });
-            if (dateStr) calendar.gotoDate(dateStr);
         }
 
         /* =========== ir a una fecha concreta haciendo clic ========= */
