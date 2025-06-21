@@ -21,6 +21,13 @@ module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
       description: 'Preferencias del profesional', parameters: noArgs
     });
 
+  if (LOCAL_FUNCTIONS.get_prof_info)
+    tools.push({
+      type: 'function', name: 'get_prof_info',
+      description: 'Datos básicos del profesional logueado',
+      parameters: noArgs
+    });
+
   /* ---------- HISTORIAL ---------- */
   if (LOCAL_FUNCTIONS.update_historial)
     tools.push({

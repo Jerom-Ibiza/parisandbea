@@ -12,6 +12,16 @@ const LOCAL_FUNCTIONS = {
         return rows[0]?.preferencias || null;
     },
 
+    async get_prof_info(_a, req) {
+        const id = req.session.user.id_profesional;
+        const [rows] = await pool.query(
+            `SELECT nombre, telefono, mail, especialidad, num_colegiado, notas
+             FROM profesionales WHERE id_profesional = ? LIMIT 1`,
+            [id]
+        );
+        return rows[0] || null;
+    },
+
     async get_datetime() {
         return await new Promise((resolve, reject) => {
             const mockReq = {};

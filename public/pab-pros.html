@@ -252,7 +252,7 @@
             .fc .fc-header-toolbar {
                 display: flex;
                 flex-direction: column;
-                gap: 8px;
+                gap: 15px;
                 padding: 0 10px;
                 /* opcional: algo de almohadillado */
             }
@@ -285,9 +285,14 @@
 
             /* 4) Reducir padding de los botones para que entren mejor */
             .fc .fc-button {
-                padding: 6px 8px !important;
+                padding: 9px 10px !important;
                 font-size: 0.85rem;
                 min-width: auto !important;
+            }
+
+            /* El selector de profesionales ocupa todo el ancho */
+            #proSelect {
+                margin-top: 20px;
             }
         }
 
@@ -618,6 +623,12 @@
             background: rgba(0, 0, 0, 0.2);
             border-radius: 3px;
         }
+
+        button.swal2-cancel {
+            background-color: #aed3c1 !important;
+            border-radius: 10px !important;
+            font-family: "Raleway", sans-serif;
+        }
     </style>
 </head>
 
@@ -745,7 +756,7 @@
                 headerToolbar: {
                     left: 'prev,next today newEvent',
                     center: 'title',
-                    right: 'dayGridMonth,toggleHours,timeGridWeek,timeGridDay'
+                    right: 'toggleHours,dayGridMonth,timeGridWeek,timeGridDay'
                 },
                 events: fetchEvents,
                 dateClick: onDateClick,
