@@ -136,7 +136,6 @@
 
         /* ======= campos de los formularios (nueva/editar) ======= */
         .modal-field {
-            display: flex;
             align-items: center;
             gap: 8px;
             margin-bottom: 8px;
@@ -145,12 +144,6 @@
         .modal-field .material-icons {
             font-size: 20px;
             color: var(--accent-dark);
-        }
-
-        .modal-field .swal2-input,
-        .modal-field .swal2-select,
-        .modal-field .swal2-textarea {
-            flex: 1;
         }
 
         @media (min-width: 1200px) {
@@ -939,6 +932,7 @@
                     document.getElementById('swal-notif').value = prefill.notificacion || 'ninguna';
                 },
                 preConfirm: () => {
+                    const parse = v => v ? new Date(v).toISOString() : null;
                     return {
                         title: document.getElementById('swal-title').value,
                         descripcion: document.getElementById('swal-desc').value,
@@ -946,8 +940,8 @@
                         id_paciente: document.getElementById('swal-idpac').value,
                         estado: document.getElementById('swal-estado').value,
                         notificacion: document.getElementById('swal-notif').value,
-                        start: document.getElementById('swal-start').value,
-                        end: document.getElementById('swal-end').value
+                        start: parse(document.getElementById('swal-start').value),
+                        end: parse(document.getElementById('swal-end').value)
                     };
                 },
                 showCancelButton: true,
