@@ -552,10 +552,22 @@ const guide = {
     ]
 };
 
+/* ---------- campos requeridos por bloque (para resaltar en la guía) ---------- */
+const requiredGuide = {
+    historial: ['Motivo consulta'],
+    evaluacion: ['Localización dolor'],
+    tratamiento: ['Fecha inicio', 'Técnicas utilizadas'],
+    sesion: ['Técnicas utilizadas']
+};
+
 function showGuide(block) {
     $id('modalTitle').textContent = block.toUpperCase();
+    const req = requiredGuide[block] || [];
     $id('modalList').innerHTML = guide[block]
-        .map(it => `<li><span class="material-symbols-outlined">${it.icon}</span> ${it.text}</li>`)
+        .map(it => {
+            const cls = req.includes(it.text) ? ' class="required"' : '';
+            return `<li${cls}><span class="material-symbols-outlined">${it.icon}</span> ${it.text}</li>`;
+        })
         .join('');
     $id('modalGuide').style.display = 'flex';
 }

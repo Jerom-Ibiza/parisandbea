@@ -467,8 +467,29 @@
         margin-bottom: 4px;
     }
 
+    #modalGuide li.required {
+        background: #fff6b2;
+        border-radius: 8px;
+        padding: 2px 4px;
+        animation: pulse-yellow 1.5s infinite;
+    }
+
     #modalGuide li .material-symbols-outlined {
         font-size: 38px;
+    }
+
+    @keyframes pulse-yellow {
+        0% {
+            box-shadow: 0 0 0 0 rgba(255, 193, 7, .6);
+        }
+
+        70% {
+            box-shadow: 0 0 0 12px rgba(255, 193, 7, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+        }
     }
 
     @keyframes pop {
