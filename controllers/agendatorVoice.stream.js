@@ -81,7 +81,7 @@ exports.handleVoiceStream = [
             res.write(`event:question\ndata:${text.replace(/\n/g, ' ')}\n\n`);
 
             const prof = req.session.user;
-            let instructions = `${prompt}\nID_PROFESIONAL:${prof.id_profesional}`;
+            let instructions = `${prompt}\nID_PROFESIONAL:${prof.id_profesional}\nNOMBRE_PROFESIONAL:${prof.nombre}`;
             if (prof.preferencias) instructions += `\nPREFERENCIAS_PRO:\n${prof.preferencias}`;
             if (req.session.agSelectedPatient)
                 instructions += `\nID_PACIENTE_SELECCIONADO:${req.session.agSelectedPatient}`;
