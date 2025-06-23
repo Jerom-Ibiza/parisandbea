@@ -24,7 +24,7 @@ module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
   if (LOCAL_FUNCTIONS.get_prof_info)
     tools.push({
       type: 'function', name: 'get_prof_info',
-      description: 'Lista con datos de todos los profesionales',
+      description: 'Datos básicos del profesional logueado',
       parameters: noArgs
     });
 
