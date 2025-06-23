@@ -122,11 +122,10 @@ document.addEventListener('click', async e => {
 
     /* ============ 2.a · IMAGEN ============ */
     if (isImg) {
-        if (!window.sessionImages.includes(url)) {
-            window.sessionImages.push(url);
-            if (window.sessionImages.length > 5) window.sessionImages.shift();
-        }
-        const bodyImg = { message: userQ, images: [...window.sessionImages] };
+        // Envío una sola imagen para evitar errores al
+        // acumular varias en sessionImages
+        window.sessionImages = [url];
+        const bodyImg = { message: userQ, images: [url] };
         if (useModelO3) await sendToAssistant(bodyImg);
         else await sendToAssistantStream(bodyImg);
         return;
