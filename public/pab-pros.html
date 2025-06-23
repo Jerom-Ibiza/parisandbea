@@ -120,18 +120,29 @@
             background: var(--accent-dark) !important
         }
 
-        /* ======= detalles en el modal de la cita ======= */
+        /* ---- Ajuste de alineación en el detalle del modal ---- */
         .modal-detail {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
+            /* icono arriba, junto al primer renglón */
             gap: 8px;
-            margin: 4px 0;
-            color: #444;
+            margin: 8px 0;
         }
 
         .modal-detail .material-icons {
+            flex: 0 0 24px;
+            /* ancho fijo para el icono */
+            margin-top: 2px;
+            /* sube ligeramente el icono */
             font-size: 20px;
             color: var(--accent-dark);
+        }
+
+        .modal-detail span {
+            line-height: 1.4;
+            /* altura de línea cómoda en multilinea */
+            margin: 0;
+            /* eliminar márgenes por defecto */
         }
 
         /* ======= campos de los formularios (nueva/editar) ======= */
@@ -621,6 +632,34 @@
             background-color: #aed3c1 !important;
             border-radius: 10px !important;
             font-family: "Raleway", sans-serif;
+        }
+
+        /* 1) Forzar alineación izquierda en todo el contenido HTML de SweetAlert */
+        .swal2-html-container {
+            text-align: left !important;
+        }
+
+        /* 2) Mantener los iconos y labels centrados verticalmente */
+        .modal-detail {
+            display: flex;
+            align-items: center;
+            /* icono + texto siempre alineados al centro */
+            gap: 8px;
+            margin: 4px 0;
+        }
+
+        /* icono con tamaño fijo */
+        .modal-detail .material-icons {
+            flex: 0 0 24px;
+            font-size: 20px;
+            color: var(--accent-dark);
+        }
+
+        /* el texto ocupa todo el ancho restante */
+        .modal-detail span {
+            flex: 1;
+            margin: 0;
+            line-height: 1.4;
         }
     </style>
 </head>
