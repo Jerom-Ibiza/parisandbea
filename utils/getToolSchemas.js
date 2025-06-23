@@ -28,6 +28,14 @@ module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
       parameters: noArgs
     });
 
+  if (LOCAL_FUNCTIONS.get_servicios)
+    tools.push({
+      type: 'function',
+      name: 'get_servicios',
+      description: 'Lista id_servicio, nombre, precio y activo de todos los servicios',
+      parameters: { type: 'object', properties: {}, additionalProperties: false }
+    });
+
   /* ---------- HISTORIAL ---------- */
   if (LOCAL_FUNCTIONS.update_historial)
     tools.push({

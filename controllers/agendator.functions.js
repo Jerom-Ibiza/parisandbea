@@ -22,6 +22,15 @@ const LOCAL_FUNCTIONS = {
         return rows[0] || null;
     },
 
+    async get_servicios() {
+        const [rows] = await pool.query(
+            `SELECT id_servicio, nombre, precio, activo
+               FROM servicios
+           ORDER BY orden ASC, id_servicio ASC`
+        );
+        return rows; // [{ id_servicio, nombre, precio, activo }, …]
+    },
+
     async get_datetime() {
         return await new Promise((resolve, reject) => {
             const mockReq = {};

@@ -16,6 +16,27 @@ let talkingAg = false;
 let currentAudio = null;
 let typingAg;
 
+const linkify = txt => {
+    const processLine = line =>
+        line.replace(/(https?:\/\/[^\s]+)/g, url => {
+            const isImg = /\.(jpe?g|png|webp|gif|bmp|svg|heic)$/i.test(url);
+            const isStored = /\/attachments_consulta\//i.test(url);
+            const isTmp = /\/tmp\//i.test(url);
+            const showProbe = isTmp;
+            const showPin = isTmp && !isImg;
+            const iconProbe = showProbe ? `<span class="probe" data-url="${url}" title="Analizar">🔍</span>` : '';
+            const iconResearch = showProbe ? `&nbsp;<span class="research" data-url="${url}" title="Análisis técnico">🔬</span>` : '';
+            const iconPin = showPin ? `<button class="btnSaveAttach" data-tmp="${url.split('/').pop()}" title="Guardar">📌</button>` : '';
+
+            if (isImg) {
+                return `<div class="thumb-wrap">${iconPin}<a href="${url}" target="_blank" rel="noopener"><img src="${url}" class="thumb" /></a>${iconProbe}${iconResearch}</div>`;
+            }
+            return `<div class="file-wrap">${iconPin}<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>${iconProbe}${iconResearch}</div>`;
+        });
+
+    return txt.split(/\n+/).map(processLine).join('<br>');
+};
+
 function playTTS(url) {
     currentAudio?.pause();
     currentAudio = new Audio(url);
@@ -72,7 +93,7 @@ async function sendText(msg) {
     msg = msg.trim();
     if (!msg) return;
     inpAg.value = '';
-    logAg.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${msg}</div>`);
+    logAg.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${linkify(msg)}</div>`);
     logAg.scrollTop = logAg.scrollHeight;
     const opts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg, id_paciente: selectedPatient }), credentials: 'include' };
     const r = await fetch('/api/agendator/chat-stream', opts);
@@ -99,7 +120,7 @@ async function sendText(msg) {
                 if (ev === 'audio') playTTS(data);
             } else if (chunk.startsWith('data:')) {
                 const txt = chunk.slice(5).replace(/\\n/g, '\n');
-                full += txt; div.textContent = full; logAg.scrollTop = logAg.scrollHeight;
+                full += txt; div.innerHTML = linkify(full); logAg.scrollTop = logAg.scrollHeight;
             }
         }
     }
@@ -139,10 +160,9 @@ btnAgTalk.onclick = async () => {
                         const lines = chunk.split('\n');
                         const ev = lines[0].slice(6).trim();
                         const data = (lines[1] || '').replace(/^data:/, '').trim();
-                        if (ev === 'question') { logAg.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${data}</div>`); div = document.createElement('div'); div.className = 'feedback msg-assist'; logAg.appendChild(div); logAg.scrollTop = logAg.scrollHeight; }
-                        else if (ev === 'audio') playTTS(data);
+                        if (ev === 'question') { logAg.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${linkify(data)}</div>`); div = document.createElement('div'); div.className = 'feedback msg-assist'; logAg.appendChild(div); logAg.scrollTop = logAg.scrollHeight; } else if (ev === 'audio') playTTS(data);
                     } else if (chunk.startsWith('data:')) {
-                        const txt = chunk.slice(5).replace(/\\n/g, '\n'); full += txt; if (!div) { div = document.createElement('div'); div.className = 'feedback msg-assist'; logAg.appendChild(div); } div.textContent = full; logAg.scrollTop = logAg.scrollHeight;
+                        const txt = chunk.slice(5).replace(/\\n/g, '\n'); full += txt; if (!div) { div = document.createElement('div'); div.className = 'feedback msg-assist'; logAg.appendChild(div); } div.innerHTML = linkify(full); logAg.scrollTop = logAg.scrollHeight;
                     }
                 }
             }
