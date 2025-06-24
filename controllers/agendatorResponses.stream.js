@@ -62,7 +62,7 @@ exports.chatStream = async (req, res) => {
             tool_choice: 'auto'
         });
 
-        for (let step = 0; step < 4; step++) {
+        for (let step = 0; step < 8; step++) {
             const calls = (rsp.output || []).filter(o => o.type === 'function_call');
             if (!calls.length) break;
             for (const call of calls) {

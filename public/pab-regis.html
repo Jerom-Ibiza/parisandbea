@@ -9,9 +9,11 @@
     <!-- fuentes & sweetalert -->
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css"> <!-- tu hoja global -->
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- metadatos sociales -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://parisandbea.es/pab-regis.html">
     <meta property="og:title" content="Registro | Paris & Bea">
@@ -20,20 +22,17 @@
     <meta property="og:image:width" content="512">
     <meta property="og:image:height" content="512">
     <meta property="og:image:alt" content="Logo Paris & Bea Clínica Dental">
-
-    <!-- Opcional, pero recomendable para Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://parisandbea.es/images/recursos/parisandbea-inscripcion.jpg">
 
-    <!-- Favicon “clásico” -->
+    <!-- favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="images/recursos/favicon-32.png">
-
-    <!-- Icono para iOS / iPadOS (pantalla de inicio) -->
     <link rel="apple-touch-icon" sizes="180x180" href="images/recursos/icon-180.png">
 
     <style>
         /* ============ estilos base ============ */
         body {
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -43,8 +42,7 @@
         }
 
         .form-box {
-            background: #fff;
-            opacity: 1;
+            background: rgba(255, 255, 255, 0.92);
             padding: 40px 30px;
             border-radius: 18px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
@@ -55,21 +53,21 @@
         .form-box img {
             display: block;
             margin: 0 auto 14px;
-            max-width: 160px
+            max-width: 160px;
         }
 
         .form-box h1 {
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 14px;
-            text-align: center
+            text-align: center;
         }
 
         .form-box label {
             display: block;
             margin-bottom: 6px;
             font-weight: 600;
-            color: #555
+            color: #555;
         }
 
         .form-box input,
@@ -94,8 +92,6 @@
             background-position: right 10px center;
             background-size: 16px;
             appearance: none;
-            -moz-appearance: none;
-            -webkit-appearance: none;
             font-family: inherit;
             font-size: 1rem;
             color: #333;
@@ -120,44 +116,13 @@
             font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
-            transition: background .3s
+            transition: background .3s;
         }
 
         .form-box button:hover {
-            background: #6a9c8c
+            background: #6a9c8c;
         }
 
-        .policy-link {
-            display: inline-block;
-            margin-top: 12px;
-            font-size: .9rem;
-            color: #0076b6;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        /* --- estilos base del contenedor --- */
-        .form-actions {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        /* botón ya tiene estilo; solo retocamos el enlace */
-        .policy-link {
-            font-size: .9rem;
-            color: #0076b6;
-            text-decoration: underline;
-        }
-
-        /* opcional: la tarjeta algo translúcida para ver sutilmente el fondo */
-        .form-box {
-            background: rgba(255, 255, 255, 0.92);
-        }
-
-        /* ---------- estilizado del enlace ---------- */
         .policy-link {
             display: inline-flex;
             align-items: center;
@@ -181,18 +146,20 @@
             font-size: 18px;
         }
 
-        #langSel {
-            margin-top: 30px;
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
         }
 
-        /* ============ 2 columnas para 1200-1500 px ============ */
-        @media (min-width:1200px) and (max-width:1500px) {
+        @media (min-width: 1200px) {
             .form-box {
                 max-width: 1200px;
                 padding: 48px 60px;
             }
 
-            /* contenedor del formulario -> grid 2 cols */
             #regForm {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -200,13 +167,11 @@
                 row-gap: 18px;
             }
 
-            /* columnas explícitas: left / right */
             .left-col label,
             .right-col label {
                 margin-bottom: 4px;
             }
 
-            /* hace que los inputs ocupen toda su columna */
             .left-col input,
             .left-col select,
             .right-col input,
@@ -214,16 +179,11 @@
                 margin-bottom: 18px;
             }
 
-            /* Dirección y contenedor teléfono dentro de la derecha
-         ya van bien — no toques nada */
-
-            /* botón -> debajo de las 2 columnas */
             #regForm button {
                 grid-column: 1 / -1;
                 margin-top: 8px;
                 max-width: 280px;
                 justify-self: center;
-                /* centrado */
             }
 
             .policy-link {
@@ -233,7 +193,6 @@
 
             .form-actions {
                 grid-column: 1 / -1;
-                /* ocupa ancho completo del grid */
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
@@ -242,6 +201,73 @@
             #langSel {
                 margin-top: 20px;
             }
+        }
+
+        /* ────────── Screensaver Carousel ────────── */
+        #screensaver {
+            position: fixed;
+            inset: 0;
+            display: none;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f4f4e9 0%, #d6e1c5 100%);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #screensaver .slides {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s ease-in-out;
+        }
+
+        #screensaver .ss-slide {
+            flex: 0 0 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ss-card {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 3rem;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+            align-items: center;
+        }
+
+        .ss-card img {
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .ss-copy h3 {
+            font-size: 3rem;
+            margin: 0 0 .5rem;
+            color: #243a2b;
+            font-weight: 600;
+        }
+
+        .ss-copy .slogan {
+            font-size: 1.8rem;
+            font-weight: 500;
+            margin: 0 0 1.5rem;
+            color: #3e5a47;
+        }
+
+        .ss-copy .desc {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #4a5158;
         }
     </style>
 </head>
@@ -252,7 +278,6 @@
         <img src="images/recursos/parisandbealogo.png" alt="Logo">
         <h1 id="formTitle">Registro de paciente</h1>
 
-        <!-- ▸ dos columnas: left-col y right-col  -->
         <form id="regForm">
             <div class="left-col">
                 <label id="lblNombre" for="nombre">Nombre*</label>
@@ -289,7 +314,6 @@
                     </div>
                 </div>
 
-                <!-- PREFIJO + TELÉFONO -->
                 <label id="lblTelefono" for="prefijo">Teléfono*</label>
                 <div style="display:flex;gap:8px">
                     <input id="prefijo" name="prefijo" value="+34" style="max-width:90px" pattern="\+\d{1,4}"
@@ -311,9 +335,12 @@
                 <span id="lblViafirma">Firma digital consentimiento informado (recomendado)</span>
             </label>
 
-            <!-- acciones -->
             <div class="form-actions">
-                <button id="submitBtn" type="submit">Enviar inscripción</button>
+
+                <a id="policyLink" href="/politica-privacidad.html?embed=1" target="_blank" class="policy-link">
+                    <span class="material-icons">privacy_tip</span>
+                    <span id="linkPrivacidad">Política de privacidad</span>
+                </a>
 
                 <select id="langSel" style="float:right;margin-bottom:10px">
                     <option value="es">Español</option>
@@ -324,12 +351,13 @@
 
                 <input type="hidden" id="docLang" name="lang" value="es">
 
-                <a id="policyLink" href="/politica-privacidad.html?embed=1" target="_blank" class="policy-link">
-                    <span class="material-icons">privacy_tip</span>
-                    <span id="linkPrivacidad">Política de privacidad</span>
-                </a>
+                <button id="submitBtn" type="submit">Enviar inscripción</button>
             </div>
         </form>
+    </div>
+
+    <div id="screensaver">
+        <div class="slides"></div>
     </div>
 
     <script>
@@ -356,7 +384,7 @@
                 submit: 'Enviar inscripción',
                 privacidad: 'Política de privacidad',
                 successTitle: '¡Bienvenido/a!',
-                successText: 'Registro completado con éxito',
+                successText: 'Registro completado con éxito'
             },
             en: {
                 title: 'Patient Registration | Paris & Bea',
@@ -380,7 +408,7 @@
                 submit: 'Submit',
                 privacidad: 'Privacy policy',
                 successTitle: 'Welcome!',
-                successText: 'Registration completed successfully',
+                successText: 'Registration completed successfully'
             },
             de: {
                 title: 'Patientenregistrierung | Paris & Bea',
@@ -404,7 +432,7 @@
                 submit: 'Anmeldung absenden',
                 privacidad: 'Datenschutzrichtlinie',
                 successTitle: 'Willkommen!',
-                successText: 'Registrierung erfolgreich abgeschlossen',
+                successText: 'Registrierung erfolgreich abgeschlossen'
             },
             fr: {
                 title: 'Enregistrement du patient | Paris & Bea',
@@ -428,7 +456,7 @@
                 submit: "Envoyer l'inscription",
                 privacidad: 'Politique de confidentialité',
                 successTitle: 'Bienvenue!',
-                successText: "Inscription réussie",
+                successText: "Inscription réussie"
             }
         };
 
@@ -447,8 +475,8 @@
             document.getElementById('optGeneroM').textContent = t.generoM;
             document.getElementById('optGeneroO').textContent = t.generoO;
             document.getElementById('lblDni').textContent = t.dni;
-            document.getElementById('lblCp').textContent = t.cp;
             document.getElementById('dni').placeholder = t.dniPH;
+            document.getElementById('lblCp').textContent = t.cp;
             document.getElementById('lblDireccion').textContent = t.direccion;
             document.getElementById('lblTelefono').textContent = t.telefono;
             document.getElementById('lblEmail').textContent = t.email;
@@ -467,7 +495,6 @@
         document.getElementById('langSel').addEventListener('change', e => {
             applyLang(e.target.value);
         });
-
         applyLang('es');
 
         /* ========= máscara de fecha ========= */
@@ -482,12 +509,14 @@
                 fechaInput.value = digits;
             }
         });
+
         /* ========= formato DNI ========= */
         const dniInput = document.getElementById('dni');
         dniInput.addEventListener('input', () => {
             let val = dniInput.value.toUpperCase().replace(/[^0-9A-Z]/g, '').slice(0, 9);
             dniInput.value = val;
         });
+
         /* ========= token y validación ========= */
         const params = new URLSearchParams(location.search);
         const token = params.get('token');
@@ -516,12 +545,12 @@
             }
         }
 
-        /* ========= envío ========= */
+        /* ========= envío del formulario ========= */
         document.getElementById('regForm').addEventListener('submit', async e => {
             e.preventDefault();
             const fd = new FormData(e.target);
 
-            /* normalizar fecha dd/mm/aaaa o dd-mm-aaaa -> aaaa-mm-dd */
+            /* normalizar fecha -> aaaa-mm-dd */
             let fecha = fd.get('fecha_nacimiento').trim();
             const p = fecha.split(/[-\/]/);
             if (p.length === 3) {
@@ -529,30 +558,27 @@
                 fd.set('fecha_nacimiento', fecha);
             }
 
-            /* prefijo + teléfono  */
+            /* prefijo + teléfono */
             let pref = fd.get('prefijo').trim();
             let tel = fd.get('telefono').trim();
             if (!pref.startsWith('+')) pref = '+' + pref;
             fd.set('telefono', pref + tel);
             fd.delete('prefijo');
 
-            /* código postal + dirección */
+            /* cp + dirección */
             let cp = fd.get('cp').trim();
             let dir = fd.get('direccion').trim();
             fd.set('direccion', cp + ' ' + dir);
             fd.delete('cp');
 
-            /* ---------- defaults si vienen vacíos ---------- */
+            /* defaults */
             if (!fd.get('apellidos')) fd.set('apellidos', 'Pendiente');
             if (!fd.get('fecha_nacimiento')) fd.set('fecha_nacimiento', '2000-01-01');
             if (!fd.get('genero')) fd.set('genero', 'Otro');
             if (!fd.get('email')) fd.set('email', 'Pendiente');
 
-
             const data = Object.fromEntries(fd.entries());
-
-            const sendViafirma = document.getElementById('sendViafirma').checked;
-            data.sendViafirma = sendViafirma;          // ← nuevo flag
+            data.sendViafirma = document.getElementById('sendViafirma').checked;
 
             try {
                 const r = await fetch('/api/public/pacientes/register?token=' + token, {
@@ -563,7 +589,6 @@
                 const res = await r.json();
                 if (!r.ok) throw new Error(res.error || 'Error en registro');
 
-                /* —— ÉXITO —— */
                 await Swal.fire({
                     icon: 'success',
                     title: successTitle,
@@ -575,10 +600,7 @@
                     showConfirmButton: false
                 });
 
-                /* intentar cerrar si fue abierta con window.open() */
                 window.close();
-
-                /* …y, pasados 0,5 s, volver siempre al kiosco */
                 setTimeout(() => location.replace('/kiosk.html'), 500);
 
             } catch (e) {
@@ -586,6 +608,70 @@
                 Swal.fire('Error', e.message, 'error');
             }
         });
+
+        /* ────────── screensaver carousel ────────── */
+        const screensaverDelay = 10000; // 2 minutos
+        const screensaver = document.getElementById('screensaver');
+        const slidesContainer = screensaver.querySelector('.slides');
+        let ssSlides = [], ssIndex = 0, ssTimer;
+
+        async function loadScreensaverSlides() {
+            try {
+                const list = await (await fetch('/api/productos/public')).json();
+                for (const p of list) {
+                    const d = await (await fetch('/api/productos/public/' + p.slug)).json();
+                    ssSlides.push({
+                        nombre: p.nombre,
+                        imagen: p.imagen,
+                        proposito: p.proposito || '',
+                        explicacion: d.explicacion_centro || ''
+                    });
+                }
+                ssSlides.forEach(prod => {
+                    const slide = document.createElement('div');
+                    slide.className = 'ss-slide';
+                    slide.innerHTML = `
+                        <div class="ss-card">
+                            <img src="${prod.imagen}" alt="${prod.nombre}">
+                            <div class="ss-copy">
+                                <h3>${prod.nombre}</h3>
+                                <p class="slogan">${prod.proposito}</p>
+                                <p class="desc">${prod.explicacion}</p>
+                            </div>
+                        </div>`;
+                    slidesContainer.appendChild(slide);
+                });
+            } catch (e) {
+                console.error('screensaver load error:', e);
+            }
+        }
+
+        function showScreensaver() {
+            if (!ssSlides.length) return;
+            screensaver.style.display = 'flex';
+            slidesContainer.style.transform = `translateX(-${ssIndex * 100}%)`;
+            ssTimer = setInterval(() => {
+                ssIndex = (ssIndex + 1) % ssSlides.length;
+                slidesContainer.style.transform = `translateX(-${ssIndex * 100}%)`;
+            }, 5000);
+        }
+
+        function hideScreensaver() {
+            clearInterval(ssTimer);
+            screensaver.style.display = 'none';
+        }
+
+        function resetScreensaverTimer() {
+            clearTimeout(window._ssResetTimer);
+            hideScreensaver();
+            window._ssResetTimer = setTimeout(showScreensaver, screensaverDelay);
+        }
+
+        ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evt =>
+            document.addEventListener(evt, resetScreensaverTimer, { passive: true })
+        );
+
+        loadScreensaverSlides().then(resetScreensaverTimer);
     </script>
 
 </body>
