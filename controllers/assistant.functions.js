@@ -615,6 +615,11 @@ const LOCAL_FUNCTIONS = {
       if (p.length) personaFinal = `${p[0].nombre} ${p[0].apellidos}`;
     }
 
+    let tituloFinal = titulo;
+    if (personaFinal && !titulo.startsWith(personaFinal)) {
+      tituloFinal = `${personaFinal} - ${titulo}`;
+    }
+
     let ubicacionFinal = ubicacion || null;
     if (!ubicacionFinal) {
       const [home] = await pool.query(
@@ -642,7 +647,7 @@ const LOCAL_FUNCTIONS = {
           id_profesional, id_servicio)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        titulo,
+        tituloFinal,
         descripcion || null,
         fecha_hora_inicio,
         fecha_hora_fin,
