@@ -205,6 +205,7 @@ async function saveToDB(block, data, id_paciente, id_profesional) {
     case 'tratamiento': {
       const tData = { ...data, id_paciente, id_profesional };
       if (tData.dias_alerta == null) tData.dias_alerta = 0;
+      if (tData.estado == null || tData.estado === '') tData.estado = 'Activo';
       await pool.query(
         'INSERT INTO tratamientos SET ?',
         tData
@@ -216,12 +217,10 @@ async function saveToDB(block, data, id_paciente, id_profesional) {
         'SELECT id_tratamiento FROM tratamientos WHERE id_paciente = ? ORDER BY fecha_inicio DESC LIMIT 1',
         [id_paciente]
       );
-      if (!rows.length) {
-        throw new Error('El paciente no tiene tratamientos; no puedo registrar la sesión.');
-      }
+      const idTrat = rows.length ? rows[0].id_tratamiento : null;
       await pool.query(
         'INSERT INTO sesiones SET ?',
-        { ...data, id_tratamiento: rows[0].id_tratamiento, id_profesional }
+        { ...data, id_tratamiento: idTrat, id_profesional }
       );
       break;
     }
