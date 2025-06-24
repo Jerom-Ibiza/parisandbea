@@ -537,7 +537,7 @@
         }
 
         #divider {
-            width: 6px;
+            width: 10px;
             cursor: col-resize;
             height: 50%;
             margin-top: 13%;
@@ -840,7 +840,7 @@
         }
 
         #divider {
-            height: 6px;
+            height: 10px;
             cursor: row-resize;
             width: 50%;
             margin: auto;
@@ -901,4 +901,10 @@
 
     #screensaver img.active {
         opacity: 1;
+    }
+
+    @media (min-width:768px) and (max-width:1199px) {
+        .info-panel dd {
+            font-size: 22px;
+        }
     }

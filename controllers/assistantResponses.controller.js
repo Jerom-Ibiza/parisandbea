@@ -8,6 +8,7 @@ const ttsOAI = require('../utils/openaiTTS');
 const prompt = require('../prompts/assistant.responses');
 const { LOCAL_FUNCTIONS } = require('./assistant.functions');
 const getTools = require('../utils/getToolSchemas');
+const localImageToDataUrl = require('../utils/localImageToDataUrl');
 
 const openai = new OpenAI();
 
@@ -73,9 +74,9 @@ exports.chat = async (req, res) => {
       role: 'user',
       content: [
         { type: 'input_text', text: message },
-        ...images.map(url => ({
+        ...images.map(u => ({
           type: 'input_image',
-          image_url: url
+          image_url: localImageToDataUrl(u)
         }))
       ]
     };
