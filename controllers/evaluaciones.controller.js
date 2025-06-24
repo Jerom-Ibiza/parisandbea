@@ -862,6 +862,7 @@ exports.createTratamiento = async (req, res) => {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
+    const alertValue = dias_alerta ?? 0;
     const params = [
       id_paciente,
       id_profesional || null,
@@ -876,7 +877,7 @@ exports.createTratamiento = async (req, res) => {
       capsulas_por_bote ?? null,
       dosis_diaria ?? null,
       fecha_inicio_suplementacion || null,
-      dias_alerta ?? null
+      alertValue
     ];
 
     const [result] = await pool.query(query, params);

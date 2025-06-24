@@ -43,6 +43,11 @@ exports.createAppointment = async (req, res) => {
             }
         }
 
+        let tituloFinal = titulo;
+        if (personaFinal && !titulo.startsWith(personaFinal)) {
+            tituloFinal = `${personaFinal} - ${titulo}`;
+        }
+
         let ubicacionFinal = ubicacion || null;
         if (!ubicacionFinal) {
             const [home] = await pool.query(
@@ -79,7 +84,7 @@ exports.createAppointment = async (req, res) => {
           id_profesional, id_servicio)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
-                titulo,
+                tituloFinal,
                 descripcion || null,
                 fecha_hora_inicio,
                 fecha_hora_fin,
@@ -165,6 +170,27 @@ exports.updateAppointment = async (req, res) => {
                 .json({ error: 'El profesional ya tiene otra cita en ese horario' });
         }
 
+        let personaFinal =
+            body.persona !== undefined ? body.persona : c.persona;
+        const idPacienteFinal =
+            body.id_paciente !== undefined ? body.id_paciente : c.id_paciente;
+
+        if (!personaFinal && idPacienteFinal) {
+            const [p] = await pool.query(
+                'SELECT nombre, apellidos FROM pacientes WHERE id_paciente = ?',
+                [idPacienteFinal]
+            );
+            if (p.length) {
+                personaFinal = `${p[0].nombre} ${p[0].apellidos}`;
+            }
+        }
+
+        const tituloBase = body.titulo ?? c.titulo;
+        let tituloFinal = tituloBase;
+        if (personaFinal && !tituloBase.startsWith(personaFinal)) {
+            tituloFinal = `${personaFinal} - ${tituloBase}`;
+        }
+
         /* ── Actualizar */
         await pool.query(
             `UPDATE citas SET
@@ -181,12 +207,12 @@ exports.updateAppointment = async (req, res) => {
          id_servicio       = ?
        WHERE id_cita = ?`,
             [
-                body.titulo ?? c.titulo,
+                tituloFinal,
                 body.descripcion ?? c.descripcion,
                 inicio,
                 fin,
-                body.persona ?? c.persona,
-                body.id_paciente ?? c.id_paciente,
+                personaFinal,
+                idPacienteFinal,
                 body.estado ?? c.estado,
                 body.ubicacion ?? c.ubicacion,
                 body.notificacion ?? c.notificacion,
