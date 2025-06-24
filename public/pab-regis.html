@@ -618,6 +618,12 @@
         async function loadScreensaverSlides() {
             try {
                 const list = await (await fetch('/api/productos/public')).json();
+                // Mezclar aleatoriamente el listado para que los productos se
+                // muestren en un orden diferente en cada carga
+                for (let i = list.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [list[i], list[j]] = [list[j], list[i]];
+                }
                 for (const p of list) {
                     const d = await (await fetch('/api/productos/public/' + p.slug)).json();
                     ssSlides.push({
