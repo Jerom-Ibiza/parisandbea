@@ -213,11 +213,26 @@ async function saveToDB(block, data, id_paciente, id_profesional) {
       break;
     }
     case 'sesion': {
+      let idTrat;
       const [rows] = await pool.query(
         'SELECT id_tratamiento FROM tratamientos WHERE id_paciente = ? ORDER BY fecha_inicio DESC LIMIT 1',
         [id_paciente]
       );
-      const idTrat = rows.length ? rows[0].id_tratamiento : null;
+      if (rows.length) {
+        idTrat = rows[0].id_tratamiento;
+      } else {
+        const [res] = await pool.query(
+          'INSERT INTO tratamientos SET ?',
+          {
+            id_paciente,
+            id_profesional,
+            fecha_inicio: new Date(),
+            dias_alerta: 0,
+            estado: 'Activo'
+          }
+        );
+        idTrat = res.insertId;
+      }
       await pool.query(
         'INSERT INTO sesiones SET ?',
         { ...data, id_tratamiento: idTrat, id_profesional }

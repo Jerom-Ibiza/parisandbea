@@ -85,8 +85,8 @@ async function loadSessionInfo(req) {
     `SELECT s.*, pr.nombre AS prof_nombre
        FROM sesiones s
        LEFT JOIN profesionales pr ON pr.id_profesional = s.id_profesional
-       INNER JOIN tratamientos t ON t.id_tratamiento = s.id_tratamiento
-      WHERE t.id_paciente = ?
+       LEFT JOIN tratamientos t ON t.id_tratamiento = s.id_tratamiento
+      WHERE (t.id_paciente = ? OR s.id_tratamiento IS NULL)
       ORDER BY s.fecha_sesion DESC, s.hora_sesion DESC, s.id_sesion DESC
       LIMIT 1`,
     [patient.id_paciente]
@@ -204,10 +204,10 @@ const LOCAL_FUNCTIONS = {
     const id_paciente = req.session.patient.id_paciente;
     const [rows] = await pool.query(
       `SELECT s.id_sesion FROM sesiones s
-		   INNER JOIN tratamientos t ON t.id_tratamiento = s.id_tratamiento
-		 WHERE t.id_paciente = ?
-		 ORDER BY s.fecha_sesion DESC, s.hora_sesion DESC, s.id_sesion DESC
-		 LIMIT 1`,
+                   LEFT JOIN tratamientos t ON t.id_tratamiento = s.id_tratamiento
+                 WHERE (t.id_paciente = ? OR s.id_tratamiento IS NULL)
+                 ORDER BY s.fecha_sesion DESC, s.hora_sesion DESC, s.id_sesion DESC
+                 LIMIT 1`,
       [id_paciente]
     );
     if (!rows.length) throw new Error('No hay sesiones para actualizar');
@@ -223,8 +223,8 @@ const LOCAL_FUNCTIONS = {
     const id_paciente = req.session.patient.id_paciente;
     const [rows] = await pool.query(
       `SELECT s.* FROM sesiones s
-       INNER JOIN tratamientos t ON t.id_tratamiento = s.id_tratamiento
-       WHERE t.id_paciente = ?
+      LEFT JOIN tratamientos t ON t.id_tratamiento = s.id_tratamiento
+       WHERE (t.id_paciente = ? OR s.id_tratamiento IS NULL)
        ORDER BY s.fecha_sesion DESC, s.hora_sesion DESC, s.id_sesion DESC LIMIT ?`,
       [id_paciente, Math.min(Number(n) || 1, 10)]);
     return rows;
