@@ -157,16 +157,24 @@
             color: var(--accent-dark);
         }
 
+        .modal-title-icon {
+            display: none;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
         @media (min-width: 1200px) {
             .modal-fields-2col {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 10px;
-            }
-
-            .modal-fields-2col {
                 width: 100%;
                 max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .modal-title-icon {
+                display: inline-block;
             }
         }
 
@@ -1043,7 +1051,7 @@
         /* =================== abrir formulario ===================== */
         async function openForm(prefill = {}) {
             const { value: formValues } = await Swal.fire({
-                title: prefill.id ? 'Editar cita' : 'Nueva cita',
+                title: prefill.id ? 'Editar cita' : '<span class="modal-title-icon material-symbols-outlined" style="font-size: 35px">calendar_add_on</span> Nueva cita',
                 html: `
       <div class="modal-fields-2col">
         <div class="modal-field"><span class="material-icons">title</span><input id="swal-title" class="swal2-input" placeholder="Título" value="${prefill.title || ''}"></div>
