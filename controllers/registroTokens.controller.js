@@ -57,7 +57,7 @@ exports.isUsable = async tk => {
 };
 
 /* ============================================================
- * Token para kiosco (60 min, clave en query ?key=xxx)
+ * Token para kiosco (72 h, clave en query ?key=xxx)
  * ========================================================== */
 exports.createKiosk = async (req, res) => {
     try {
@@ -69,11 +69,11 @@ exports.createKiosk = async (req, res) => {
         if (req.query.pin !== process.env.KIOSK_PIN)
             return res.status(403).json({ error: 'PIN incorrecto' });
 
-        /* 3 · token de 60 min */
+        /* 3 · token de 72 h */
         const token = crypto.randomBytes(32).toString('hex');
         await pool.query(
             `INSERT INTO registro_tokens (token, expires_at)
-       VALUES (?, DATE_ADD(NOW(), INTERVAL 60 MINUTE))`,
+       VALUES (?, DATE_ADD(NOW(), INTERVAL 4320 MINUTE))`,
             [token]);
 
         res.json({ token });
