@@ -541,7 +541,16 @@
             margin-bottom: 8px;
         }
 
-        .search-wrapper input {
+        /* sin margen extra cuando se usa dentro de modal-field */
+        .modal-field .search-wrapper {
+            margin-bottom: 0;
+            margin-top: -50px;
+            margin-left: 20px;
+            max-width: none;
+        }
+
+        /* estilos del buscador solo en el modal de Agendator */
+        #modalAg .search-wrapper input {
             width: 100%;
             padding: 12px 40px 12px 12px;
             /* espacio para el botón */
@@ -551,7 +560,7 @@
             transition: border-color .2s, box-shadow .2s;
         }
 
-        .search-wrapper input:focus {
+        #modalAg .search-wrapper input:focus {
             outline: none;
             border-color: var(--accent-dark);
             box-shadow: 0 0 0 3px rgba(174, 211, 193, 0.4);
@@ -777,6 +786,10 @@
             #modalAg #agInput {
                 width: 75%;
             }
+        }
+
+        div:where(.swal2-container) .swal2-textarea {
+            vertical-align: middle;
         }
     </style>
 </head>
