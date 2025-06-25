@@ -236,7 +236,7 @@
 
             .fc .fc-timegrid-slot,
             .fc .fc-timegrid-slot-label-frame {
-                height: 25px;
+                height: 65px;
             }
 
         }
@@ -674,9 +674,81 @@
             }
         }
 
+        /* ────────────────────────────────
+   Ajustes para tablets / portátiles
+   (entre 769 px y 1199 px de ancho)
+   ──────────────────────────────── */
         @media (min-width: 769px) and (max-width: 1199px) {
+
             #modalAg .agendator-overlay {
                 bottom: 90px;
+            }
+
+            /* 1) Barra superior del calendario */
+            .fc .fc-header-toolbar {
+                display: flex;
+                /* nos aseguramos de que sea flex   */
+                flex-wrap: wrap;
+                /* permite saltar a segunda línea   */
+                gap: 12px;
+                /* espacio uniforme entre elementos */
+                padding: 0 10px;
+                align-items: center;
+                justify-content: center;
+                /* todo centrado en el contenedor   */
+            }
+
+            /* 2) Cada “chunk” de la toolbar */
+            .fc .fc-header-toolbar .fc-toolbar-chunk {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex: 0 0 100%;
+                /* cada bloque ocupa toda la fila   */
+                justify-content: center;
+                /* y se centra                      */
+            }
+
+            /* 3) Reordenamos para que quede:
+        fila 1 → navegación + hoy + Nueva cita
+        fila 2 → título de la semana
+        fila 3 → “Mostrar 0-7” + vistas (month/week/day)          */
+            .fc .fc-header-toolbar .fc-toolbar-chunk:nth-child(1) {
+                order: 1;
+            }
+
+            .fc .fc-header-toolbar .fc-toolbar-chunk:nth-child(2) {
+                order: 2;
+            }
+
+            .fc .fc-header-toolbar .fc-toolbar-chunk:nth-child(3) {
+                order: 3;
+            }
+
+            /* 4) Botones: tamaño y legibilidad */
+            .fc .fc-button {
+                padding: 9px 14px !important;
+                /* un poco más compactos        */
+                font-size: 0.88rem;
+                /* texto ligeramente más pequeño*/
+                min-width: auto !important;
+                /* permite que se ajusten       */
+            }
+
+            /* 5) Título ocupa 100 % y se centra */
+            .fc .fc-toolbar-title {
+                width: 100%;
+                text-align: center;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (min-width: 1200px) {
+
+            .info-panel,
+            .chat-panel {
+                height: auto;
+                margin-bottom: 8px;
             }
         }
     </style>
@@ -731,7 +803,7 @@
                 </div>
             </div>
             <textarea id="agInput" placeholder="Escribe…"
-                style="width:100%;min-height:80px;padding:8px;border:2px solid #aed3c1;border-radius:15px;"></textarea>
+                style="width:100%;min-height:60px;padding:8px;border:2px solid #aed3c1;border-radius:15px;"></textarea>
             <div style="display:flex;gap:10px;justify-content:flex-end;align-items:center;">
                 <button id="btnAgStop" class="btn-round" style="display:none">Cancel</button>
                 <button id="btnAgTalk" class="btn-round" title="Hablar con el asistente">

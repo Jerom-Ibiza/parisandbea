@@ -181,6 +181,7 @@ btnAgTalk.onclick = async () => {
                 manualCancelAg = false;
                 chunksAg = [];
                 logAg.insertAdjacentHTML('beforeend', '<div class="feedback error">❌ Pregunta cancelada</div>');
+                hideAgendatorImg();
                 logAg.scrollTop = logAg.scrollHeight;
                 return;
             }
