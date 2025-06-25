@@ -750,6 +750,21 @@
                 height: auto;
                 margin-bottom: 8px;
             }
+
+            #modalAg .manual-box {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            #modalAg .manual-box .search-wrapper {
+                width: 35%;
+                max-width: none;
+            }
+
+            #modalAg #agInput {
+                width: 75%;
+            }
         }
     </style>
 </head>
@@ -801,9 +816,9 @@
                 <div id="agResults" class="search-results"
                     style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ccc;border-radius:8px;z-index:1001;display:none;">
                 </div>
+                <textarea id="agInput" placeholder="Escribe…"
+                    style="width:100%;min-height:60px;padding:8px;border:2px solid #aed3c1;border-radius:15px;"></textarea>
             </div>
-            <textarea id="agInput" placeholder="Escribe…"
-                style="width:100%;min-height:60px;padding:8px;border:2px solid #aed3c1;border-radius:15px;"></textarea>
             <div style="display:flex;gap:10px;justify-content:flex-end;align-items:center;">
                 <button id="btnAgStop" class="btn-round" style="display:none">Cancel</button>
                 <button id="btnAgTalk" class="btn-round" title="Hablar con el asistente">
