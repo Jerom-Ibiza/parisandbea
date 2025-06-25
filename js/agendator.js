@@ -59,7 +59,7 @@ btnStopAg.onclick = () => {
 
 $('btnOpenAg').onclick = () => {
     modalAg.style.display = 'flex';
-    inpSearchAg.focus();
+    setTimeout(() => inpSearchAg.focus(), 0);
     resSearchAg.style.display = 'none';
 };
 btnCloseAg.onclick = () => { modalAg.style.display = 'none'; };
