@@ -731,6 +731,9 @@ document.querySelectorAll('.chip').forEach(btn => {
 const btnRec = $id('btnRecord'), log = $id('log');
 const btnSaveChat = $id('btnSaveChat');
 const btnResumen = $id('btnResumen');
+const btnContrato = $id('btnContrato');
+const btnPuncion = $id('btnPuncion');
+const btnSuelo = $id('btnSuelo');
 const btnReload = $id('btnReload');
 const updateSaveBtn = () => {
     const show = log.childElementCount ? 'block' : 'none';
@@ -1153,6 +1156,24 @@ $id('btnSaveChat').onclick = async () => {
 $id('btnResumen').onclick = () => {
     sendText('Haz un resumen detallado del paciente');
     btnResumen.style.display = 'none';
+};
+
+/* ---------- DOCUMENTO DE CONSENTIMIENTO ---------- */
+$id('btnContrato').onclick = () => {
+    sendText('Crea documento para este paciente para recibir tratamiento de Ostio y Fisio');
+    btnContrato.style.display = 'none';
+};
+
+/* ---------- DOCUMENTO DE PUNCIÓN SECA ---------- */
+$id('btnPuncion').onclick = () => {
+    sendText('Crea documento para este paciente para recibir tratamiento de Punción Seca');
+    btnPuncion.style.display = 'none';
+};
+
+/* ---------- DOCUMENTO DE SUELO PÉLVICO ---------- */
+$id('btnSuelo').onclick = () => {
+    sendText('Crea documento para esta pacienta para recibir tratamiento de Suelo Pélvico');
+    btnSuelo.style.display = 'none';
 };
 
 /* ---------- RECARGAR LA PÁGINA ---------- */
