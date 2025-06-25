@@ -13,8 +13,29 @@ let selectedPatient = null;
 
 let recAg, chunksAg = [];
 let talkingAg = false;
+let manualCancelAg = false;
 let currentAudio = null;
 let typingAg;
+
+function showAgendatorImg() {
+    if ($('agendatorOverlay')) return;
+    const img = new Image();
+    img.id = 'agendatorOverlay';
+    img.src = 'images/recursos/agendator.png';
+    img.className = 'agendator-overlay';
+    const panel = modalAg.querySelector('.panel');
+    (panel || modalAg).appendChild(img);
+    const reveal = () => requestAnimationFrame(() => img.classList.add('show'));
+    if (img.complete) reveal();
+    else img.onload = reveal;
+}
+
+function hideAgendatorImg() {
+    const img = $('agendatorOverlay');
+    if (!img) return;
+    img.classList.remove('show');
+    img.addEventListener('transitionend', () => img.remove(), { once: true });
+}
 
 const linkify = txt => {
     const processLine = line =>
@@ -54,19 +75,31 @@ function cleanup() {
 
 btnStopAg.onclick = () => {
     if (currentAudio) { currentAudio.pause(); return; }
-    if (talkingAg) { recAg.stop(); talkingAg = false; btnTalkAg.classList.remove('talking'); btnStopAg.style.display = 'none'; }
+    if (talkingAg) {
+        manualCancelAg = true;                 // marcar cancelación manual
+        recAg.stop();                          // onstop no enviará nada
+        talkingAg = false;
+        btnTalkAg.classList.remove('talking');
+        btnStopAg.style.display = 'none';
+    }
 };
 
 $('btnOpenAg').onclick = () => {
     modalAg.style.display = 'flex';
-    setTimeout(() => {
-        inpSearchAg.focus();
+    requestAnimationFrame(() => {
         inpAg.blur();
-    }, 0);
+        inpSearchAg.focus();
+    });
     resSearchAg.style.display = 'none';
 };
-btnCloseAg.onclick = () => { modalAg.style.display = 'none'; };
-modalAg.addEventListener('click', e => { if (e.target.id === 'modalAg') { modalAg.style.display = 'none'; resSearchAg.style.display = 'none'; } });
+btnCloseAg.onclick = () => { modalAg.style.display = 'none'; hideAgendatorImg(); };
+modalAg.addEventListener('click', e => {
+    if (e.target.id === 'modalAg') {
+        modalAg.style.display = 'none';
+        resSearchAg.style.display = 'none';
+        hideAgendatorImg();
+    }
+});
 
 btnSendAg.onclick = () => sendText(inpAg.value);
 
@@ -141,8 +174,16 @@ btnAgTalk.onclick = async () => {
         else options.mimeType = 'video/mp4';
         recAg = new MediaRecorder(stream, options);
         chunksAg = [];
+        manualCancelAg = false;            // arranque limpio
         recAg.ondataavailable = e => chunksAg.push(e.data);
         recAg.onstop = async () => {
+            if (manualCancelAg) {
+                manualCancelAg = false;
+                chunksAg = [];
+                logAg.insertAdjacentHTML('beforeend', '<div class="feedback error">❌ Pregunta cancelada</div>');
+                logAg.scrollTop = logAg.scrollHeight;
+                return;
+            }
             const mime = recAg.mimeType || 'audio/webm';
             const ext = mime.includes('mp4') ? '.mp4' : '.webm';
             const blob = new Blob(chunksAg, { type: mime });
@@ -167,9 +208,25 @@ btnAgTalk.onclick = async () => {
                         const lines = chunk.split('\n');
                         const ev = lines[0].slice(6).trim();
                         const data = (lines[1] || '').replace(/^data:/, '').trim();
-                        if (ev === 'question') { logAg.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${linkify(data)}</div>`); div = document.createElement('div'); div.className = 'feedback msg-assist'; logAg.appendChild(div); logAg.scrollTop = logAg.scrollHeight; } else if (ev === 'audio') playTTS(data);
+                        if (ev === 'question') {
+                            logAg.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${linkify(data)}</div>`);
+                            div = document.createElement('div');
+                            div.className = 'feedback msg-assist';
+                            logAg.appendChild(div);
+                            logAg.scrollTop = logAg.scrollHeight;
+                        } else if (ev === 'audio') {
+                            playTTS(data);
+                        }
                     } else if (chunk.startsWith('data:')) {
-                        const txt = chunk.slice(5).replace(/\\n/g, '\n'); full += txt; if (!div) { div = document.createElement('div'); div.className = 'feedback msg-assist'; logAg.appendChild(div); } div.innerHTML = linkify(full); logAg.scrollTop = logAg.scrollHeight;
+                        const txt = chunk.slice(5).replace(/\\n/g, '\n');
+                        full += txt;
+                        if (!div) {
+                            div = document.createElement('div');
+                            div.className = 'feedback msg-assist';
+                            logAg.appendChild(div);
+                        }
+                        div.innerHTML = linkify(full);
+                        logAg.scrollTop = logAg.scrollHeight;
                     }
                 }
             }
@@ -178,10 +235,13 @@ btnAgTalk.onclick = async () => {
         talkingAg = true;
         btnTalkAg.classList.add('talking');
         btnStopAg.style.display = 'flex';
+        showAgendatorImg();
     } else {
         talkingAg = false;
         btnTalkAg.classList.remove('talking');
+        manualCancelAg = false;          // se envía la grabación
         recAg.stop();
         btnStopAg.style.display = 'none';
+        hideAgendatorImg();
     }
 };

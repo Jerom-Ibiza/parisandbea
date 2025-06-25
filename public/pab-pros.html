@@ -300,14 +300,6 @@
             }
         }
 
-        @media (min-width: 769px) and (max-width: 1199px) {
-
-            .fc .fc-timegrid-slot,
-            .fc .fc-timegrid-slot-label-frame {
-                height: 60px;
-            }
-        }
-
         @media (min-width: 1200px) {
 
             .fc .fc-timegrid-slot,
@@ -658,6 +650,34 @@
             flex: 1;
             margin: 0;
             line-height: 1.4;
+        }
+
+        /* imagen flotante durante la grabación */
+        #modalAg .agendator-overlay {
+            position: absolute;
+            bottom: 95px;
+            right: 20px;
+            max-width: 250px;
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+            z-index: 1001;
+        }
+
+        #modalAg .agendator-overlay.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 1199px) {
+            #modalAg .agendator-overlay {
+                bottom: 114px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1199px) {
+            #modalAg .agendator-overlay {
+                bottom: 90px;
+            }
         }
     </style>
 </head>
