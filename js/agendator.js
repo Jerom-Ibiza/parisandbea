@@ -57,7 +57,11 @@ btnStopAg.onclick = () => {
     if (talkingAg) { recAg.stop(); talkingAg = false; btnTalkAg.classList.remove('talking'); btnStopAg.style.display = 'none'; }
 };
 
-$('btnOpenAg').onclick = () => { modalAg.style.display = 'flex'; inpAg.focus(); resSearchAg.style.display = 'none'; };
+$('btnOpenAg').onclick = () => {
+    modalAg.style.display = 'flex';
+    inpSearchAg.focus();
+    resSearchAg.style.display = 'none';
+};
 btnCloseAg.onclick = () => { modalAg.style.display = 'none'; };
 modalAg.addEventListener('click', e => { if (e.target.id === 'modalAg') { modalAg.style.display = 'none'; resSearchAg.style.display = 'none'; } });
 

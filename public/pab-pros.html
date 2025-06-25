@@ -678,6 +678,9 @@
             <span class="material-icons">calendar_view_day</span>
             Agendas hoy
         </button>
+        <button class="btn" id="btnRefresh" type="button" title="Recargar página">
+            <span class="material-icons">refresh</span>
+        </button>
         <button class="btn" id="btnOpenAg" type="button">
             <span class="material-symbols-outlined">robot_2</span>
             Agendator
@@ -1131,6 +1134,10 @@
             talkBtn.classList.remove('listening');
             stopBtn.classList.remove('active');
             // …envía el audio…
+        });
+
+        document.getElementById('btnRefresh').addEventListener('click', () => {
+            location.reload();
         });
 
         document.getElementById('btnClearSearch').addEventListener('click', () => {
