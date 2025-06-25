@@ -1056,7 +1056,12 @@
       <div class="modal-fields-2col">
         <div class="modal-field"><span class="material-icons">title</span><input id="swal-title" class="swal2-input" placeholder="Título" value="${prefill.title || ''}"></div>
         <div class="modal-field"><span class="material-icons">description</span><textarea id="swal-desc" class="swal2-textarea" placeholder="Descripción">${prefill.descripcion || ''}</textarea></div>
-        <div class="modal-field"><span class="material-icons">person</span><input id="swal-persona" class="swal2-input" placeholder="Nombre" value="${prefill.persona || ''}"></div>
+        <div class="modal-field"><span class="material-icons">person</span>
+          <div class="search-wrapper">
+            <input id="swal-persona" class="swal2-input" placeholder="Nombre" autocomplete="off" value="${prefill.persona || ''}">
+            <div id="swal-results" class="search-results" style="display:none"></div>
+          </div>
+        </div>
         <div class="modal-field"><span class="material-icons">badge</span><input id="swal-idpac" class="swal2-input" placeholder="ID paciente (opcional)" value="${prefill.id_paciente || ''}"></div>
         <div class="modal-field"><span class="material-icons">schedule</span><input id="swal-start" class="swal2-input" placeholder="Inicio"></div>
         <div class="modal-field"><span class="material-icons">info</span><select id="swal-estado" class="swal2-select">
@@ -1090,6 +1095,31 @@
                     });
                     document.getElementById('swal-estado').value = prefill.estado || 'pendiente';
                     document.getElementById('swal-notif').value = prefill.notificacion || 'ninguna';
+                    const inp = document.getElementById('swal-persona');
+                    const inpId = document.getElementById('swal-idpac');
+                    const results = document.getElementById('swal-results');
+                    let timer;
+                    inp.addEventListener('input', () => {
+                        inpId.value = '';
+                        clearTimeout(timer);
+                        const q = inp.value.trim();
+                        if (!q) { results.style.display = 'none'; return; }
+                        timer = setTimeout(async () => {
+                            try {
+                                const r = await fetch('/api/voice/suggest?q=' + encodeURIComponent(q));
+                                const arr = (await r.json()).slice(0, 5);
+                                results.innerHTML = arr.map(p => `<div data-id="${p.id_paciente}">${p.nombre} ${p.apellidos} ${p.dni ? '(' + p.dni + ')' : ''}</div>`).join('');
+                                results.style.display = arr.length ? 'block' : 'none';
+                            } catch { }
+                        }, 300);
+                    });
+                    results.addEventListener('click', e => {
+                        const div = e.target.closest('div[data-id]');
+                        if (!div) return;
+                        inp.value = div.textContent;
+                        inpId.value = div.dataset.id;
+                        results.style.display = 'none';
+                    });
                 },
                 preConfirm: () => {
                     const parse = v => v ? new Date(v).toISOString() : null;
