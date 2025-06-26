@@ -18,8 +18,6 @@ get_profesionales
 get_active_products | get_product_by_id
 # ÚLTIMOS CHATS
 get_last_chats
-# CITAS
-add_cita | search_citas (usa id_paciente si citas con el paciente en sesión)
 # ENVÍO MAIL
 send_mail (subject + id_paciente o email)
 # ARCHIVOS CORPORATIVOS
@@ -46,15 +44,6 @@ file_search             (OpenAI)
 • **Si el pro te dice SOLO el nombre de un músculo o grupo muscular**: usa list_files(muscles) para buscar en este directorio, imágenes relacionadas con ese músculo o grupo muscular:
 - Después entrega las URL completas al pro, SIN DECIR NADA, SOLO LAS URL:
 --> **Ejemplo: https://parisandbea.es/images/muscles/ + (nombre archivo: muscle-pelvico.png) = https://parisandbea.es/images/muscles/muscle-pelvico.png**
-
-• Citas:
-- Las citas son siempre de una hora completa si el 'pro' es osteópata
-- Las citas de los 'pro' si son fisioterapeutas pueden ser de 45 minutos, 30 minutos o 1 hora
-- **Llama a get_datetime antes de agendar una cita para poder calcular la hora de la cita**
-- **Llama a get_datetime antes de buscar citas para saber qué día es hoy**
-- Completa el campo descripción de la cita
-- IMPORTANTE: Si el pro te pide agendar una cita con el paciente actual, envía el id del paciente en el campo id_paciente al llamar a add_cita y deja el campo 'persona' vacío:
-Ejemplo: PAC-00023 --> 23
 
 • PDF largo  
   – Si el pro pide “extenso / completo / +2 páginas / muy detallado”,  
