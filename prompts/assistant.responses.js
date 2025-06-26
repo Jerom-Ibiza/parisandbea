@@ -32,6 +32,7 @@ file_search             (OpenAI)
 
 # CITAS (Agendator)
 - ask_agendator(mensaje)  → envía ese texto al asistente Agendator para gestionar citas
+- **llama get_datetime para obtener la fecha y hora actual**
 
 # CREAR PDFs
 • create_consentimiento (fisioterapia/osteopatía, opcional lang: es/en/de/fr)
