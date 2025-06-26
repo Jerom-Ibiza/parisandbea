@@ -22,7 +22,8 @@ router.get('/info', async (req, res) => {
     /* ---------- paciente + historial ---------- */
     const [pRows] = await pool.query(
       `SELECT id_paciente, fecha_nacimiento, fecha_registro,
-              nombre, apellidos, telefono, email, genero, dni, direccion, lopd_estado
+              nombre, apellidos, telefono, email, genero, dni, direccion,
+              lopd_estado, fisio_estado
        FROM pacientes
        WHERE id_paciente = ? LIMIT 1`,
       [patient.id_paciente]
