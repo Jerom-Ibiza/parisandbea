@@ -428,6 +428,64 @@ module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
       }
     });
 
+  if (LOCAL_FUNCTIONS.delete_citas)
+    tools.push({
+      type: 'function',
+      name: 'delete_citas',
+      description: 'Elimina varias citas por criterios de búsqueda',
+      parameters: {
+        type: 'object',
+        properties: {
+          id_profesional: { type: 'integer' },
+          id_paciente: { type: 'integer' },
+          id_servicio: { type: 'integer' },
+          estado: { type: 'string', enum: ['pendiente', 'confirmada', 'cancelada'] },
+          startDate: { type: 'string', format: 'date-time' },
+          endDate: { type: 'string', format: 'date-time' },
+          all: { type: 'boolean' }
+        },
+        additionalProperties: false
+      }
+    });
+
+  if (LOCAL_FUNCTIONS.update_citas)
+    tools.push({
+      type: 'function',
+      name: 'update_citas',
+      description: 'Edita varias citas aplicando los mismos cambios',
+      parameters: {
+        type: 'object',
+        required: ['updates'],
+        properties: {
+          id_profesional: { type: 'integer' },
+          id_paciente: { type: 'integer' },
+          id_servicio: { type: 'integer' },
+          estado: { type: 'string', enum: ['pendiente', 'confirmada', 'cancelada'] },
+          startDate: { type: 'string', format: 'date-time' },
+          endDate: { type: 'string', format: 'date-time' },
+          all: { type: 'boolean' },
+          updates: {
+            type: 'object',
+            properties: {
+              titulo: { type: 'string' },
+              descripcion: { type: 'string' },
+              fecha_hora_inicio: { type: 'string', format: 'date-time' },
+              fecha_hora_fin: { type: 'string', format: 'date-time' },
+              persona: { type: 'string' },
+              id_paciente: { type: 'integer' },
+              estado: { type: 'string', enum: ['pendiente', 'confirmada', 'cancelada'] },
+              ubicacion: { type: 'string' },
+              notificacion: { type: 'string' },
+              id_profesional: { type: 'integer' },
+              id_servicio: { type: 'integer' }
+            },
+            additionalProperties: false
+          }
+        },
+        additionalProperties: false
+      }
+    });
+
   /* ---------- BORRADOR PDF CHUNKED ---------- */
   if (LOCAL_FUNCTIONS.start_document)
     tools.push({

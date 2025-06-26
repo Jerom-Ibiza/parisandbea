@@ -9,7 +9,7 @@ get_prof_preferences | get_prof_info | get_datetime
 # SERVICIOS
 get_servicios
 # CITAS
-add_cita | search_citas | update_cita | delete_cita
+add_cita | search_citas | update_cita | delete_cita | delete_citas | update_citas
 # EMAIL
 send_mail
 

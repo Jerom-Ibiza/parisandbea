@@ -233,6 +233,117 @@ const LOCAL_FUNCTIONS = {
         const [res] = await pool.query('DELETE FROM citas WHERE id_cita = ?', [id_cita]);
         if (!res.affectedRows) throw new Error('Cita no encontrada');
         return { ok: true, message: 'Operación realizada correctamente' };
+    },
+
+    async delete_citas(args = {}, req) {
+        const { id_profesional, id_paciente, id_servicio, estado, startDate, endDate, all } = args;
+        const allFlag = all === '1' || all === true || all === 'true';
+        const profId = allFlag ? null : id_profesional || req.session.user.id_profesional;
+        let query = 'DELETE FROM citas WHERE 1 = 1';
+        const params = [];
+        if (profId) { query += ' AND id_profesional = ?'; params.push(profId); }
+        if (id_paciente) { query += ' AND id_paciente = ?'; params.push(id_paciente); }
+        if (id_servicio) { query += ' AND id_servicio = ?'; params.push(id_servicio); }
+        if (estado) { query += ' AND estado = ?'; params.push(estado); }
+        if (startDate && endDate) { query += ' AND fecha_hora_inicio BETWEEN ? AND ?'; params.push(startDate, endDate); }
+        else if (startDate) { query += ' AND fecha_hora_inicio >= ?'; params.push(startDate); }
+        else if (endDate) { query += ' AND fecha_hora_inicio <= ?'; params.push(endDate); }
+        const [res] = await pool.query(query, params);
+        return { ok: true, removed: res.affectedRows, message: 'Operación realizada correctamente' };
+    },
+
+    async update_citas(args = {}, req) {
+        const { updates = {}, ...filters } = args;
+        const {
+            id_profesional,
+            id_paciente,
+            id_servicio,
+            estado,
+            startDate,
+            endDate,
+            all
+        } = filters;
+
+        const allFlag = all === '1' || all === true || all === 'true';
+        const profIdFilter = allFlag ? null : id_profesional || req.session.user.id_profesional;
+
+        let query = 'SELECT * FROM citas WHERE 1 = 1';
+        const params = [];
+        if (profIdFilter) { query += ' AND id_profesional = ?'; params.push(profIdFilter); }
+        if (id_paciente) { query += ' AND id_paciente = ?'; params.push(id_paciente); }
+        if (id_servicio) { query += ' AND id_servicio = ?'; params.push(id_servicio); }
+        if (estado) { query += ' AND estado = ?'; params.push(estado); }
+        if (startDate && endDate) { query += ' AND fecha_hora_inicio BETWEEN ? AND ?'; params.push(startDate, endDate); }
+        else if (startDate) { query += ' AND fecha_hora_inicio >= ?'; params.push(startDate); }
+        else if (endDate) { query += ' AND fecha_hora_inicio <= ?'; params.push(endDate); }
+
+        const [rows] = await pool.query(query, params);
+        let updated = 0;
+        for (const c of rows) {
+            const body = { ...updates };
+            const inicio = body.fecha_hora_inicio ?? c.fecha_hora_inicio;
+            const fin = body.fecha_hora_fin ?? c.fecha_hora_fin;
+            const profId = body.id_profesional ?? c.id_profesional;
+
+            if (new Date(fin) <= new Date(inicio)) continue;
+
+            const [overlap] = await pool.query(
+                `SELECT COUNT(*) AS n FROM citas
+                  WHERE id_profesional = ? AND estado <> 'cancelada'
+                    AND ? < fecha_hora_fin AND ? > fecha_hora_inicio AND id_cita <> ?`,
+                [profId, inicio, fin, c.id_cita]
+            );
+            if (overlap[0].n) continue;
+
+            let personaFinal = body.persona !== undefined ? body.persona : c.persona;
+            const idPacienteFinal = body.id_paciente !== undefined ? body.id_paciente : c.id_paciente;
+
+            if (!personaFinal && idPacienteFinal) {
+                const [p] = await pool.query(
+                    'SELECT nombre, apellidos FROM pacientes WHERE id_paciente = ?',
+                    [idPacienteFinal]
+                );
+                if (p.length) personaFinal = `${p[0].nombre} ${p[0].apellidos}`;
+            }
+
+            const tituloBase = body.titulo ?? c.titulo;
+            let tituloFinal = tituloBase;
+            if (personaFinal && !tituloBase.startsWith(personaFinal)) {
+                tituloFinal = `${personaFinal} - ${tituloBase}`;
+            }
+
+            await pool.query(
+                `UPDATE citas SET
+                     titulo            = ?,
+                     descripcion       = ?,
+                     fecha_hora_inicio = ?,
+                     fecha_hora_fin    = ?,
+                     persona           = ?,
+                     id_paciente       = ?,
+                     estado            = ?,
+                     ubicacion         = ?,
+                     notificacion      = ?,
+                     id_profesional    = ?,
+                     id_servicio       = ?
+                   WHERE id_cita = ?`,
+                [
+                    tituloFinal,
+                    body.descripcion ?? c.descripcion,
+                    inicio,
+                    fin,
+                    personaFinal,
+                    idPacienteFinal,
+                    body.estado ?? c.estado,
+                    body.ubicacion ?? c.ubicacion,
+                    body.notificacion ?? c.notificacion,
+                    profId,
+                    body.id_servicio ?? c.id_servicio,
+                    c.id_cita
+                ]
+            );
+            updated++;
+        }
+        return { ok: true, updated, message: 'Operación realizada correctamente' };
     }
 };
 
