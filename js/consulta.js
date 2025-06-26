@@ -653,10 +653,12 @@ async function loadSession() {
         /* ---- construir HTML de detalles ---- */
         let html = '', p = data.patient, h = data.historial;
         html += title('account_circle', 'Datos personales');
+        const lopdStatus = p.lopd_estado === 'firmado';
+        const lopdBtn = `<button id="btnLopdDoc" class="lopd-send-btn">${lopdStatus ? 'Reenviar' : 'Enviar'}</button>`;
         html += `<dl>
           ${row('<span class="material-icons-outlined">login</span> Alta', fDate(p.fecha_registro))}
           ${row('<span class="material-symbols-outlined">fingerprint</span> ID', p.id_paciente)}
-          ${row('<span class="material-symbols-outlined">shield_person</span> LOPD', p.lopd_estado === 'firmado' ? '✅' : '❌')}
+          ${row('<span class="material-symbols-outlined">shield_person</span> LOPD', (lopdStatus ? '✅' : '❌') + ' ' + lopdBtn)}
           ${row('<span class="material-symbols-outlined">early_on</span> Nacim.', fDate(p.fecha_nacimiento))}
           ${row('<span class="material-symbols-outlined">transgender</span> Género', p.genero)}
           ${row('<span class="material-symbols-outlined">id_card</span> DNI', p.dni)}
@@ -1175,6 +1177,13 @@ $id('btnSuelo').onclick = () => {
     sendText('Crea documento para esta pacienta para recibir tratamiento de Suelo Pélvico');
     btnSuelo.style.display = 'none';
 };
+
+/* ---------- DOCUMENTO LOPD ---------- */
+document.addEventListener('click', e => {
+    if (e.target.id === 'btnLopdDoc') {
+        sendText('Crea documento para este paciente LOPD');
+    }
+});
 
 /* ---------- RECARGAR LA PÁGINA ---------- */
 $id('btnReload').onclick = () => {

@@ -291,7 +291,7 @@
                     pattern="\d{2}[-/]\d{2}[-/]\d{4}" autocomplete="bday" inputmode="numeric">
 
                 <label id="lblGenero" for="genero">Género</label>
-                <select id="genero" name="genero">
+                <select id="genero" name="genero" required>
                     <option id="optGeneroNull" value="">-- selecciona --</option>
                     <option id="optGeneroF">Femenino</option>
                     <option id="optGeneroM">Masculino</option>
@@ -306,7 +306,7 @@
                 <div style="display:flex;gap:8px">
                     <div style="flex:0 0 110px">
                         <label id="lblCp" for="cp">Código Postal*</label>
-                        <input id="cp" name="cp" pattern="\d{4,5}" inputmode="numeric" required style="width:100%">
+                        <input id="cp" name="cp" pattern="\d{4,5}" placeholder="07800" required style="width:100%">
                     </div>
                     <div style="flex:1">
                         <label id="lblDireccion" for="direccion">Dirección*</label>

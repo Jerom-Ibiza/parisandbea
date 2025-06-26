@@ -1121,7 +1121,7 @@
                             try {
                                 const r = await fetch('/api/voice/suggest?q=' + encodeURIComponent(q));
                                 const arr = (await r.json()).slice(0, 5);
-                                results.innerHTML = arr.map(p => `<div data-id="${p.id_paciente}">${p.nombre} ${p.apellidos} ${p.dni ? '(' + p.dni + ')' : ''}</div>`).join('');
+                                results.innerHTML = arr.map(p => `<div data-id="${p.id_paciente}" data-name="${p.nombre} ${p.apellidos}">${p.nombre} ${p.apellidos} ${p.dni ? '(' + p.dni + ')' : ''}</div>`).join('');
                                 results.style.display = arr.length ? 'block' : 'none';
                             } catch { }
                         }, 300);
@@ -1129,7 +1129,7 @@
                     results.addEventListener('click', e => {
                         const div = e.target.closest('div[data-id]');
                         if (!div) return;
-                        inp.value = div.textContent;
+                        inp.value = div.dataset.name;
                         inpId.value = div.dataset.id;
                         results.style.display = 'none';
                     });
