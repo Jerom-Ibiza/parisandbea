@@ -677,6 +677,14 @@ const LOCAL_FUNCTIONS = {
       );
     });
   },
+
+  /* ────────── CONSULTAR AGENDATOR ────────── */
+  async ask_agendator({ message }, req) {
+    if (!message) throw new Error('Falta "message"');
+    const ask = require('../utils/askAgendator');
+    const reply = await ask(message, req);
+    return { ok: true, reply };
+  },
 };
 
 module.exports = { LOCAL_FUNCTIONS, loadSessionInfo };

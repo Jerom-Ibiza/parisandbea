@@ -522,5 +522,18 @@ module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
       }
     });
 
+  if (LOCAL_FUNCTIONS.ask_agendator)
+    tools.push({
+      type: 'function',
+      name: 'ask_agendator',
+      description: 'Envía un mensaje al asistente Agendator para gestionar las citas',
+      parameters: {
+        type: 'object',
+        required: ['message'],
+        properties: { message: { type: 'string' } },
+        additionalProperties: false
+      }
+    });
+
   return tools;
 };

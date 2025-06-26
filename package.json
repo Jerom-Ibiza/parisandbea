@@ -18,7 +18,7 @@
     "node-cron": "^3.0.3",
     "nodemailer": "^6.10.0",
     "npm": "^11.1.0",
-    "openai": "^4.98.0",
+    "openai": "^5.7.0",
     "pdfkit": "^0.16.0",
     "sharp": "^0.34.1",
     "signaturit-sdk": "^1.2.1",

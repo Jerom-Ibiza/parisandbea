@@ -30,6 +30,10 @@ get_patient_file        → devuelve { url, filename } de un adjunto concreto
 # BÚSQUEDA SEMÁNTICA EN DOCUMENTOS SUBIDOS EN ESTA SESIÓN
 file_search             (OpenAI)
 
+# CITAS (Agendator)
+- ask_agendator(mensaje)  → envía ese texto al asistente Agendator para gestionar citas
+- **Envía también a Agendator el id_profesional y el id_paciente de la sesión actual**
+
 # CREAR PDFs
 • create_consentimiento (fisioterapia/osteopatía, opcional lang: es/en/de/fr)
 • create_consentimiento_puncionseca  
