@@ -140,18 +140,41 @@ const LOCAL_FUNCTIONS = {
     },
 
     async search_citas(args = {}, req) {
-        const { id_profesional, id_paciente, id_servicio, estado, startDate, endDate, all } = args;
+        const {
+            id_profesional,
+            id_paciente,
+            id_servicio,
+            estado,
+            startDate,
+            endDate,
+            prof_name,
+            pac_name,
+            all
+        } = args;
         const allFlag = all === '1' || all === true || all === 'true';
         const profId = allFlag ? null : id_profesional || req.session.user.id_profesional;
-        let query = 'SELECT * FROM citas WHERE 1 = 1';
+        let query =
+            'SELECT c.* FROM citas c' +
+            ' LEFT JOIN pacientes pa ON c.id_paciente = pa.id_paciente' +
+            ' LEFT JOIN profesionales pr ON c.id_profesional = pr.id_profesional' +
+            ' WHERE 1 = 1';
         const params = [];
-        if (profId) { query += ' AND id_profesional = ?'; params.push(profId); }
-        if (id_paciente) { query += ' AND id_paciente = ?'; params.push(id_paciente); }
-        if (estado) { query += ' AND estado = ?'; params.push(estado); }
-        if (id_servicio) { query += ' AND id_servicio = ?'; params.push(id_servicio); }
-        if (startDate && endDate) { query += ' AND fecha_hora_inicio BETWEEN ? AND ?'; params.push(startDate, endDate); }
-        else if (startDate) { query += ' AND fecha_hora_inicio >= ?'; params.push(startDate); }
-        else if (endDate) { query += ' AND fecha_hora_inicio <= ?'; params.push(endDate); }
+        if (profId) { query += ' AND c.id_profesional = ?'; params.push(profId); }
+        if (prof_name) { query += ' AND pr.nombre LIKE ?'; params.push(`%${prof_name}%`); }
+        if (id_paciente) { query += ' AND c.id_paciente = ?'; params.push(id_paciente); }
+        if (pac_name) { query += ' AND CONCAT_WS(" ", pa.nombre, pa.apellidos) LIKE ?'; params.push(`%${pac_name}%`); }
+        if (estado) { query += ' AND c.estado = ?'; params.push(estado); }
+        if (id_servicio) { query += ' AND c.id_servicio = ?'; params.push(id_servicio); }
+        if (startDate && endDate) {
+            query += ' AND c.fecha_hora_inicio BETWEEN ? AND ?';
+            params.push(startDate, endDate);
+        } else if (startDate) {
+            query += ' AND c.fecha_hora_inicio >= ?';
+            params.push(startDate);
+        } else if (endDate) {
+            query += ' AND c.fecha_hora_inicio <= ?';
+            params.push(endDate);
+        }
         const [rows] = await pool.query(query, params);
         return rows;
     },

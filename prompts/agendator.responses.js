@@ -10,6 +10,7 @@ get_prof_preferences | get_prof_info | get_datetime
 get_servicios
 # CITAS
 add_cita | search_citas | update_cita | delete_cita | delete_citas | update_citas
+search_citas filtra por ids o por los nombres de pacientes y profesionales
 # EMAIL
 send_mail
 

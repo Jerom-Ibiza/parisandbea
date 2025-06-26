@@ -71,13 +71,13 @@
     .chip {
         flex: 1;
         padding: 8px 4px;
-        border: 2px solid #aed3c1;
-        border-radius: 12px;
+        border: transparent;
+        border-radius: 25px;
         background: #fff;
         font-size: 13px;
         font-weight: 600;
         cursor: pointer;
-        transition: .15s
+        transition: .15s;
     }
 
     .chip.active {
@@ -110,8 +110,7 @@
         border: none;
         border-radius: 50%;
         cursor: pointer;
-        transition: background .2s, transform .15s;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, .15)
+        transition: background .2s, transform .15s
     }
 
     .btn-round {
@@ -763,7 +762,7 @@
     }
 
     .chat-panel {
-        border-bottom-left-radius: 15px;
+        border-bottom-left-radius: 30px;
     }
 
     .material-symbols-outlined {
@@ -773,7 +772,7 @@
     /* Estilo fijo para el contenedor de datos */
     #mainData {
         font-size: 20px;
-        line-height: 1.8;
+        line-height: 2.8;
     }
 
     /* ---------- asistente “escuchando” ---------- */
@@ -815,7 +814,7 @@
 
     .info-panel {
         padding: 1px 10px;
-        border-bottom-right-radius: 15px;
+        border-bottom-right-radius: 30px;
     }
 
     /* ───────────────────  MEDIA QUERY DESKTOP ≥ 1200px ───────────── */
@@ -919,4 +918,15 @@
         .info-panel dd {
             font-size: 22px;
         }
+    }
+
+    .botonesChat {
+        margin: 15px;
+        padding: 14px 22px;
+        border: none;
+        border-radius: 25px;
+        background: #aed3c1;
+        color: #fff;
+        cursor: pointer;
+        font-size: 18px;
     }
