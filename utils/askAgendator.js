@@ -46,7 +46,9 @@ module.exports = async function askAgendator(message, req, opts = {}) {
         tool_choice: 'auto'
     });
 
-    for (let step = 0; step < 4; step++) {
+    /* hasta 8 pasos como en el stream para que ejecute
+       todas las llamadas a funciones necesarias */
+    for (let step = 0; step < 8; step++) {
         const calls = (rsp.output || []).filter(o => o.type === 'function_call');
         if (!calls.length) break;
         for (const call of calls) {
