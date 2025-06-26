@@ -134,6 +134,8 @@ exports.identifyPatient = [
 
       req.session.patient = pat;
       req.session.agendaHist = [];
+      req.session.respHistory = [];
+      req.session.agSelectedPatient = null;
       res.json({ found: true, redirect: '/consulta.html', paciente: pat });
 
     } catch (e) {
@@ -152,6 +154,8 @@ exports.identifyPatientByText = async (req, res) => {
     if (!pat) return res.json({ found: false });
     req.session.patient = pat;
     req.session.agendaHist = [];
+    req.session.respHistory = [];
+    req.session.agSelectedPatient = null;
     res.json({ found: true, redirect: '/consulta.html' });
   } catch (e) {
     logger.error(e);
@@ -201,6 +205,8 @@ exports.selectPatientById = async (req, res) => {
     if (!rows.length) return res.status(404).json({ error: 'Paciente no encontrado' });
     req.session.patient = rows[0];
     req.session.agendaHist = [];
+    req.session.respHistory = [];
+    req.session.agSelectedPatient = null;
     res.json({ redirect: '/consulta.html' });
   } catch (e) {
     logger.error(e);

@@ -1183,6 +1183,18 @@ document.addEventListener('click', e => {
     }
 });
 
+/* ---------- CITAS DE HOY ---------- */
+$id('btnCitasHoy').onclick = () => {
+    sendText('Muéstrame las citas que tengo hoy');
+    btnCitasHoy.style.display = 'none';
+};
+
+/* ---------- CITAS SEMANA ---------- */
+$id('btnCitasSemana').onclick = () => {
+    sendText('Muéstrame las citas que tengo esta semana');
+    btnCitasSemana.style.display = 'none';
+};
+
 /* ---------- RECARGAR LA PÁGINA ---------- */
 $id('btnReload').onclick = () => {
     location.reload(true);
