@@ -12,12 +12,29 @@ const LOCAL_FUNCTIONS = {
         return rows[0]?.preferencias || null;
     },
 
-    async get_prof_info(_a, req) {
-        const id = req.session.user.id_profesional;
+    async get_prof_info(args = {}, req) {
+        let { id_profesional, nombre } = args;
+
+        if (!id_profesional && nombre) {
+            const [rows] = await pool.query(
+                `SELECT id_profesional
+                     FROM profesionales
+                    WHERE nombre LIKE ?
+                    ORDER BY nombre
+                    LIMIT 1`,
+                [`%${nombre}%`]
+            );
+            id_profesional = rows[0]?.id_profesional || null;
+        }
+
+        const profId = id_profesional || req.session.user.id_profesional;
         const [rows] = await pool.query(
-            `SELECT nombre, telefono, mail, especialidad, num_colegiado, notas
-             FROM profesionales WHERE id_profesional = ? LIMIT 1`,
-            [id]
+            `SELECT id_profesional, nombre, telefono, mail,
+                    especialidad, num_colegiado, notas
+               FROM profesionales
+              WHERE id_profesional = ?
+              LIMIT 1`,
+            [profId]
         );
         return rows[0] || null;
     },

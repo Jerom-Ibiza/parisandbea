@@ -658,8 +658,8 @@ async function loadSession() {
         const fisioStatus = p.fisio_estado === 'firmado';
         const fisioBtn = `<button id="btnFisioDoc" class="lopd-send-btn">${fisioStatus ? 'Reenviar' : 'Enviar'}</button>`;
         html += `<dl>
-          ${row('<span class="material-icons-outlined">login</span> Alta', fDate(p.fecha_registro))}
           ${row('<span class="material-symbols-outlined">fingerprint</span> ID', p.id_paciente)}
+          ${row('<span class="material-icons-outlined">login</span> Alta', fDate(p.fecha_registro))}
           ${row('<span class="material-symbols-outlined">rheumatology</span> Ostio/Fisio', (fisioStatus ? '✅' : '❌') + ' ' + fisioBtn)}
           ${row('<span class="material-symbols-outlined">shield_person</span> LOPD', (lopdStatus ? '✅' : '❌') + ' ' + lopdBtn)}
           ${row('<span class="material-symbols-outlined">early_on</span> Nacim.', fDate(p.fecha_nacimiento))}
@@ -1302,7 +1302,7 @@ window.addEventListener('beforeunload', () => {
 });
 
 /* ─── Screensaver por inactividad ─── */
-const screensaverDelay = 120000; // 2 minutos
+const screensaverDelay = 180000; // 3 minutos
 const screensaver = document.getElementById('screensaver');
 const ssImages = [
     'images/wall01.jpg',

@@ -23,9 +23,17 @@ module.exports = (LOCAL_FUNCTIONS = {}, opts = {}) => {
 
   if (LOCAL_FUNCTIONS.get_prof_info)
     tools.push({
-      type: 'function', name: 'get_prof_info',
-      description: 'Datos básicos del profesional logueado',
-      parameters: noArgs
+      type: 'function',
+      name: 'get_prof_info',
+      description: 'Datos básicos de un profesional por ID o nombre (por defecto el logueado)',
+      parameters: {
+        type: 'object',
+        properties: {
+          id_profesional: { type: 'integer', description: 'ID del profesional' },
+          nombre: { type: 'string', description: 'Nombre del profesional' }
+        },
+        additionalProperties: false
+      }
     });
 
   if (LOCAL_FUNCTIONS.get_servicios)

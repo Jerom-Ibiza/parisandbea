@@ -257,8 +257,6 @@
     /* filas alternas en bloques de info */
     .info-panel dt:nth-of-type(odd),
     .info-panel dd:nth-of-type(odd) {
-        background: #f1f1f1;
-        padding: 15px;
         border-radius: 10px;
         text-align: justify;
     }
@@ -402,7 +400,7 @@
     /* botón de envío de LOPD en ficha */
     .lopd-send-btn {
         margin-left: 8px;
-        padding: 10px 15px;
+        padding: 4px 15px;
         background: #aed3c1;
         color: #fff;
         border: none;
@@ -772,7 +770,7 @@
     /* Estilo fijo para el contenedor de datos */
     #mainData {
         font-size: 20px;
-        line-height: 2.8;
+        line-height: 1.5;
     }
 
     /* ---------- asistente “escuchando” ---------- */
@@ -833,7 +831,7 @@
 
         .info-panel dt {
             font-size: 22px;
-            padding: 2px;
+            padding: 0px;
             padding-left: 10px;
         }
 
@@ -857,39 +855,6 @@
             margin: auto;
             border-radius: 5px;
         }
-    }
-
-    /* ───────────────────  MEDIA QUERY DESKTOP ≥ 1200px ───────────── */
-    @media (max-width:768px) {
-
-        #mainData,
-        .feedback {
-            font-size: 17px;
-        }
-
-        .info-panel dt {
-            font-size: 15px;
-            width: 135px;
-            line-height: 1.4;
-        }
-
-        .info-panel {
-            padding: 1px 10px;
-            line-height: 1.4;
-        }
-
-        .info-panel dd {
-            margin: 0 0 6px 0px;
-        }
-
-        #modalGuide .panel Specificity: (1, 1, 0) {
-            width: 100%;
-        }
-
-        .material-symbols-outlined {
-            vertical-align: bottom;
-        }
-
     }
 
     /* ───────────────────  SCREENSAVER ───────────────────────── */
@@ -929,4 +894,63 @@
         color: #fff;
         cursor: pointer;
         font-size: 18px;
+
+
+    }
+
+    .info-panel dt,
+    .info-panel dd:nth-of-type(odd),
+    .info-panel dd {
+        padding: 10px;
+        font-size: 22px;
+    }
+
+    @media (max-width:768px) {
+
+        #mainData,
+        .feedback {
+            font-size: 17px;
+        }
+
+        .info-panel dt {
+            font-size: 15px;
+            width: 135px;
+            line-height: 1.4;
+        }
+
+        .info-panel {
+            padding: 1px 10px;
+            line-height: 1.4;
+        }
+
+        .info-panel dd {
+            margin: 0 0 6px 0px;
+        }
+
+        #modalGuide .panel Specificity: (1, 1, 0) {
+            width: 100%;
+        }
+
+        .material-symbols-outlined {
+            vertical-align: bottom;
+        }
+
+        .botonesChat {
+            margin: 5px;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 15px;
+        }
+
+        #btnHome {
+            display: none;
+        }
+
+        .info-panel dt,
+        .info-panel dd:nth-of-type(odd),
+        .info-panel dd {
+            padding: 10px;
+            font-size: 16px;
+        }
+
     }
