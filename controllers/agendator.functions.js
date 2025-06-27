@@ -135,6 +135,15 @@ const LOCAL_FUNCTIONS = {
             [profId, fecha_hora_inicio, fecha_hora_fin]
         );
         if (overlap[0].n) throw new Error('El profesional ya tiene otra cita en ese horario');
+        const [roomCount] = await pool.query(
+            `SELECT COUNT(*) AS n
+               FROM citas
+              WHERE fecha_hora_inicio = ?
+                AND estado <> 'cancelada'`,
+            [fecha_hora_inicio]
+        );
+        if (roomCount[0].n >= 3)
+            throw new Error('No se pueden agendar más de 3 citas en ese horario');
         const [res] = await pool.query(
             `INSERT INTO citas (titulo, descripcion, fecha_hora_inicio, fecha_hora_fin,
         persona, id_paciente, estado, ubicacion, notificacion, id_profesional, id_servicio)
@@ -214,6 +223,17 @@ const LOCAL_FUNCTIONS = {
             [profId, inicio, fin, id_cita]
         );
         if (overlap[0].n) throw new Error('El profesional ya tiene otra cita en ese horario');
+
+        const [roomCount] = await pool.query(
+            `SELECT COUNT(*) AS n
+               FROM citas
+              WHERE fecha_hora_inicio = ?
+                AND estado <> 'cancelada'
+                AND id_cita <> ?`,
+            [inicio, id_cita]
+        );
+        if (roomCount[0].n >= 3)
+            throw new Error('No se pueden agendar más de 3 citas en ese horario');
 
         let personaFinal =
             body.persona !== undefined ? body.persona : c.persona;
@@ -334,6 +354,16 @@ const LOCAL_FUNCTIONS = {
                 [profId, inicio, fin, c.id_cita]
             );
             if (overlap[0].n) continue;
+
+            const [roomCount] = await pool.query(
+                `SELECT COUNT(*) AS n
+                   FROM citas
+                  WHERE fecha_hora_inicio = ?
+                    AND estado <> 'cancelada'
+                    AND id_cita <> ?`,
+                [inicio, c.id_cita]
+            );
+            if (roomCount[0].n >= 3) continue;
 
             let personaFinal = body.persona !== undefined ? body.persona : c.persona;
             const idPacienteFinal = body.id_paciente !== undefined ? body.id_paciente : c.id_paciente;
