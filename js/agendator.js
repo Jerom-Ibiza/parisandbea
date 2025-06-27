@@ -8,6 +8,8 @@ const btnStopAg = $('btnAgStop');
 const btnCloseAg = $('btnAgClose');
 const inpSearchAg = $('agSearch');
 const resSearchAg = $('agResults');
+const btnAgCitasHoy = $('btnAgCitasHoy');
+const btnAgCitasSemana = $('btnAgCitasSemana');
 
 let selectedPatient = null;
 
@@ -245,4 +247,14 @@ btnAgTalk.onclick = async () => {
         btnStopAg.style.display = 'none';
         hideAgendatorImg();
     }
+};
+
+btnAgCitasHoy.onclick = () => {
+    sendText('Muéstrame las citas que tengo hoy');
+    btnAgCitasHoy.style.display = 'none';
+};
+
+btnAgCitasSemana.onclick = () => {
+    sendText('Muéstrame las citas que tengo esta semana');
+    btnAgCitasSemana.style.display = 'none';
 };

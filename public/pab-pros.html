@@ -370,7 +370,7 @@
             /* entra en pantalla */
             overflow-y: auto;
             border: solid 2px #aed3c1;
-            border-radius: 15px;
+            border-radius: 35px;
         }
 
         /* ============================= */
@@ -555,7 +555,7 @@
             padding: 12px 40px 12px 12px;
             /* espacio para el botón */
             border: 2px solid var(--accent);
-            border-radius: 15px;
+            border-radius: 35px;
             font-size: 1rem;
             transition: border-color .2s, box-shadow .2s;
         }
@@ -830,7 +830,16 @@
             style="background:#fff;padding:20px;border-radius:14px;width:95%;display:flex;flex-direction:column;gap:14px;pointer-events:auto;position:relative;">
             <h2><span class="material-symbols-outlined" style="font-size: 32px;">robot_2</span> Agendator</h2>
             <button id="btnAgClose" style="position:absolute;top:6px;right:6px;z-index:2; color: #5b5b5b">✖</button>
-            <div id="agLog" class="chat-panel" style="max-height:300px;overflow:auto;flex:1;width:100%;"></div>
+            <div id="agLog" class="chat-panel" style="max-height:300px;overflow:auto;flex:1;width:100%;">
+                <div style="display:flex;flex-wrap:wrap;border-radius:30px; box-shadow: 0 3px 8px rgba(0,0,0,.1);">
+                    <button id="btnAgCitasHoy" class="botonesChat" title="Citas de hoy">
+                        <span class="material-symbols-outlined">event</span> Citas hoy
+                    </button>
+                    <button id="btnAgCitasSemana" class="botonesChat" title="Citas semana">
+                        <span class="material-symbols-outlined">event</span> Citas semana
+                    </button>
+                </div>
+            </div>
             <div class="manual-box" style="gap:6px;align-items:center;">
                 <!-- HTML: envuelve tu input y añade el botón clear -->
                 <div class="search-wrapper">
@@ -842,7 +851,7 @@
                     style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ccc;border-radius:8px;z-index:1001;display:none;">
                 </div>
                 <textarea id="agInput" placeholder="Escribe…"
-                    style="width:100%;min-height:60px;padding:8px;border:2px solid #aed3c1;border-radius:15px;"></textarea>
+                    style="width:100%;min-height:60px;padding:15px;border:2px solid #aed3c1;border-radius:35px;"></textarea>
             </div>
             <div style="display:flex;gap:10px;justify-content:flex-end;align-items:center;">
                 <button id="btnAgStop" class="btn-round" style="display:none">Cancel</button>
