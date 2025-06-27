@@ -43,6 +43,19 @@ exports.chatStream = async (req, res) => {
         const history = req.session.agendaHist || [];
         history.push({ role: 'user', content: [{ type: 'input_text', text: message }] });
 
+        try {
+            const now = await LOCAL_FUNCTIONS.get_datetime();
+            history.push({
+                role: 'user',
+                content: `Resultado de get_datetime: ${JSON.stringify(now)}`
+            });
+        } catch (e) {
+            history.push({
+                role: 'user',
+                content: `Resultado de get_datetime: ${JSON.stringify({ error: e.message })}`
+            });
+        }
+
         res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');

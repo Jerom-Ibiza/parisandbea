@@ -31,8 +31,8 @@ get_patient_file        → devuelve { url, filename } de un adjunto concreto
 file_search             (OpenAI)
 
 # CITAS (Agendator)
-- ask_agendator(mensaje)  → envía ese texto al asistente Agendator para gestionar citas
-- **llama OBLIGATORIAMENTE get_datetime para obtener la fecha y hora actual**
+1. **llama a get_datetime para obtener la fecha y hora actual** --> MUY IMPORTANTE!
+2. Después de llamar a get_datetime para saber qué día es hoy: ask_agendator(mensaje)  → envía ese texto al asistente Agendator para gestionar citas
 
 # CREAR PDFs
 • create_consentimiento (fisioterapia/osteopatía, opcional lang: es/en/de/fr)

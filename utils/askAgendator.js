@@ -32,6 +32,19 @@ module.exports = async function askAgendator(message, req, opts = {}) {
     const history = req.session.agendaHist || [];
     history.push({ role: 'user', content: [{ type: 'input_text', text: message }] });
 
+    try {
+        const now = await LOCAL_FUNCTIONS.get_datetime();
+        history.push({
+            role: 'user',
+            content: `Resultado de get_datetime: ${JSON.stringify(now)}`
+        });
+    } catch (e) {
+        history.push({
+            role: 'user',
+            content: `Resultado de get_datetime: ${JSON.stringify({ error: e.message })}`
+        });
+    }
+
     const prof = req.session.user;
     let instructions = `${prompt}\nID_PROFESIONAL:${prof.id_profesional}`;
     if (prof.preferencias) instructions += `\nPREFERENCIAS_PRO:\n${prof.preferencias}`;
