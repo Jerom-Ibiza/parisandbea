@@ -1,6 +1,7 @@
 const $ = id => document.getElementById(id);
 const modalAg = $('modalAg');
 const logAg = $('agLog');
+const logAgMsgs = $('agMsgs');
 const inpAg = $('agInput');
 const btnSendAg = $('btnAgSend');
 const btnTalkAg = $('btnAgTalk');
@@ -135,7 +136,7 @@ async function sendText(msg) {
     msg = msg.trim();
     if (!msg) return;
     inpAg.value = '';
-    logAg.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${linkify(msg)}</div>`);
+    logAgMsgs.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${linkify(msg)}</div>`);
     logAg.scrollTop = logAg.scrollHeight;
     const opts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg, id_paciente: selectedPatient }), credentials: 'include' };
     const r = await fetch('/api/agendator/chat-stream', opts);
@@ -145,7 +146,7 @@ async function sendText(msg) {
     let full = '';
     const div = document.createElement('div');
     div.className = 'feedback msg-assist';
-    logAg.appendChild(div);
+    logAgMsgs.appendChild(div);
     logAg.scrollTop = logAg.scrollHeight;
     while (true) {
         const { value, done } = await reader.read();
@@ -182,7 +183,7 @@ btnAgTalk.onclick = async () => {
             if (manualCancelAg) {
                 manualCancelAg = false;
                 chunksAg = [];
-                logAg.insertAdjacentHTML('beforeend', '<div class="feedback error">❌ Pregunta cancelada</div>');
+                logAgMsgs.insertAdjacentHTML('beforeend', '<div class="feedback error">❌ Pregunta cancelada</div>');
                 hideAgendatorImg();
                 logAg.scrollTop = logAg.scrollHeight;
                 return;
@@ -212,10 +213,10 @@ btnAgTalk.onclick = async () => {
                         const ev = lines[0].slice(6).trim();
                         const data = (lines[1] || '').replace(/^data:/, '').trim();
                         if (ev === 'question') {
-                            logAg.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${linkify(data)}</div>`);
+                            logAgMsgs.insertAdjacentHTML('beforeend', `<div class="feedback msg-user">${linkify(data)}</div>`);
                             div = document.createElement('div');
                             div.className = 'feedback msg-assist';
-                            logAg.appendChild(div);
+                            logAgMsgs.appendChild(div);
                             logAg.scrollTop = logAg.scrollHeight;
                         } else if (ev === 'audio') {
                             playTTS(data);
@@ -226,7 +227,7 @@ btnAgTalk.onclick = async () => {
                         if (!div) {
                             div = document.createElement('div');
                             div.className = 'feedback msg-assist';
-                            logAg.appendChild(div);
+                            logAgMsgs.appendChild(div);
                         }
                         div.innerHTML = linkify(full);
                         logAg.scrollTop = logAg.scrollHeight;
