@@ -57,7 +57,7 @@ function buildTools(req, noSearch) {
    ------------------------------------------------------------------------- */
 exports.chatStream = async (req, res) => {
     try {
-        const { message, images = [], model = 'gpt-4.1-mini', noSearch } = req.body || {};
+        const { message, images = [], file_ids = [], model = 'gpt-4.1-mini', noSearch } = req.body || {};
         if (!message) return res.status(400).end('Falta "message"');
         // Descomenta estas líneas cuando pruebes ya con sesión válida
         if (!req.session.user || !req.session.patient)
@@ -91,7 +91,8 @@ exports.chatStream = async (req, res) => {
             instructions: prompt,
             input: sanitiseHistory(history),
             tools: buildTools(req, !!noSearch),
-            tool_choice: 'auto'
+            tool_choice: 'auto',
+            ...(file_ids.length ? { file_ids } : {})
         });
 
         for (let step = 0; step < 4; step++) {
@@ -121,7 +122,8 @@ exports.chatStream = async (req, res) => {
                 instructions: prompt,
                 input: sanitiseHistory(history),
                 tools: buildTools(req, !!noSearch),
-                tool_choice: 'auto'
+                tool_choice: 'auto',
+                ...(file_ids.length ? { file_ids } : {})
             });
             await sleep(180);
         }
@@ -134,7 +136,8 @@ exports.chatStream = async (req, res) => {
             instructions: prompt,
             input: sanitiseHistory(history),
             tool_choice: 'none',
-            stream: true
+            stream: true,
+            ...(file_ids.length ? { file_ids } : {})
         });
 
         let fullText = '';

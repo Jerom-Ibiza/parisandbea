@@ -78,6 +78,7 @@ const btnSendTxt = $id('btnAskSend');   // botón con el icono “send”
 let activeChatId = null;          // se rellenará al primer guardado
 let chatChanged = false;         // true cuando hay algo nuevo sin salvar
 window.sessionImages = [];
+window.sessionDocs = [];
 
 /* ================= CLICK GLOBAL (📌 / 🔍) ================= */
 document.addEventListener('click', async e => {
@@ -158,7 +159,8 @@ document.addEventListener('click', async e => {
         log.scrollTop = log.scrollHeight;
 
         // 3) ahora sí haz la pregunta al asistente
-        const bodyDoc = { message: userQ };
+        window.sessionDocs = [jj.file_id];
+        const bodyDoc = { message: userQ, file_ids: [jj.file_id] };
         if (useModelO3) await sendToAssistant(bodyDoc);
         else await sendToAssistantStream(bodyDoc);
 
@@ -196,10 +198,31 @@ document.addEventListener('click', async e => {
     const ext = url.split('.').pop().toLowerCase();
     const isImg = /\.(jpe?g|png|webp|gif|bmp)$/i.test(url);
 
-    const body = {
-        message: msg,
-        ...(isImg ? { images: [url] } : {})
-    };
+    let body = { message: msg };
+    if (isImg) {
+        body.images = [url];
+    } else {
+        const relPath = new URL(url).pathname.replace(/^\/+/, '');
+        try {
+            const rIng = await fetch('/api/assistant/files/ingest', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filepath: relPath }),
+                credentials: 'include'
+            });
+            const jIng = await safeJson(rIng);
+            if (!jIng.ok) throw new Error(jIng.error || 'Error preparando doc');
+            window.sessionDocs = [jIng.file_id];
+            body.file_ids = [jIng.file_id];
+        } catch (err) {
+            log.insertAdjacentHTML(
+                'beforeend',
+                `<div class="feedback error">${linkify(err.message)}</div>`
+            );
+            chatChanged = true;
+            log.scrollTop = log.scrollHeight;
+        }
+    }
     if (useModelO3) {
         body.model = 'o3';
         body.noSearch = true;
@@ -234,6 +257,10 @@ function buildAssistantBody(msg) {
     const body = { message: msg };
     if (window.sessionImages.length) {
         body.images = [...window.sessionImages];      // copia defensiva
+    }
+    if (window.sessionDocs.length) {
+        body.file_ids = [...window.sessionDocs];
+        window.sessionDocs = [];
     }
     if (useModelO3) {
         body.model = 'o3';

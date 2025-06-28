@@ -76,7 +76,7 @@ exports.handleVoiceStream = [
             safeUnlink(realPath);
             logger.info('[voice-stream] texto: ' + text.slice(0, 80) + '…');
 
-            const { model = 'gpt-4.1-mini', noSearch } = req.body || {};
+            const { model = 'gpt-4.1-mini', noSearch, file_ids = [] } = req.body || {};
             if (!req.session.user || !req.session.patient)
                 return res.status(403).end('Sin sesión válida');
 
@@ -103,7 +103,8 @@ exports.handleVoiceStream = [
                 instructions: prompt,
                 input: sanitiseHistory(history),
                 tools: buildTools(req, !!noSearch),
-                tool_choice: 'auto'
+                tool_choice: 'auto',
+                ...(file_ids.length ? { file_ids } : {})
             });
 
             for (let step = 0; step < 4; step++) {
@@ -133,7 +134,8 @@ exports.handleVoiceStream = [
                     instructions: prompt,
                     input: sanitiseHistory(history),
                     tools: buildTools(req, !!noSearch),
-                    tool_choice: 'auto'
+                    tool_choice: 'auto',
+                    ...(file_ids.length ? { file_ids } : {})
                 });
                 await sleep(180);
             }
@@ -144,7 +146,8 @@ exports.handleVoiceStream = [
                 instructions: prompt,
                 input: sanitiseHistory(history),
                 tool_choice: 'none',
-                stream: true
+                stream: true,
+                ...(file_ids.length ? { file_ids } : {})
             });
 
             let fullText = '';
