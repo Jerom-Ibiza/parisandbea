@@ -7,6 +7,7 @@ const mime = require('mime-types');           // ← npm i mime --save
 const pool = require('../database');   // ← faltaba
 const slugify = require('../utils/slugify');
 const logger = require('../logger');
+const extractText = require('../utils/extractText');
 
 const TMP = path.join(__dirname, '..', 'tmp');
 const openai = new OpenAI();
@@ -55,11 +56,26 @@ exports.registerFile = async (req, res) => {
     /* 5. si es documento → Files API + vector-store --------------------- */
     let fileId = null, vsId = null;
     if (!isImage) {
+      let uploadPath = abs;
+      let tmpTxt = null;
+      if (['.pdf', '.docx', '.xls', '.xlsx'].includes(ext)) {
+        try {
+          const text = await extractText(abs);
+          tmpTxt = abs + '.txt';
+          await fs.promises.writeFile(tmpTxt, text);
+          uploadPath = tmpTxt;
+        } catch (e) {
+          logger.error('[extractText] ' + e.message);
+        }
+      }
       const up = await openai.files.create({
-        file: fs.createReadStream(abs),
+        file: fs.createReadStream(uploadPath),
         purpose: 'assistants'
       });
       fileId = up.id;
+      if (tmpTxt) {
+        fs.unlink(tmpTxt, () => { });
+      }
 
       vsId = req.session.vectorStoreId;
       if (!vsId) {
@@ -175,10 +191,24 @@ exports.ingestAttachment = async (req, res) => {
       return res.status(404).json({ error: 'No existe el archivo' });
 
     // 2) sube a Files API
+    let uploadPath = abs;
+    let tmpTxt = null;
+    const ext = path.extname(abs).toLowerCase();
+    if (['.pdf', '.docx', '.xls', '.xlsx'].includes(ext)) {
+      try {
+        const text = await extractText(abs);
+        tmpTxt = abs + '.txt';
+        await fs.promises.writeFile(tmpTxt, text);
+        uploadPath = tmpTxt;
+      } catch (e) {
+        logger.error('[extractText] ' + e.message);
+      }
+    }
     const up = await openai.files.create({
-      file: fs.createReadStream(abs),
+      file: fs.createReadStream(uploadPath),
       purpose: 'assistants'
     });
+    if (tmpTxt) fs.unlink(tmpTxt, () => { });
 
     // 3) vector-store (uno por sesión)
     let vsId = req.session.vectorStoreId;
@@ -210,7 +240,21 @@ exports.ingestFile = async (req, res) => {
     if (!fs.existsSync(abs)) return res.status(404).json({ ok: false, error: 'No existe el archivo' });
 
     /* 1· subimos el archivo a la Files API (si no está ya) */
-    const fileUp = await openai.files.create({ file: fs.createReadStream(abs), purpose: 'assistants' });
+    let uploadPath = abs;
+    let tmpTxt = null;
+    const ext = path.extname(abs).toLowerCase();
+    if (['.pdf', '.docx', '.xls', '.xlsx'].includes(ext)) {
+      try {
+        const text = await extractText(abs);
+        tmpTxt = abs + '.txt';
+        await fs.promises.writeFile(tmpTxt, text);
+        uploadPath = tmpTxt;
+      } catch (e) {
+        logger.error('[extractText] ' + e.message);
+      }
+    }
+    const fileUp = await openai.files.create({ file: fs.createReadStream(uploadPath), purpose: 'assistants' });
+    if (tmpTxt) fs.unlink(tmpTxt, () => { });
 
     /* 2· creamos (o usamos) el vector-store de la sesión */
     const vsId = req.session.vectorStoreId || (await openai.vectorStores.create({ name: `vs_${Date.now()}` })).id;
