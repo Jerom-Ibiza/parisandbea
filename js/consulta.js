@@ -278,7 +278,7 @@ const linkify = txt => {
             const isImg = /\.(jpe?g|png|webp|gif|bmp|svg|heic)$/i.test(url);
             const isStored = /\/attachments_consulta\//i.test(url); // ya guardado
             const isTmp = /\/tmp\//i.test(url);
-            const showProbe = isTmp;                 // solo para archivos en tmp
+            const showProbe = isTmp || isStored;                 // solo para archivos en tmp
             const showPin = isTmp && !isImg;         // pin solo para tmp-PDF
             const iconProbe = showProbe ? `<span class="probe" data-url="${url}" title="Analizar">🔍</span>` : '';
             const iconResearch = showProbe ? `&nbsp;<span class="research" data-url="${url}" title="Análisis técnico">🔬</span>` : '';
