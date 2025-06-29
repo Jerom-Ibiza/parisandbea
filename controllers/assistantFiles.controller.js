@@ -193,10 +193,12 @@ exports.ingestAttachment = async (req, res) => {
     // 2) sube a Files API
     let uploadPath = abs;
     let tmpTxt = null;
+    let extractedText = null;
     const ext = path.extname(abs).toLowerCase();
     if (['.pdf', '.docx', '.xls', '.xlsx'].includes(ext)) {
       try {
         const text = await extractText(abs);
+        extractedText = text;
         tmpTxt = abs + '.txt';
         await fs.promises.writeFile(tmpTxt, text);
         uploadPath = tmpTxt;
@@ -223,7 +225,14 @@ exports.ingestAttachment = async (req, res) => {
     // 4) enlaza file → vector store
     await openai.vectorStores.files.create(vsId, { file_id: up.id });
 
-    res.json({ ok: true, file_id: up.id, vectorStoreId: vsId });
+    res.json({
+      ok: true,
+      file_id: up.id,
+      vectorStoreId: vsId,
+      text: extractedText
+        ? extractedText.slice(0, 20000)
+        : null
+    });
   } catch (err) {
     logger.error('[ingestAttachment] ' + err.message);
     res.status(500).json({ error: err.message });
@@ -242,10 +251,12 @@ exports.ingestFile = async (req, res) => {
     /* 1· subimos el archivo a la Files API (si no está ya) */
     let uploadPath = abs;
     let tmpTxt = null;
+    let extractedText = null;
     const ext = path.extname(abs).toLowerCase();
     if (['.pdf', '.docx', '.xls', '.xlsx'].includes(ext)) {
       try {
         const text = await extractText(abs);
+        extractedText = text;
         tmpTxt = abs + '.txt';
         await fs.promises.writeFile(tmpTxt, text);
         uploadPath = tmpTxt;
@@ -263,7 +274,13 @@ exports.ingestFile = async (req, res) => {
     /* 3· vinculamos el file al VS (idempotente) */
     await openai.vectorStores.files.create(vsId, { file_id: fileUp.id });
 
-    res.json({ ok: true, message: 'Documento preparado', file_id: fileUp.id, vector_store: vsId });
+    res.json({
+      ok: true,
+      message: 'Documento preparado',
+      file_id: fileUp.id,
+      vector_store: vsId,
+      text: extractedText ? extractedText.slice(0, 20000) : null
+    });
 
   } catch (err) {
     logger.error('[ingestFile] ' + err.message);

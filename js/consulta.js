@@ -160,7 +160,9 @@ document.addEventListener('click', async e => {
 
         // 3) ahora sí haz la pregunta al asistente
         window.sessionDocs = [jj.file_id];
-        const bodyDoc = { message: userQ, file_ids: [jj.file_id] };
+        let msg = userQ;
+        if (jj.text) msg += `\n\n${jj.text}`;
+        const bodyDoc = { message: msg, file_ids: [jj.file_id] };
         if (useModelO3) await sendToAssistant(bodyDoc);
         else await sendToAssistantStream(bodyDoc);
 
@@ -179,7 +181,7 @@ document.addEventListener('click', async e => {
     if (!lens) return;
 
     const url = lens.dataset.url;
-    const msg = $id('txtMessage').value.trim();
+    let msg = $id('txtMessage').value.trim();
     if (!msg) {
         alert('Escribe tu consulta antes de pulsar el icono 🔬');
         return;
@@ -213,7 +215,9 @@ document.addEventListener('click', async e => {
             const jIng = await safeJson(rIng);
             if (!jIng.ok) throw new Error(jIng.error || 'Error preparando doc');
             window.sessionDocs = [jIng.file_id];
+            if (jIng.text) msg += `\n\n${jIng.text}`;
             body.file_ids = [jIng.file_id];
+            body.message = msg;
         } catch (err) {
             log.insertAdjacentHTML(
                 'beforeend',
