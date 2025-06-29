@@ -26,16 +26,14 @@ function buildTools(req, noSearch) {
   return tools;
 }
 
-function ask(input, tools, model = 'gpt-4.1-mini', file_ids = []) {
-  const params = {
+function ask(input, tools, model = 'gpt-4.1-mini') {
+  return openai.responses.create({
     model,
     instructions: prompt,
     input,
     tools,
     tool_choice: 'auto'
-  };
-  if (file_ids.length) params.file_ids = file_ids;
-  return openai.responses.create(params);
+  });
 }
 
 /* -------------  NUEVA FUNCI�N ------------- */
@@ -63,7 +61,7 @@ function sanitiseHistory(hist) {
 /* --------------------------- /chat ------------------------------- */
 exports.chat = async (req, res) => {
   try {
-    const { message, images = [], file_ids = [], model, noSearch } = req.body || {};
+    const { message, images = [], model, noSearch } = req.body || {};
     if (!message) return res.status(400).json({ error: 'Falta "message"' });
     if (!req.session.user ||
       !req.session.patient) return res.status(403).json({ error: 'Sin sesi�n v�lida' });
@@ -85,7 +83,7 @@ exports.chat = async (req, res) => {
     history.push(userEntry);
 
     /* -- PRIMERA LLAMADA ----------------- */
-    let rsp = await ask(sanitiseHistory(history), buildTools(req, !!noSearch), model, file_ids);
+    let rsp = await ask(sanitiseHistory(history), buildTools(req, !!noSearch), model);
 
 
     /* -- LOOP HERRAMIENTAS --------------- */
@@ -111,7 +109,7 @@ exports.chat = async (req, res) => {
         });
       }
 
-      rsp = await ask(sanitiseHistory(history), buildTools(req, !!noSearch), model, file_ids);
+      rsp = await ask(sanitiseHistory(history), buildTools(req, !!noSearch), model);
       await sleep(180);
     }
 

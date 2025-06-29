@@ -78,7 +78,6 @@ const btnSendTxt = $id('btnAskSend');   // botón con el icono “send”
 let activeChatId = null;          // se rellenará al primer guardado
 let chatChanged = false;         // true cuando hay algo nuevo sin salvar
 window.sessionImages = [];
-window.sessionDocs = [];
 
 /* ================= CLICK GLOBAL (📌 / 🔍) ================= */
 document.addEventListener('click', async e => {
@@ -159,10 +158,9 @@ document.addEventListener('click', async e => {
         log.scrollTop = log.scrollHeight;
 
         // 3) ahora sí haz la pregunta al asistente
-        window.sessionDocs = [jj.file_id];
         let msg = userQ;
         if (jj.text) msg += `\n\n${jj.text}`;
-        const bodyDoc = { message: msg, file_ids: [jj.file_id] };
+        const bodyDoc = { message: msg };
         if (useModelO3) await sendToAssistant(bodyDoc);
         else await sendToAssistantStream(bodyDoc);
 
