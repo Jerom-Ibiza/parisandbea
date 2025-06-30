@@ -42,7 +42,10 @@ exports.register = async (req, res) => {
         const direccionFinal = direccion && direccion.trim() ? direccion.trim() : 'Pendiente';
         const emailFinal = email && email.trim() ? email.trim() : 'Pendiente';
         const tipoContraparteFinal = tipo_contraparte && tipo_contraparte.trim() ? tipo_contraparte.trim() : 'persona_fisica';
-        const razonSocialFinal = razon_social && razon_social.trim() ? razon_social.trim() : null;
+        let razonSocialFinal = null;
+        if (tipoContraparteFinal === 'empresa') {
+            razonSocialFinal = razon_social && razon_social.trim() ? razon_social.trim() : 'Pendiente';
+        }
         const tipoDocFinal = tipo_doc_id && tipo_doc_id.trim() ? tipo_doc_id.trim() : 'NIF';
         const idFiscalFinal = id_fiscal && id_fiscal.trim() ? id_fiscal.trim() : null;
         const paisFinal = pais_iso && pais_iso.trim() ? pais_iso.trim() : 'ES';

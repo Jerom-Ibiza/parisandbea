@@ -320,6 +320,7 @@
                     <option value="Pasaporte">Pasaporte</option>
                     <option value="Otro">Otro</option>
                 </select>
+
                 <label id="lblIdFiscal" for="id_fiscal">ID fiscal</label>
                 <input id="id_fiscal" name="id_fiscal">
                 <div style="display:flex;gap:8px">
@@ -565,6 +566,7 @@
             const show = tipoSelect.value === "empresa";
             razonLabel.style.display = show ? "block" : "none";
             razonInput.style.display = show ? "block" : "none";
+            razonInput.required = show;
             if (!show) razonInput.value = "";
         });
 
@@ -644,6 +646,7 @@
             if (!fd.get('tipo_contraparte')) fd.set('tipo_contraparte', 'persona_fisica');
             if (!fd.get('pais_iso')) fd.set('pais_iso', 'ES');
             if (!fd.get('tipo_doc_id')) fd.set('tipo_doc_id', 'NIF');
+            if (!fd.get('razon_social')) fd.delete('razon_social');
 
             const data = Object.fromEntries(fd.entries());
             data.sendViafirma = document.getElementById('sendViafirma').checked;
