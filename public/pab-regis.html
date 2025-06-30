@@ -297,22 +297,31 @@
                     <option id="optGeneroM">Masculino</option>
                     <option id="optGeneroO">Otro</option>
                 </select>
-                <label id="lblTipoC" for="tipo_contraparte">Tipo de cliente</label>
-                <select id="tipo_contraparte" name="tipo_contraparte">
-                    <option id="optTipoPF" value="persona_fisica">Persona física</option>
-                    <option id="optTipoEM" value="empresa">Empresa/Mutua</option>
-                </select>
-
-                <label id="lblRazon" for="razon_social" style="display:none">Razón social</label>
-                <input id="razon_social" name="razon_social" style="display:none">
 
                 <label id="lblDni" for="dni">DNI / Pasaporte*</label>
                 <input id="dni" name="dni" placeholder="DNI o pasaporte" required>
                 <label id="lblEmail" for="email">Email</label>
                 <input id="email" name="email" type="email" autocomplete="email">
+                <label id="lblTelefono" for="prefijo">Teléfono*</label>
+                <div style="display:flex;gap:8px">
+                    <input id="prefijo" name="prefijo" value="+34" style="max-width:90px" pattern="\+\d{1,4}"
+                        title="Empieza por + seguido de 1-4 dígitos" inputmode="numeric" autocomplete="tel-country-code"
+                        required>
+
+                    <input id="telefono" name="telefono" placeholder="600200300" pattern="\d{6,15}"
+                        title="Solo dígitos (6-15)" inputmode="numeric" autocomplete="tel-national" required
+                        style="flex:1">
+                </div>
             </div>
 
             <div class="right-col">
+                <label id="lblRazon" for="razon_social">Razón social</label>
+                <input id="razon_social" name="razon_social">
+                <label id="lblTipoC" for="tipo_contraparte">Tipo de cliente</label>
+                <select id="tipo_contraparte" name="tipo_contraparte">
+                    <option id="optTipoPF" value="persona_fisica">Persona física</option>
+                    <option id="optTipoEM" value="empresa">Empresa/Mutua</option>
+                </select>
                 <label id="lblTipoDoc" for="tipo_doc_id">Tipo documento fiscal</label>
                 <select id="tipo_doc_id" name="tipo_doc_id">
                     <option value="NIF">NIF</option>
@@ -338,17 +347,6 @@
                 <input id="pais_iso" name="pais_iso" value="ES">
                 <label id="lblProvincia" for="provincia">Provincia/Región</label>
                 <input id="provincia" name="provincia">
-
-                <label id="lblTelefono" for="prefijo">Teléfono*</label>
-                <div style="display:flex;gap:8px">
-                    <input id="prefijo" name="prefijo" value="+34" style="max-width:90px" pattern="\+\d{1,4}"
-                        title="Empieza por + seguido de 1-4 dígitos" inputmode="numeric" autocomplete="tel-country-code"
-                        required>
-
-                    <input id="telefono" name="telefono" placeholder="600200300" pattern="\d{6,15}"
-                        title="Solo dígitos (6-15)" inputmode="numeric" autocomplete="tel-national" required
-                        style="flex:1">
-                </div>
             </div>
 
             <label style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
