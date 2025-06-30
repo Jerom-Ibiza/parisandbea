@@ -24,15 +24,17 @@ async function getPatient(id) {
 }
 
 async function updatePatient(id, data) {
-    await fetch('/api/pacientes/update/' + id, {
+    const r = await fetch('/api/pacientes/update/' + id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     });
+    return r.ok;
 }
 
 async function deletePatient(id) {
-    await fetch('/api/pacientes/delete/' + id, { method: 'DELETE' });
+    const r = await fetch('/api/pacientes/delete/' + id, { method: 'DELETE' });
+    return r.ok;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -65,15 +67,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.target.classList.contains('delete')) {
             const ok = await Swal.fire({
                 icon: 'warning',
-                title: '¿Eliminar paciente? ¿Seguro?',
+                title: '¿Eliminar paciente? ¿Seguro? <br><br> ¡Solo si lo solicita el paciente o su tutor legal! <br><br> ¡POR ESCRITO Y FIRMADO!',
                 html: 'Esta operación no puede deshacerse!! Se eliminará el paciente con todos sus datos personales y sanitarios!',
                 showCancelButton: true,
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar'
             });
             if (!ok.isConfirmed) return;
-            await deletePatient(id);
-            tr.remove();
+            const okDel = await deletePatient(id);
+            if (okDel) {
+                tr.remove();
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Paciente eliminado'
+                });
+            }
             return;
         }
         if (e.target.classList.contains('edit')) {
@@ -107,10 +115,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 })
             });
             if (!data) return;
-            await updatePatient(id, data);
-            tr.children[0].textContent = data.nombre;
-            tr.children[1].textContent = data.apellidos;
-            tr.children[2].textContent = data.dni;
+            const okUpd = await updatePatient(id, data);
+            if (okUpd) {
+                tr.children[0].textContent = data.nombre;
+                tr.children[1].textContent = data.apellidos;
+                tr.children[2].textContent = data.dni;
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Datos guardados'
+                });
+            }
         }
     });
 });
