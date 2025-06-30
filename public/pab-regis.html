@@ -318,6 +318,11 @@
 
                 <label id="lblDni" for="dni">DNI / Pasaporte*</label>
                 <input id="dni" name="dni" placeholder="DNI o pasaporte" required>
+                <label id="lblEmail" for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email">
+            </div>
+
+            <div class="right-col">
                 <label id="lblTelefono" for="prefijo">Teléfono*</label>
                 <div style="display:flex;gap:8px">
                     <input id="prefijo" name="prefijo" value="+34" style="max-width:90px" pattern="\+\d{1,4}"
@@ -328,11 +333,6 @@
                         title="Solo dígitos (6-15)" inputmode="numeric" autocomplete="tel-national" required
                         style="flex:1">
                 </div>
-            </div>
-
-            <div class="right-col">
-                <label id="lblEmail" for="email">Email</label>
-                <input id="email" name="email" type="email" autocomplete="email">
                 <div style="display:flex;gap:8px">
                     <div style="flex:0 0 110px">
                         <label id="lblCp" for="codigo_postal">Código Postal*</label>
@@ -373,7 +373,7 @@
                             <option id="optTipoEM" value="empresa">Empresa/Mutua</option>
                         </select>
                     </div>
-                    <div>
+                    <div id="tipoDocField" style="display:none">
                         <label id="lblTipoDoc" for="tipo_doc_id">Tipo documento fiscal</label>
                         <select id="tipo_doc_id" name="tipo_doc_id">
                             <option value="NIF">NIF</option>
@@ -384,11 +384,16 @@
                     </div>
                 </div>
 
-                <label id="lblRazon" for="razon_social">Razón social</label>
-                <input id="razon_social" name="razon_social">
-
-                <label id="lblIdFiscal" for="id_fiscal">ID fiscal</label>
-                <input id="id_fiscal" name="id_fiscal">
+                <div class="row-lg" id="empresaRow" style="display:none">
+                    <div>
+                        <label id="lblRazon" for="razon_social">Razón social</label>
+                        <input id="razon_social" name="razon_social">
+                    </div>
+                    <div>
+                        <label id="lblIdFiscal" for="id_fiscal">ID fiscal</label>
+                        <input id="id_fiscal" name="id_fiscal">
+                    </div>
+                </div>
             </div>
 
             <label style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
@@ -600,17 +605,26 @@
         applyLang('es');
 
         const tipoSelect = document.getElementById('tipo_contraparte');
-        const razonLabel = document.getElementById('lblRazon');
+        const empresaRow = document.getElementById('empresaRow');
+        const tipoDocField = document.getElementById('tipoDocField');
         const razonInput = document.getElementById('razon_social');
-        const updateRazon = () => {
+        const idFiscalInput = document.getElementById('id_fiscal');
+        const tipoDocSelect = document.getElementById('tipo_doc_id');
+        const updateEmpresaFields = () => {
             const show = tipoSelect.value === 'empresa';
-            razonLabel.style.display = show ? 'block' : 'none';
-            razonInput.style.display = show ? 'block' : 'none';
+            empresaRow.style.display = show ? '' : 'none';
+            tipoDocField.style.display = show ? '' : 'none';
             razonInput.required = show;
-            if (!show) razonInput.value = '';
+            idFiscalInput.required = show;
+            tipoDocSelect.required = show;
+            if (!show) {
+                razonInput.value = '';
+                idFiscalInput.value = '';
+                tipoDocSelect.value = 'NIF';
+            }
         };
-        tipoSelect.addEventListener('change', updateRazon);
-        updateRazon();
+        tipoSelect.addEventListener('change', updateEmpresaFields);
+        updateEmpresaFields();
 
         /* ========= máscara de fecha ========= */
         const fechaInput = document.getElementById('fecha_nacimiento');
@@ -689,6 +703,7 @@
             if (!fd.get('pais_iso')) fd.set('pais_iso', 'ES');
             if (!fd.get('tipo_doc_id')) fd.set('tipo_doc_id', 'NIF');
             if (!fd.get('razon_social')) fd.delete('razon_social');
+            if (!fd.get('id_fiscal')) fd.delete('id_fiscal');
 
             const data = {};
             for (const [k, v] of fd.entries()) {
