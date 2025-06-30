@@ -124,6 +124,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <option value="NL">Países Bajos</option>
                 <option value="CH">Suiza</option>
                 <option value="AT">Austria</option>
+                <option value="GR">Grecia</option>
+                <option value="IE">Irlanda</option>
+                <option value="US">Estados Unidos</option>
+                <option value="CA">Canadá</option>
+                <option value="MX">México</option>
+                <option value="EC">Ecuador</option>
+                <option value="VE">Venezuela</option>
+                <option value="AR">Argentina</option>
+                <option value="CO">Colombia</option>
             </select></div>
             <div class="modal-field"><span class="material-symbols-outlined">map</span><input id="swProvincia" class="swal2-input" placeholder="Provincia" value="${p.provincia || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">markunread_mailbox</span><input id="swCp" class="swal2-input" placeholder="CP" value="${p.codigo_postal || ''}"></div>
