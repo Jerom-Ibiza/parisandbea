@@ -78,6 +78,7 @@ const btnSendTxt = $id('btnAskSend');   // botón con el icono “send”
 let activeChatId = null;          // se rellenará al primer guardado
 let chatChanged = false;         // true cuando hay algo nuevo sin salvar
 window.sessionImages = [];
+window.sessionDocs = [];
 
 /* ================= CLICK GLOBAL (📌 / 🔍) ================= */
 document.addEventListener('click', async e => {
@@ -1222,6 +1223,12 @@ $id('btnCitasHoy').onclick = () => {
 $id('btnCitasSemana').onclick = () => {
     sendText('Muéstrame las citas que tengo esta semana');
     btnCitasSemana.style.display = 'none';
+};
+
+/* ---------- ARCHIVOS DEL PACIENTE ---------- */
+$id('btnArchivos').onclick = () => {
+    sendText('Muéstrame los archivos de este paciente');
+    btnArchivos.style.display = 'none';
 };
 
 /* ---------- RECARGAR LA PÁGINA ---------- */
