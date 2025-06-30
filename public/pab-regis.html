@@ -557,16 +557,18 @@
         });
         applyLang('es');
 
-        const tipoSelect = document.getElementById("tipo_contraparte");
-        const razonLabel = document.getElementById("lblRazon");
-        const razonInput = document.getElementById("razon_social");
-        tipoSelect.addEventListener("change", () => {
-            const show = tipoSelect.value === "empresa";
-            razonLabel.style.display = show ? "block" : "none";
-            razonInput.style.display = show ? "block" : "none";
+        const tipoSelect = document.getElementById('tipo_contraparte');
+        const razonLabel = document.getElementById('lblRazon');
+        const razonInput = document.getElementById('razon_social');
+        const updateRazon = () => {
+            const show = tipoSelect.value === 'empresa';
+            razonLabel.style.display = show ? 'block' : 'none';
+            razonInput.style.display = show ? 'block' : 'none';
             razonInput.required = show;
-            if (!show) razonInput.value = "";
-        });
+            if (!show) razonInput.value = '';
+        };
+        tipoSelect.addEventListener('change', updateRazon);
+        updateRazon();
 
         /* ========= máscara de fecha ========= */
         const fechaInput = document.getElementById('fecha_nacimiento');
@@ -646,7 +648,10 @@
             if (!fd.get('tipo_doc_id')) fd.set('tipo_doc_id', 'NIF');
             if (!fd.get('razon_social')) fd.delete('razon_social');
 
-            const data = Object.fromEntries(fd.entries());
+            const data = {};
+            for (const [k, v] of fd.entries()) {
+                data[k] = v;
+            }
             data.sendViafirma = document.getElementById('sendViafirma').checked;
 
             try {
