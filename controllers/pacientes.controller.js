@@ -8,10 +8,17 @@ exports.createPatient = async (req, res) => {
     const {
       nombre,
       apellidos,
+      razon_social,
       fecha_nacimiento,
       genero,
+      tipo_contraparte,
       dni,
+      tipo_doc_id,
+      id_fiscal,
       direccion,
+      pais_iso,
+      provincia,
+      codigo_postal,
       telefono,
       email
     } = req.body;
@@ -22,16 +29,25 @@ exports.createPatient = async (req, res) => {
 
     const [result] = await pool.query(
       `INSERT INTO pacientes
-         (nombre, apellidos, fecha_nacimiento, genero,
-          dni, direccion, telefono, email)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+         (nombre, apellidos, razon_social, fecha_nacimiento, genero,
+          tipo_contraparte, dni, tipo_doc_id, id_fiscal,
+          direccion, pais_iso, provincia, codigo_postal,
+          telefono, email)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         nombre,
         apellidos,
+        razon_social || null,
         fecha_nacimiento,
         genero,
+        tipo_contraparte || 'persona_fisica',
         dni || null,
+        tipo_doc_id || 'NIF',
+        id_fiscal || null,
         direccion || null,
+        pais_iso || 'ES',
+        provincia || null,
+        codigo_postal || null,
         telefono || null,
         email || null
       ]
@@ -126,10 +142,17 @@ exports.updatePatient = async (req, res) => {
     const {
       nombre,
       apellidos,
+      razon_social,
       fecha_nacimiento,
       genero,
+      tipo_contraparte,
       dni,
+      tipo_doc_id,
+      id_fiscal,
       direccion,
+      pais_iso,
+      provincia,
+      codigo_postal,
       telefono,
       email
     } = req.body;
@@ -147,20 +170,34 @@ exports.updatePatient = async (req, res) => {
       `UPDATE pacientes SET
          nombre            = ?,
          apellidos         = ?,
+         razon_social      = ?,
          fecha_nacimiento  = ?,
          genero            = ?,
+         tipo_contraparte  = ?,
          dni               = ?,
+         tipo_doc_id       = ?,
+         id_fiscal         = ?,
          direccion         = ?,
+         pais_iso          = ?,
+         provincia         = ?,
+         codigo_postal     = ?,
          telefono          = ?,
          email             = ?
        WHERE id_paciente = ?`,
       [
         nombre ?? p.nombre,
         apellidos ?? p.apellidos,
+        razon_social ?? p.razon_social,
         fecha_nacimiento ?? p.fecha_nacimiento,
         genero ?? p.genero,
+        tipo_contraparte ?? p.tipo_contraparte,
         dni ?? p.dni,
+        tipo_doc_id ?? p.tipo_doc_id,
+        id_fiscal ?? p.id_fiscal,
         direccion ?? p.direccion,
+        pais_iso ?? p.pais_iso,
+        provincia ?? p.provincia,
+        codigo_postal ?? p.codigo_postal,
         telefono ?? p.telefono,
         email ?? p.email,
         id
@@ -316,8 +353,13 @@ exports.getPatientById = async (req, res) => {
     const { id } = req.params;
     const [rows] = await pool.query(
       `SELECT
-         p.id_paciente, p.nombre, p.apellidos, p.fecha_nacimiento, p.genero,
-         p.dni, p.direccion, p.telefono, p.email, p.fecha_registro,
+         p.id_paciente, p.nombre, p.apellidos, p.razon_social,
+         p.fecha_nacimiento, p.genero, p.tipo_contraparte,
+         p.dni, p.tipo_doc_id, p.id_fiscal,
+         p.direccion, p.pais_iso, p.provincia, p.codigo_postal,
+         p.telefono, p.email, p.fecha_registro,
+         p.lopd_setcode, p.lopd_estado, p.lopd_firmado,
+         p.fisio_setcode, p.fisio_estado, p.fisio_firmado,
          h.id_historial, h.motivo_consulta, h.fecha_inicio_problema,
          h.antecedentes_personales, h.antecedentes_familiares,
          h.tratamientos_previos, h.medicacion_actual, h.alergias,
@@ -337,13 +379,26 @@ exports.getPatientById = async (req, res) => {
       id_paciente: r.id_paciente,
       nombre: r.nombre,
       apellidos: r.apellidos,
+      razon_social: r.razon_social,
       fecha_nacimiento: r.fecha_nacimiento,
       genero: r.genero,
+      tipo_contraparte: r.tipo_contraparte,
       dni: r.dni,
+      tipo_doc_id: r.tipo_doc_id,
+      id_fiscal: r.id_fiscal,
       direccion: r.direccion,
+      pais_iso: r.pais_iso,
+      provincia: r.provincia,
+      codigo_postal: r.codigo_postal,
       telefono: r.telefono,
       email: r.email,
       fecha_registro: r.fecha_registro,
+      lopd_setcode: r.lopd_setcode,
+      lopd_estado: r.lopd_estado,
+      lopd_firmado: r.lopd_firmado,
+      fisio_setcode: r.fisio_setcode,
+      fisio_estado: r.fisio_estado,
+      fisio_firmado: r.fisio_firmado,
       historial: r.id_historial ? {
         id_historial: r.id_historial,
         motivo_consulta: r.motivo_consulta,

@@ -92,10 +92,17 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="modal-fields-2col">
             <div class="modal-field"><span class="material-symbols-outlined">person</span><input id="swNombre" class="swal2-input" placeholder="Nombre" value="${p.nombre || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">family_restroom</span><input id="swApellidos" class="swal2-input" placeholder="Apellidos" value="${p.apellidos || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">business</span><input id="swRazon" class="swal2-input" placeholder="Razón social" value="${p.razon_social || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">work</span><input id="swTipoC" class="swal2-input" placeholder="Tipo cliente" value="${p.tipo_contraparte || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">early_on</span><input id="swFecha" type="date" class="swal2-input" value="${p.fecha_nacimiento ? p.fecha_nacimiento.split('T')[0] : ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">transgender</span><input id="swGenero" class="swal2-input" placeholder="Género" value="${p.genero || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">id_card</span><input id="swDni" class="swal2-input" placeholder="DNI" value="${p.dni || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">badge</span><input id="swTipoDoc" class="swal2-input" placeholder="Tipo doc" value="${p.tipo_doc_id || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">receipt</span><input id="swFiscal" class="swal2-input" placeholder="ID fiscal" value="${p.id_fiscal || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">home_pin</span><input id="swDireccion" class="swal2-input" placeholder="Dirección" value="${p.direccion || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">flag</span><input id="swPais" class="swal2-input" placeholder="País" value="${p.pais_iso || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">map</span><input id="swProvincia" class="swal2-input" placeholder="Provincia" value="${p.provincia || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">markunread_mailbox</span><input id="swCp" class="swal2-input" placeholder="CP" value="${p.codigo_postal || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">mobile_hand</span><input id="swTelefono" class="swal2-input" placeholder="Teléfono" value="${p.telefono || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">mail</span><input id="swEmail" class="swal2-input" placeholder="Email" value="${p.email || ''}"></div>
           </div>
@@ -106,10 +113,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 preConfirm: () => ({
                     nombre: document.getElementById('swNombre').value.trim(),
                     apellidos: document.getElementById('swApellidos').value.trim(),
+                    razon_social: document.getElementById('swRazon').value.trim(),
+                    tipo_contraparte: document.getElementById('swTipoC').value.trim(),
                     fecha_nacimiento: document.getElementById('swFecha').value,
                     genero: document.getElementById('swGenero').value.trim(),
                     dni: document.getElementById('swDni').value.trim(),
+                    tipo_doc_id: document.getElementById('swTipoDoc').value.trim(),
+                    id_fiscal: document.getElementById('swFiscal').value.trim(),
                     direccion: document.getElementById('swDireccion').value.trim(),
+                    pais_iso: document.getElementById('swPais').value.trim(),
+                    provincia: document.getElementById('swProvincia').value.trim(),
+                    codigo_postal: document.getElementById('swCp').value.trim(),
                     telefono: document.getElementById('swTelefono').value.trim(),
                     email: document.getElementById('swEmail').value.trim()
                 })
