@@ -8,71 +8,32 @@ exports.createPatient = async (req, res) => {
     const {
       nombre,
       apellidos,
-      razon_social,
       fecha_nacimiento,
       genero,
-      tipo_contraparte,
       dni,
-      tipo_doc_id,
-      id_fiscal,
       direccion,
-      pais_iso,
-      provincia,
-      codigo_postal,
       telefono,
       email
     } = req.body;
 
-    if (!nombre || !fecha_nacimiento || !genero) {
+    if (!nombre || !apellidos || !fecha_nacimiento || !genero) {
       return res.status(400).json({ error: 'Faltan datos requeridos' });
     }
 
-    const apellidosFinal = apellidos && apellidos.trim() ? apellidos.trim() : 'Pendiente';
-    const razonSocialFinal = tipo_contraparte === 'empresa'
-      ? (razon_social && razon_social.trim() ? razon_social.trim() : 'Pendiente')
-      : null;
-    const fechaNacimientoFinal = fecha_nacimiento && fecha_nacimiento.trim()
-      ? fecha_nacimiento.trim()
-      : '2000-01-01';
-    const generoFinal = genero && genero.trim() ? genero.trim() : 'Otro';
-    const tipoContraparteFinal = tipo_contraparte && tipo_contraparte.trim()
-      ? tipo_contraparte.trim()
-      : 'persona_fisica';
-    const tipoDocFinal = tipo_doc_id && tipo_doc_id.trim() ? tipo_doc_id.trim() : 'NIF';
-    const idFiscalFinal = id_fiscal && id_fiscal.trim() ? id_fiscal.trim() : null;
-    const direccionFinal = direccion && direccion.trim() ? direccion.trim() : 'Pendiente';
-    const paisFinal = pais_iso && pais_iso.trim() ? pais_iso.trim() : 'ES';
-    const provinciaFinal = provincia && provincia.trim() ? provincia.trim() : null;
-    const cpFinal = codigo_postal && codigo_postal.trim() ? codigo_postal.trim() : null;
-    const emailFinal = email && email.trim() ? email.trim() : 'Pendiente';
-
     const [result] = await pool.query(
       `INSERT INTO pacientes
-         (nombre, apellidos, razon_social, fecha_nacimiento, genero, tipo_contraparte,
-          dni, tipo_doc_id, id_fiscal, direccion, pais_iso, provincia, codigo_postal,
-          telefono, email)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (nombre, apellidos, fecha_nacimiento, genero,
+          dni, direccion, telefono, email)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         nombre,
         apellidos,
         fecha_nacimiento,
         genero,
-        apellidosFinal,
-        razonSocialFinal,
-        fechaNacimientoFinal,
-        generoFinal,
-        tipoContraparteFinal,
         dni || null,
         direccion || null,
-        tipoDocFinal,
-        idFiscalFinal,
-        direccionFinal,
-        paisFinal,
-        provinciaFinal,
-        cpFinal,
         telefono || null,
         email || null
-        emailFinal
       ]
     );
 
