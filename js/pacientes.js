@@ -65,7 +65,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.target.classList.contains('delete')) {
             const ok = await Swal.fire({
                 icon: 'warning',
-                title: '¿Eliminar definitivamente?',
+                title: '¿Eliminar paciente? ¿Seguro?',
+                html: 'Esta operación no puede deshacerse!! Se eliminará el paciente con todos sus datos personales y sanitarios!',
                 showCancelButton: true,
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar'
@@ -78,17 +79,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.target.classList.contains('edit')) {
             const p = await getPatient(id);
             const { value: data } = await Swal.fire({
-                title: 'Editar paciente',
+                title: '<span class="modal-title-icon material-icons">edit</span>Editar paciente',
                 html: `
-          <input id="swNombre" class="swal2-input" placeholder="Nombre" value="${p.nombre || ''}">
-          <input id="swApellidos" class="swal2-input" placeholder="Apellidos" value="${p.apellidos || ''}">
-          <input id="swFecha" type="date" class="swal2-input" value="${p.fecha_nacimiento ? p.fecha_nacimiento.split('T')[0] : ''}">
-          <input id="swGenero" class="swal2-input" placeholder="Género" value="${p.genero || ''}">
-          <input id="swDni" class="swal2-input" placeholder="DNI" value="${p.dni || ''}">
-          <input id="swDireccion" class="swal2-input" placeholder="Dirección" value="${p.direccion || ''}">
-          <input id="swTelefono" class="swal2-input" placeholder="Teléfono" value="${p.telefono || ''}">
-          <input id="swEmail" class="swal2-input" placeholder="Email" value="${p.email || ''}">
+          <div class="modal-fields-2col">
+            <div class="modal-field"><span class="material-symbols-outlined">person</span><input id="swNombre" class="swal2-input" placeholder="Nombre" value="${p.nombre || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">family_restroom</span><input id="swApellidos" class="swal2-input" placeholder="Apellidos" value="${p.apellidos || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">early_on</span><input id="swFecha" type="date" class="swal2-input" value="${p.fecha_nacimiento ? p.fecha_nacimiento.split('T')[0] : ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">transgender</span><input id="swGenero" class="swal2-input" placeholder="Género" value="${p.genero || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">id_card</span><input id="swDni" class="swal2-input" placeholder="DNI" value="${p.dni || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">home_pin</span><input id="swDireccion" class="swal2-input" placeholder="Dirección" value="${p.direccion || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">mobile_hand</span><input id="swTelefono" class="swal2-input" placeholder="Teléfono" value="${p.telefono || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">mail</span><input id="swEmail" class="swal2-input" placeholder="Email" value="${p.email || ''}"></div>
+          </div>
         `,
+                customClass: { popup: 'edit-patient-popup' },
                 focusConfirm: false,
                 showCancelButton: true,
                 preConfirm: () => ({

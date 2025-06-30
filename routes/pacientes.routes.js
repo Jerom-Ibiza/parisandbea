@@ -1,31 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const pacientesController = require('../controllers/pacientes.controller');
-const checkApiKey = require('../middleware/checkApiKey');
+const checkAuthOrApiKey = require('../middleware/checkAuthOrApiKey');
 
 // Crear un nuevo paciente
-router.post('/create', checkApiKey, pacientesController.createPatient);
+router.post('/create', checkAuthOrApiKey, pacientesController.createPatient);
 
 // Añadir un historial clínico...
-router.post('/:id_paciente/historial', checkApiKey, pacientesController.addHistorial);
+router.post('/:id_paciente/historial', checkAuthOrApiKey, pacientesController.addHistorial);
 
 // Editar un paciente
-router.put('/update/:id', checkApiKey, pacientesController.updatePatient);
+router.put('/update/:id', checkAuthOrApiKey, pacientesController.updatePatient);
 
 // Editar el historial clínico...
-router.put('/:id_paciente/historial', checkApiKey, pacientesController.updateHistorial);
+router.put('/:id_paciente/historial', checkAuthOrApiKey, pacientesController.updateHistorial);
 
 // Buscar pacientes (query params)
-router.get('/search', checkApiKey, pacientesController.searchPatients);
+router.get('/search', checkAuthOrApiKey, pacientesController.searchPatients);
 
 // ──────────────────────────────────────────
 // *Primero* la ruta específica "/empresa"
-router.get('/empresa', checkApiKey, pacientesController.getEmpresaInfo);
+router.get('/empresa', checkAuthOrApiKey, pacientesController.getEmpresaInfo);
 
 // Después la ruta dinámica "/:id"
-router.get('/:id', checkApiKey, pacientesController.getPatientById);
+router.get('/:id', checkAuthOrApiKey, pacientesController.getPatientById);
 
 // Eliminar un paciente
-router.delete('/delete/:id', checkApiKey, pacientesController.deletePatient);
+router.delete('/delete/:id', checkAuthOrApiKey, pacientesController.deletePatient);
 
 module.exports = router;

@@ -7,6 +7,7 @@
     <title>Pacientes | Paris & Bea</title>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -104,6 +105,45 @@
             th:nth-child(3),
             td:nth-child(3) {
                 display: none;
+            }
+        }
+
+        /* ====== estilos para los modales ====== */
+        .modal-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .modal-field .material-icons {
+            font-size: 20px;
+            color: var(--accent-dark);
+        }
+
+        .modal-title-icon {
+            display: none;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @media(min-width:1200px) {
+            .modal-fields-2col {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                width: 100%;
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .modal-title-icon {
+                display: inline-block;
+            }
+
+            .edit-patient-popup {
+                width: 80% !important;
+                max-width: 1500px;
             }
         }
     </style>
