@@ -93,22 +93,50 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="modal-field"><span class="material-symbols-outlined">person</span><input id="swNombre" class="swal2-input" placeholder="Nombre" value="${p.nombre || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">family_restroom</span><input id="swApellidos" class="swal2-input" placeholder="Apellidos" value="${p.apellidos || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">business</span><input id="swRazon" class="swal2-input" placeholder="Razón social" value="${p.razon_social || ''}"></div>
-            <div class="modal-field"><span class="material-symbols-outlined">work</span><input id="swTipoC" class="swal2-input" placeholder="Tipo cliente" value="${p.tipo_contraparte || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">work</span><select id="swTipoC" class="swal2-select">
+                <option value="persona_fisica">Persona física</option>
+                <option value="empresa">Empresa/Mutua</option>
+            </select></div>
             <div class="modal-field"><span class="material-symbols-outlined">early_on</span><input id="swFecha" type="date" class="swal2-input" value="${p.fecha_nacimiento ? p.fecha_nacimiento.split('T')[0] : ''}"></div>
-            <div class="modal-field"><span class="material-symbols-outlined">transgender</span><input id="swGenero" class="swal2-input" placeholder="Género" value="${p.genero || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">transgender</span><select id="swGenero" class="swal2-select">
+                <option value="">-- selecciona --</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Otro">Otro</option>
+            </select></div>
             <div class="modal-field"><span class="material-symbols-outlined">id_card</span><input id="swDni" class="swal2-input" placeholder="DNI" value="${p.dni || ''}"></div>
-            <div class="modal-field"><span class="material-symbols-outlined">badge</span><input id="swTipoDoc" class="swal2-input" placeholder="Tipo doc" value="${p.tipo_doc_id || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">badge</span><select id="swTipoDoc" class="swal2-select">
+                <option value="NIF">NIF</option>
+                <option value="NIE">NIE</option>
+                <option value="Pasaporte">Pasaporte</option>
+                <option value="Otro">Otro</option>
+            </select></div>
             <div class="modal-field"><span class="material-symbols-outlined">receipt</span><input id="swFiscal" class="swal2-input" placeholder="ID fiscal" value="${p.id_fiscal || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">home_pin</span><input id="swDireccion" class="swal2-input" placeholder="Dirección" value="${p.direccion || ''}"></div>
-            <div class="modal-field"><span class="material-symbols-outlined">flag</span><input id="swPais" class="swal2-input" placeholder="País" value="${p.pais_iso || ''}"></div>
+            <div class="modal-field"><span class="material-symbols-outlined">flag</span><select id="swPais" class="swal2-select">
+                <option value="ES">España</option>
+                <option value="FR">Francia</option>
+                <option value="DE">Alemania</option>
+                <option value="IT">Italia</option>
+                <option value="PT">Portugal</option>
+                <option value="GB">Reino Unido</option>
+                <option value="BE">Bélgica</option>
+                <option value="NL">Países Bajos</option>
+                <option value="CH">Suiza</option>
+                <option value="AT">Austria</option>
+            </select></div>
             <div class="modal-field"><span class="material-symbols-outlined">map</span><input id="swProvincia" class="swal2-input" placeholder="Provincia" value="${p.provincia || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">markunread_mailbox</span><input id="swCp" class="swal2-input" placeholder="CP" value="${p.codigo_postal || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">mobile_hand</span><input id="swTelefono" class="swal2-input" placeholder="Teléfono" value="${p.telefono || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">mail</span><input id="swEmail" class="swal2-input" placeholder="Email" value="${p.email || ''}"></div>
           </div>
         `,
-                customClass: { popup: 'edit-patient-popup' },
-                focusConfirm: false,
+                didOpen: () => {
+                    document.getElementById('swTipoC').value = p.tipo_contraparte || 'persona_fisica';
+                    document.getElementById('swGenero').value = p.genero || '';
+                    document.getElementById('swTipoDoc').value = p.tipo_doc_id || 'NIF';
+                    document.getElementById('swPais').value = p.pais_iso || 'ES';
+                },
                 showCancelButton: true,
                 preConfirm: () => ({
                     nombre: document.getElementById('swNombre').value.trim(),
