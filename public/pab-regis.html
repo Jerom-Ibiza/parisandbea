@@ -297,22 +297,46 @@
                     <option id="optGeneroM">Masculino</option>
                     <option id="optGeneroO">Otro</option>
                 </select>
+                <label id="lblTipoC" for="tipo_contraparte">Tipo de cliente</label>
+                <select id="tipo_contraparte" name="tipo_contraparte">
+                    <option id="optTipoPF" value="persona_fisica">Persona física</option>
+                    <option id="optTipoEM" value="empresa">Empresa/Mutua</option>
+                </select>
+
+                <label id="lblRazon" for="razon_social" style="display:none">Razón social</label>
+                <input id="razon_social" name="razon_social" style="display:none">
+
+                <label id="lblDni" for="dni">DNI / Pasaporte*</label>
+                <input id="dni" name="dni" placeholder="DNI o pasaporte" required>
+                <label id="lblEmail" for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email">
             </div>
 
             <div class="right-col">
-                <label id="lblDni" for="dni">DNI / Pasaporte*</label>
-                <input id="dni" name="dni" placeholder="DNI o pasaporte" required>
-
+                <label id="lblTipoDoc" for="tipo_doc_id">Tipo documento fiscal</label>
+                <select id="tipo_doc_id" name="tipo_doc_id">
+                    <option value="NIF">NIF</option>
+                    <option value="NIE">NIE</option>
+                    <option value="Pasaporte">Pasaporte</option>
+                    <option value="Otro">Otro</option>
+                </select>
+                <label id="lblIdFiscal" for="id_fiscal">ID fiscal</label>
+                <input id="id_fiscal" name="id_fiscal">
                 <div style="display:flex;gap:8px">
                     <div style="flex:0 0 110px">
-                        <label id="lblCp" for="cp">Código Postal*</label>
-                        <input id="cp" name="cp" pattern="\d{4,5}" placeholder="07800" required style="width:100%">
+                        <label id="lblCp" for="codigo_postal">Código Postal*</label>
+                        <input id="codigo_postal" name="codigo_postal" pattern="\d{4,5}" placeholder="07800" required
+                            style="width:100%">
                     </div>
                     <div style="flex:1">
                         <label id="lblDireccion" for="direccion">Dirección*</label>
                         <input id="direccion" name="direccion" required style="width:100%">
                     </div>
                 </div>
+                <label id="lblPais" for="pais_iso">País</label>
+                <input id="pais_iso" name="pais_iso" value="ES">
+                <label id="lblProvincia" for="provincia">Provincia/Región</label>
+                <input id="provincia" name="provincia">
 
                 <label id="lblTelefono" for="prefijo">Teléfono*</label>
                 <div style="display:flex;gap:8px">
@@ -324,9 +348,6 @@
                         title="Solo dígitos (6-15)" inputmode="numeric" autocomplete="tel-national" required
                         style="flex:1">
                 </div>
-
-                <label id="lblEmail" for="email">Email</label>
-                <input id="email" name="email" type="email" autocomplete="email">
             </div>
 
             <label style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
@@ -374,6 +395,14 @@
                 generoF: 'Femenino',
                 generoM: 'Masculino',
                 generoO: 'Otro',
+                tipoContraparte: "Tipo de cliente",
+                personaFisica: "Persona física",
+                empresa: "Empresa/Mutua",
+                razonSocial: "Razón social",
+                tipoDoc: "Tipo documento fiscal",
+                idFiscal: "ID fiscal",
+                pais: "País",
+                provincia: "Provincia/Región",
                 dni: 'DNI / Pasaporte*',
                 dniPH: 'DNI o pasaporte',
                 cp: 'C.P.*',
@@ -398,6 +427,14 @@
                 generoF: 'Female',
                 generoM: 'Male',
                 generoO: 'Other',
+                tipoContraparte: "Customer type",
+                personaFisica: "Individual",
+                empresa: "Company/Mutual",
+                razonSocial: "Company name",
+                tipoDoc: "Fiscal ID type",
+                idFiscal: "Fiscal ID",
+                pais: "Country",
+                provincia: "Province/Region",
                 dni: 'ID / Passport*',
                 dniPH: 'ID or passport',
                 cp: 'ZIP*',
@@ -422,6 +459,14 @@
                 generoF: 'Weiblich',
                 generoM: 'Männlich',
                 generoO: 'Andere',
+                tipoContraparte: "Kundentyp",
+                personaFisica: "Privatperson",
+                empresa: "Firma/Versicherung",
+                razonSocial: "Firmenname",
+                tipoDoc: "Steuer-ID Typ",
+                idFiscal: "Steuer-ID",
+                pais: "Land",
+                provincia: "Provinz/Region",
                 dni: 'Ausweis / Pass*',
                 dniPH: 'Ausweis oder Pass',
                 cp: 'PLZ*',
@@ -446,6 +491,14 @@
                 generoF: 'Féminin',
                 generoM: 'Masculin',
                 generoO: 'Autre',
+                tipoContraparte: "Type de client",
+                personaFisica: "Personne physique",
+                empresa: "Entreprise/Mutuelle",
+                razonSocial: "Raison sociale",
+                tipoDoc: "Type de document fiscal",
+                idFiscal: "Identifiant fiscal",
+                pais: "Pays",
+                provincia: "Province/Région",
                 dni: "Carte d'identité / Passeport*",
                 dniPH: "Carte d'identité ou passeport",
                 cp: 'C.P.*',
@@ -478,6 +531,14 @@
             document.getElementById('dni').placeholder = t.dniPH;
             document.getElementById('lblCp').textContent = t.cp;
             document.getElementById('lblDireccion').textContent = t.direccion;
+            document.getElementById('lblTipoC').textContent = t.tipoContraparte;
+            document.getElementById('optTipoPF').textContent = t.personaFisica;
+            document.getElementById('optTipoEM').textContent = t.empresa;
+            document.getElementById('lblRazon').textContent = t.razonSocial;
+            document.getElementById('lblTipoDoc').textContent = t.tipoDoc;
+            document.getElementById('lblIdFiscal').textContent = t.idFiscal;
+            document.getElementById('lblPais').textContent = t.pais;
+            document.getElementById('lblProvincia').textContent = t.provincia;
             document.getElementById('lblTelefono').textContent = t.telefono;
             document.getElementById('lblEmail').textContent = t.email;
             document.getElementById('lblViafirma').textContent = t.viafirma;
@@ -496,6 +557,16 @@
             applyLang(e.target.value);
         });
         applyLang('es');
+
+        const tipoSelect = document.getElementById("tipo_contraparte");
+        const razonLabel = document.getElementById("lblRazon");
+        const razonInput = document.getElementById("razon_social");
+        tipoSelect.addEventListener("change", () => {
+            const show = tipoSelect.value === "empresa";
+            razonLabel.style.display = show ? "block" : "none";
+            razonInput.style.display = show ? "block" : "none";
+            if (!show) razonInput.value = "";
+        });
 
         /* ========= máscara de fecha ========= */
         const fechaInput = document.getElementById('fecha_nacimiento');
@@ -565,17 +636,14 @@
             fd.set('telefono', pref + tel);
             fd.delete('prefijo');
 
-            /* cp + dirección */
-            let cp = fd.get('cp').trim();
-            let dir = fd.get('direccion').trim();
-            fd.set('direccion', cp + ' ' + dir);
-            fd.delete('cp');
-
             /* defaults */
             if (!fd.get('apellidos')) fd.set('apellidos', 'Pendiente');
             if (!fd.get('fecha_nacimiento')) fd.set('fecha_nacimiento', '2000-01-01');
             if (!fd.get('genero')) fd.set('genero', 'Otro');
             if (!fd.get('email')) fd.set('email', 'Pendiente');
+            if (!fd.get('tipo_contraparte')) fd.set('tipo_contraparte', 'persona_fisica');
+            if (!fd.get('pais_iso')) fd.set('pais_iso', 'ES');
+            if (!fd.get('tipo_doc_id')) fd.set('tipo_doc_id', 'NIF');
 
             const data = Object.fromEntries(fd.entries());
             data.sendViafirma = document.getElementById('sendViafirma').checked;
