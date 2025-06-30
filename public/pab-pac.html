@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Pacientes | Paris & Bea</title>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --accent: #aed3c1;
+            --accent-dark: #7fb29b;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Raleway', sans-serif;
+            background: #efefef;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--accent);
+            color: #fff;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            position: relative;
+        }
+
+        .header-logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 30px;
+        }
+
+        header .material-icons {
+            font-size: 28px;
+        }
+
+        #profName {
+            margin-left: auto;
+            font-weight: 700;
+        }
+
+        main {
+            flex: 1 0 auto;
+            max-width: 1000px;
+            margin: 20px auto;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            font-size: 1rem;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: left;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .material-icons.edit,
+        .material-icons.delete {
+            cursor: pointer;
+            color: var(--accent-dark);
+        }
+
+        @media (max-width:600px) {
+
+            th:nth-child(3),
+            td:nth-child(3) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div style="display:flex;align-items:center;gap:6px;">
+            <span class="material-icons" onclick="location.href='inicio-consulta.html'"
+                style="cursor:pointer">arrow_back</span>
+            <h1 style="margin:0;font-size:1.2rem;cursor:pointer" onclick="location.href='inicio-consulta.html'">Inicio
+            </h1>
+        </div>
+        <img src="images/recursos/pabw.png" alt="logo" class="header-logo">
+        <div id="profName"></div>
+    </header>
+    <main>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Buscar paciente...">
+        </div>
+        <div class="table-responsive">
+            <table id="patientsTable">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>DNI</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </main>
+    <script src="js/pacientes.js"></script>
+</body>
+
+</html>
