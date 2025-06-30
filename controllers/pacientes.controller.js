@@ -158,7 +158,7 @@ exports.updatePatient = async (req, res) => {
     } = req.body;
 
     const [rows] = await pool.query(
-      'SELECT * FROM pacientes WHERE id_paciente = ?',
+      'SELECT *, DATE_FORMAT(fecha_nacimiento, "%Y-%m-%d") AS fecha_nacimiento_fmt FROM pacientes WHERE id_paciente = ?',
       [id]
     );
     if (!rows.length) {
@@ -188,7 +188,7 @@ exports.updatePatient = async (req, res) => {
         nombre ?? p.nombre,
         apellidos ?? p.apellidos,
         razon_social ?? p.razon_social,
-        fecha_nacimiento ?? p.fecha_nacimiento,
+        fecha_nacimiento ?? p.fecha_nacimiento_fmt,
         genero ?? p.genero,
         tipo_contraparte ?? p.tipo_contraparte,
         dni ?? p.dni,
@@ -284,9 +284,11 @@ exports.searchPatients = async (req, res) => {
 
     let query = `
       SELECT
-        p.id_paciente, p.nombre, p.apellidos, p.fecha_nacimiento, p.genero,
+        p.id_paciente, p.nombre, p.apellidos,
+        DATE_FORMAT(p.fecha_nacimiento,'%Y-%m-%d') AS fecha_nacimiento, p.genero,
         p.dni, p.direccion, p.telefono, p.email, p.fecha_registro,
-        h.id_historial, h.motivo_consulta, h.fecha_inicio_problema,
+        h.id_historial, h.motivo_consulta,
+        DATE_FORMAT(h.fecha_inicio_problema,'%Y-%m-%d') AS fecha_inicio_problema,
         h.antecedentes_personales, h.antecedentes_familiares,
         h.tratamientos_previos, h.medicacion_actual, h.alergias,
         h.habitos_vida, h.profesion AS profesion_historial
@@ -354,13 +356,14 @@ exports.getPatientById = async (req, res) => {
     const [rows] = await pool.query(
       `SELECT
          p.id_paciente, p.nombre, p.apellidos, p.razon_social,
-         p.fecha_nacimiento, p.genero, p.tipo_contraparte,
+         DATE_FORMAT(p.fecha_nacimiento,'%Y-%m-%d') AS fecha_nacimiento,
+         p.genero, p.tipo_contraparte,
          p.dni, p.tipo_doc_id, p.id_fiscal,
          p.direccion, p.pais_iso, p.provincia, p.codigo_postal,
          p.telefono, p.email, p.fecha_registro,
          p.lopd_setcode, p.lopd_estado, p.lopd_firmado,
          p.fisio_setcode, p.fisio_estado, p.fisio_firmado,
-         h.id_historial, h.motivo_consulta, h.fecha_inicio_problema,
+         h.id_historial, h.motivo_consulta, DATE_FORMAT(h.fecha_inicio_problema,'%Y-%m-%d') AS fecha_inicio_problema,
          h.antecedentes_personales, h.antecedentes_familiares,
          h.tratamientos_previos, h.medicacion_actual, h.alergias,
          h.habitos_vida, h.profesion AS profesion_historial

@@ -133,6 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <option value="VE">Venezuela</option>
                 <option value="AR">Argentina</option>
                 <option value="CO">Colombia</option>
+                <option value="Otro">Otro</option>
             </select></div>
             <div class="modal-field"><span class="material-symbols-outlined">map</span><input id="swProvincia" class="swal2-input" placeholder="Provincia" value="${p.provincia || ''}"></div>
             <div class="modal-field"><span class="material-symbols-outlined">markunread_mailbox</span><input id="swCp" class="swal2-input" placeholder="CP" value="${p.codigo_postal || ''}"></div>
