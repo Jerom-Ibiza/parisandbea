@@ -789,6 +789,21 @@
         div:where(.swal2-container) .swal2-textarea {
             vertical-align: middle;
         }
+
+
+        .modal-title-mobile {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .modal-title-mobile {
+                display: block;
+            }
+
+            .modal-title-desktop {
+                display: none;
+            }
+        }
     </style>
 </head>
 
@@ -827,6 +842,10 @@
         <div class="panel"
             style="background:#fff;padding:20px;border-radius:14px;width:95%;display:flex;flex-direction:column;gap:14px;pointer-events:auto;position:relative;">
             <button id="btnAgClose" style="position:absolute;top:6px;right:6px;z-index:2; color: #5b5b5b">✖</button>
+            <h2 class="modal-title-mobile" style="margin:0;text-align:center;">
+                <span class="material-symbols-outlined" style="font-size: 32px;">robot_2</span>
+                Agendator
+            </h2>
             <div id="agLog" class="chat-panel" style="max-height:500px;overflow:auto;flex:1;width:100%;">
                 <div id="agMsgs"></div>
                 <div style="display:flex;flex-wrap:wrap;border-radius:30px; box-shadow: 0 3px 8px rgba(0,0,0,.1);">
@@ -849,21 +868,22 @@
                     style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ccc;border-radius:8px;z-index:1001;display:none;">
                 </div>
                 <textarea id="agInput" placeholder="Escribe…"
-                    style="min-height:60px;padding:15px;border:2px solid #aed3c1;border-radius:35px;"></textarea>
+                    style="min-height:60px;padding:15px;border:2px solid #aed3c1;border-radius:35px;width: 100%;"></textarea>
             </div>
             <div style="display: flex; justify-content: space-between;">
-                <h2><span class="material-symbols-outlined" style="font-size: 32px;">robot_2</span> Agendator</h2>
+                <h2 class="modal-title-desktop"><span class="material-symbols-outlined"
+                        style="font-size: 32px;">robot_2</span> Agendator</h2>
                 <div style="display:flex;gap:10px;justify-content:flex-end;align-items:center;">
-                    <label style="display:flex;align-items:center;gap:4px;font-size:.9rem;">
-                        <input type="checkbox" id="chkAgTextOnly">
-                        Mute
-                    </label>
                     <button id="btnAgStop" class="btn-round" style="display:none">Cancel</button>
                     <button id="btnAgSend" class="btn-round"><span class="material-symbols-outlined"
                             style="color: white;">send</span></button>
                     <button id="btnAgTalk" class="btn-round" title="Hablar con el asistente">
                         <img src="images/recursos/voice_icon.png" style="max-width:30px" alt="Logo" />
                     </button>
+                    <label style="display:flex;align-items:center;gap:4px;font-size:.9rem;">
+                        <input type="checkbox" id="chkAgTextOnly">
+                        Mute
+                    </label>
                 </div>
             </div>
         </div>
