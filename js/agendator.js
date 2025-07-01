@@ -11,6 +11,7 @@ const inpSearchAg = $('agSearch');
 const resSearchAg = $('agResults');
 const btnAgCitasHoy = $('btnAgCitasHoy');
 const btnAgCitasSemana = $('btnAgCitasSemana');
+const chkAgTextOnly = $('chkAgTextOnly');
 
 let selectedPatient = null;
 
@@ -62,6 +63,7 @@ const linkify = txt => {
 };
 
 function playTTS(url) {
+    if (chkAgTextOnly?.checked) return;
     currentAudio?.pause();
     currentAudio = new Audio(url);
     currentAudio.addEventListener('ended', cleanup);
