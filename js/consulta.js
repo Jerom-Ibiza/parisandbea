@@ -920,6 +920,7 @@ async function sendBlock() {
 const btnTalk = $id('btnTalk');
 const btnStop = $id('btnStopTTS');     // mismo botón sirve para “parar voz / cancelar”
 const btnModelO3 = $id('btnModelO3');
+const chkTextOnly = $id('chkTextOnly');
 
 let useModelO3 = false;
 
@@ -937,6 +938,7 @@ function getVoiceES() {
 
 /* ---------- helpers TTS ---------- */
 function playTTS(url) {
+    if (chkTextOnly?.checked) return;
     currentAudio?.pause();                // detén la que hubiera
     currentAudio = new Audio(url);
     btnStop.style.display = 'flex';

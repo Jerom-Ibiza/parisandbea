@@ -624,7 +624,7 @@
         .bottom-bar {
             position: fixed;
             bottom: 0;
-            left: 48%;
+            left: 47%;
             transform: translateX(-50%);
             /* centrado absoluto */
             width: auto;
