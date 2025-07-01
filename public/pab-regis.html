@@ -319,7 +319,7 @@
                 <div class="row-lg">
                     <div>
                         <label id="lblDni" for="dni">DNI / Pasaporte*</label>
-                        <input id="dni" name="dni" placeholder="DNI o pasaporte" required>
+                        <input id="dni" name="dni" required>
                     </div>
                     <div>
                         <label id="lblEmail" for="email">Email</label>
@@ -335,15 +335,13 @@
                         title="Empieza por + seguido de 1-4 dígitos" inputmode="numeric" autocomplete="tel-country-code"
                         required>
 
-                    <input id="telefono" name="telefono" placeholder="600200300" pattern="\d{6,15}"
-                        title="Solo dígitos (6-15)" inputmode="numeric" autocomplete="tel-national" required
-                        style="flex:1">
+                    <input id="telefono" name="telefono" pattern="\d{6,15}" title="Solo dígitos (6-15)"
+                        inputmode="numeric" autocomplete="tel-national" required style="flex:1">
                 </div>
                 <div style="display:flex;gap:8px">
                     <div style="flex:0 0 110px">
                         <label id="lblCp" for="codigo_postal">Código Postal*</label>
-                        <input id="codigo_postal" name="codigo_postal" pattern="\d{4,5}" placeholder="07800" required
-                            style="width:100%">
+                        <input id="codigo_postal" name="codigo_postal" pattern="\d{4,5}" required style="width:100%">
                     </div>
                     <div style="flex:1">
                         <label id="lblDireccion" for="direccion">Dirección*</label>
