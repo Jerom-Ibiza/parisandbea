@@ -961,13 +961,21 @@
                 });
                 const r = await fetch('/api/citas/search?' + qs);
                 const data = await r.json();
-                const evs = data.map(c => ({
-                    id: c.id_cita,
-                    title: c.titulo,
-                    start: c.fecha_hora_inicio,
-                    end: c.fecha_hora_fin,
-                    extendedProps: c         // conserva todos los campos
-                }));
+                const evs = data.map(c => {
+                    const ev = {
+                        id: c.id_cita,
+                        title: c.titulo,
+                        start: c.fecha_hora_inicio,
+                        end: c.fecha_hora_fin,
+                        extendedProps: c // conserva todos los campos
+                    };
+                    if (!c.id_paciente) {
+                        ev.backgroundColor = '#ffcccc';
+                        ev.textColor = '#000';
+                        ev.borderColor = '#ffcccc';
+                    }
+                    return ev;
+                });
                 success(evs);
             } catch (err) { console.error(err); fail(err); }
         }
@@ -1040,11 +1048,19 @@
                     all: '1'
                 });
                 const all = await fetch('/api/citas/search?' + qs.toString()).then(r => r.json());
-                const events = all.map(c => ({
-                    title: (profMap[c.id_profesional] || 'Desconocido') + ': ' + c.titulo,
-                    start: c.fecha_hora_inicio,
-                    end: c.fecha_hora_fin
-                }));
+                const events = all.map(c => {
+                    const ev = {
+                        title: (profMap[c.id_profesional] || 'Desconocido') + ': ' + c.titulo,
+                        start: c.fecha_hora_inicio,
+                        end: c.fecha_hora_fin
+                    };
+                    if (!c.id_paciente) {
+                        ev.backgroundColor = '#ffcccc';
+                        ev.textColor = '#000';
+                        ev.borderColor = '#ffcccc';
+                    }
+                    return ev;
+                });
                 modalCal.removeAllEvents();
                 modalCal.addEventSource(events);
             } catch (err) {
