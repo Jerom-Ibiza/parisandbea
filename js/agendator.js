@@ -7,6 +7,7 @@ const btnSendAg = $('btnAgSend');
 const btnTalkAg = $('btnAgTalk');
 const btnStopAg = $('btnAgStop');
 const btnCloseAg = $('btnAgClose');
+const btnOkAg = $('btnAgOk');
 const inpSearchAg = $('agSearch');
 const resSearchAg = $('agResults');
 const btnAgCitasHoy = $('btnAgCitasHoy');
@@ -98,6 +99,7 @@ $('btnOpenAg').onclick = () => {
     resSearchAg.style.display = 'none';
 };
 btnCloseAg.onclick = () => { modalAg.style.display = 'none'; hideAgendatorImg(); };
+btnOkAg.onclick = () => { modalAg.style.display = 'none'; hideAgendatorImg(); };
 modalAg.addEventListener('click', e => {
     if (e.target.id === 'modalAg') {
         modalAg.style.display = 'none';

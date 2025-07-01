@@ -812,6 +812,10 @@
             .modal-title-desktop {
                 display: none;
             }
+
+            div:where(.swal2-container).swal2-center>.swal2-popup {
+                width: 100% !important;
+            }
         }
 
         .swal-center-text {
@@ -823,8 +827,51 @@
             border-radius: 10px;
         }
 
-        div:where(.swal2-container).swal2-center>.swal2-popup {
-            width: 100% !important;
+        /* 1) Ocultamos el checkbox nativo */
+        .mute-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* 2) Contenedor redondo (“pill”) que actuará como botón */
+        .mute-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background .25s, border-color .25s, transform .15s;
+        }
+
+        /* Icono dentro del botón */
+        .mute-toggle .mute-icon {
+            font-size: 24px;
+            color: var(--accent-dark);
+            transition: color .25s;
+        }
+
+        /* 3) Estado “mute” activado (= solo texto) */
+        .mute-input:checked+.mute-toggle {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .mute-input:checked+.mute-toggle .mute-icon {
+            color: #fff;
+        }
+
+        /* 4) Pequeña retroalimentación al hacer clic */
+        .mute-toggle:active {
+            transform: scale(.92);
+        }
+
+        /* 5) Enfocado por teclado → anillo de enfoque */
+        .mute-input:focus+.mute-toggle {
+            box-shadow: 0 0 0 3px rgba(174, 211, 193, .4);
         }
     </style>
 </head>
@@ -902,10 +949,16 @@
                     <button id="btnAgTalk" class="btn-round" title="Hablar con el asistente">
                         <img src="images/recursos/voice_icon.png" style="max-width:30px" alt="Logo" />
                     </button>
-                    <label style="display:flex;align-items:center;gap:4px;font-size:.9rem;">
-                        <input type="checkbox" id="chkAgTextOnly">
-                        Mute
+                    <!-- Checkbox “mute” -->
+                    <input type="checkbox" id="chkAgTextOnly" class="mute-input" />
+
+                    <!-- Botón visual -->
+                    <label for="chkAgTextOnly" class="mute-toggle" title="Silenciar / Activar voz">
+                        <span class="material-symbols-outlined mute-icon">volume_up</span>
                     </label>
+                </div>
+                <div style="display:flex;justify-content:center;margin-top:10px;">
+                    <button id="btnAgOk" class="btn" type="button">OK</button>
                 </div>
             </div>
         </div>
@@ -975,6 +1028,21 @@
                 return false;
             }
         }
+
+        const muteChk = document.getElementById('chkAgTextOnly');
+        const muteIcon = document.querySelector('.mute-icon');
+
+        // Cambia el glifo según el estado
+        function updateMuteIcon() {
+            muteIcon.textContent = muteChk.checked ? 'volume_off' : 'volume_up';
+        }
+
+        // Al abrir el modal por primera vez
+        updateMuteIcon();
+
+        // Cada vez que el usuario marque / desmarque
+        muteChk.addEventListener('change', updateMuteIcon);
+
 
         /* ============== instanciar FullCalendar =============== */
         const calendarEl = document.getElementById('calendar');

@@ -154,7 +154,6 @@
 
     #btnModelO3 {
         color: #fff;
-        scale: 0.8;
     }
 
     #btnModelO3.active {
@@ -193,7 +192,7 @@
     .chat-panel {
         background: #fff;
         box-shadow: 0 3px 8px rgba(0, 0, 0, .08);
-        padding: 18px 22px;
+        padding: 18px 10px;
         box-sizing: border-box;
         font-size: 15px;
         line-height: 1.4;

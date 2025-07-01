@@ -1431,3 +1431,45 @@ button.swal2-cancel {
   border-radius: 10px !important;
   font-family: "Raleway", sans-serif;
 }
+
+/* ——— Mute redondo ——— */
+.mute-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mute-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background .25s, border-color .25s, transform .15s;
+}
+
+.mute-toggle .mute-icon {
+  font-size: 24px;
+  color: var(--accent-dark);
+  transition: color .25s;
+}
+
+.mute-input:checked+.mute-toggle {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.mute-input:checked+.mute-toggle .mute-icon {
+  color: #fff;
+}
+
+.mute-toggle:active {
+  transform: scale(.92);
+}
+
+.mute-input:focus+.mute-toggle {
+  box-shadow: 0 0 0 3px rgba(174, 211, 193, .4);
+}

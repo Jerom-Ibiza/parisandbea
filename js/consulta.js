@@ -922,6 +922,16 @@ const btnStop = $id('btnStopTTS');     // mismo botón sirve para “parar voz /
 const btnModelO3 = $id('btnModelO3');
 const chkTextOnly = $id('chkTextOnly');
 
+/* ========= Mute / Voz (icono) ========= */
+const muteIcon = document.querySelector('.mute-icon');
+function updateMuteIcon() {
+    if (!muteIcon) return;
+    muteIcon.textContent = chkTextOnly.checked ? 'volume_off' : 'volume_up';
+}
+updateMuteIcon();                         // al cargar
+chkTextOnly.addEventListener('change', updateMuteIcon); // al cambiar
+
+
 let useModelO3 = false;
 
 let talking = false;                // ¿estamos grabando pregunta?

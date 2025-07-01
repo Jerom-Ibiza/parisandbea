@@ -161,9 +161,13 @@
     <button id="btnModelO3" class="btn-round btn-small" title="Usar modelo o3">Pro</button>
     <button id="btnTalk" class="btn-round" title="Hablar con el asistente">
       <img src="images/recursos/voice_icon.png" style="max-width:30px" alt="Logo" /></button>
-    <label style="display:flex;align-items:center;gap:4px;font-size:.9rem;">
-      <input type="checkbox" id="chkTextOnly">
-      Mute
+    <!-- Checkbox oculto -->
+    <input type="checkbox" id="chkTextOnly" class="mute-input">
+
+    <!-- Botón visual -->
+    <label for="chkTextOnly" class="mute-toggle" title="Silenciar / Activar voz">
+      <span class="material-symbols-outlined mute-icon"
+        style="color:#aed3c1; border: solid; border-radius: 50px; padding: 4px;">volume_up</span>
     </label>
   </div>
 
