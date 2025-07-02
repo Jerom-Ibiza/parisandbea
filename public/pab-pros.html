@@ -95,7 +95,6 @@
         .btn {
             display: flex;
             align-items: center;
-            gap: 6px;
             padding: 12px 24px;
             background: var(--accent);
             border: none;
@@ -246,7 +245,6 @@
                 max-width: 1000px;
                 margin: 20px auto;
                 background: #fff;
-                padding: 10px;
                 border-radius: 12px;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, .1);
             }
@@ -263,11 +261,6 @@
         /* -------------------------------------------------- */
 
         @media (max-width: 768px) {
-
-            .fc .fc-timegrid-slot,
-            .fc .fc-timegrid-slot-label-frame {
-                height: 100px;
-            }
 
             /* 1) Toolbar en columna, con hueco entre filas */
             .fc .fc-header-toolbar {
@@ -880,6 +873,30 @@
 
             .agenda-toolbar {
                 gap: 1px;
+            }
+
+            /* 1) Habilitamos scroll lateral en el contenedor de la vista */
+            #calendar .fc-view-harness {
+                overflow-x: auto;
+                /* scroll horizontal */
+                -webkit-overflow-scrolling: touch;
+                /* inercia iOS/Android */
+            }
+
+            /* 2) Obligamos a que la tabla sea más ancha que la pantalla.
+        Ajusta el valor si quieres celdas más o menos anchas.      */
+            #calendar .fc-scrollgrid,
+            #calendar .fc-timegrid,
+            #calendar .fc-timegrid-body,
+            #calendar .fc-timegrid-table {
+                min-width: 850px;
+                /* ≈135 px × 7 días */
+            }
+
+            /* 3) Ocultamos la barra de scroll vertical redundante que
+        genera FullCalendar dentro de la cuadrícula.              */
+            #calendar .fc-scroller-harness {
+                overflow-y: hidden !important;
             }
         }
     </style>
