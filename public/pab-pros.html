@@ -251,7 +251,7 @@
 
             .fc .fc-timegrid-slot,
             .fc .fc-timegrid-slot-label-frame {
-                height: 65px;
+                height: 75px;
             }
 
         }
@@ -922,7 +922,7 @@
                 /* casi todo el ancho */
                 max-width: 500px;
                 /* pero con tope */
-                padding: 20px 18px 26px !important;
+                padding: 20px 1px !important;
                 border-radius: 18px;
             }
 
@@ -1075,7 +1075,7 @@
                     style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ccc;border-radius:8px;z-index:1001;display:none;">
                 </div>
                 <textarea id="agInput" placeholder="Escribe…"
-                    style="min-height:60px;padding:15px;border:2px solid #aed3c1;border-radius:35px;width: 100%;"></textarea>
+                    style="min-height:60px;padding:15px;border:2px solid #aed3c1;border-radius:35px;width: 100%;margin-top:10px"></textarea>
             </div>
             <div style="display: flex; justify-content: space-between;">
                 <h2 class="modal-title-desktop"><span class="material-symbols-outlined"
@@ -1160,6 +1160,17 @@
             } catch (e) { console.error(e); }
         }
 
+        async function loadServices() {
+            try {
+                const r = await fetch('/api/servicios/profesional/' + proId);
+                const servicios = await r.json();
+                servicesMap = {};
+                servicios.forEach(s => {
+                    servicesMap[s.id_servicio] = s.nombre;
+                });
+            } catch (e) { console.error(e); }
+        }
+
         async function loadSession() {
             try {
                 const r = await fetch('/api/session/info');
@@ -1203,6 +1214,7 @@
         loadSession().then(async ok => {
             if (!ok) return;
             await loadProfesionales();
+            await loadServices();
             calendar = new FullCalendar.Calendar(calendarEl, {
                 locale: 'es',
                 initialView: 'timeGridWeek',
@@ -1237,8 +1249,9 @@
                 datesSet: attachTitleListener
             });
             calendar.render();
-            document.getElementById('proSelect').addEventListener('change', e => {
+            document.getElementById('proSelect').addEventListener('change', async e => {
                 proId = e.target.value;
+                await loadServices();
                 calendar.refetchEvents();
             });
         });

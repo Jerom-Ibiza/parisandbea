@@ -906,6 +906,18 @@
 
     @media (max-width:768px) {
 
+        #modalGuide ul {
+            font-size: 12px;
+        }
+
+        /* Distribuye los botones en dos filas */
+        .bottom-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            justify-items: center;
+        }
+
         #mainData,
         .feedback {
             font-size: 17px;
