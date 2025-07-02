@@ -816,6 +816,11 @@
             div:where(.swal2-container).swal2-center>.swal2-popup {
                 width: 100% !important;
             }
+
+            .modal-fields-2col {
+                width: ;
+                : 100%;
+            }
         }
 
         .swal-center-text {
@@ -967,10 +972,20 @@
     <script>
         /* ================ utilidades & helpers ================= */
         let proId = null;
+        let proEspecialidad = '';
+        let servicesMap = {};
 
         /* formatea a “YYYY-MM-DD HH:mm:ss” (hora local Madrid) */
         function fmt(dtISO) {
             return dtISO ? dayjs(dtISO).tz().format('YYYY-MM-DD HH:mm:ss') : null;
+        }
+
+        function getDefaultServiceId() {
+            const esFisio = /fisio/i.test(proEspecialidad);
+            const esOsteo = /osteo/i.test(proEspecialidad);
+            if (esFisio) return 1;
+            if (esOsteo) return 2;
+            return null;
         }
 
         /* feedback global: Swal éxito / error + refresco */
@@ -1019,7 +1034,7 @@
                     location.href = '/pab-login.html';
                     return false;
                 }
-                proId = data.user.id_profesional;
+                proEspecialidad = data.user.especialidad || '';
                 document.getElementById('profName').textContent = data.user.nombre;
                 return true;
             } catch (e) {
@@ -1254,6 +1269,9 @@
               <option value="cancelada">Cancelada</option>
             </select>
           </div>
+          <div class="modal-field"><span class="material-icons">medical_services</span>
+            <select id="swal-servicio" class="swal2-select"></select>
+          </div>
           <div class="modal-field"><span class="material-icons">event</span>
             <input id="swal-end" class="swal2-input" placeholder="Fin">
           </div>
@@ -1268,7 +1286,7 @@
           </div>
         </div>`,
                 focusConfirm: false,
-                didOpen: () => {
+                didOpen: async () => {
                     flatpickr('#swal-start', {
                         enableTime: true, time_24hr: true,
                         defaultDate: prefill.start || null, locale: 'es'
@@ -1281,6 +1299,26 @@
                         prefill.estado || 'pendiente';
                     document.getElementById('swal-notif').value =
                         prefill.notificacion || 'ninguna';
+
+                    try {
+                        const r = await fetch('/api/servicios/profesional/' + proId);
+                        const servicios = await r.json();
+                        const sel = document.getElementById('swal-servicio');
+                        sel.innerHTML = '<option value="">(sin especificar)</option>';
+                        servicesMap = {};
+                        servicios.forEach(s => {
+                            const opt = document.createElement('option');
+                            opt.value = s.id_servicio;
+                            opt.textContent = s.nombre;
+                            servicesMap[s.id_servicio] = s.nombre;
+                            sel.appendChild(opt);
+                        });
+                        sel.value = prefill.id_servicio || '';
+                        if (!prefill.id && !prefill.id_servicio && !sel.value) {
+                            const d = getDefaultServiceId();
+                            if (d) sel.value = String(d);
+                        }
+                    } catch (e) { console.error(e); }
 
                     /* autocompletado pacientes ------------------------------ */
                     const inp = document.getElementById('swal-persona');
@@ -1321,6 +1359,7 @@
                         id_paciente: document.getElementById('swal-idpac').value,
                         estado: document.getElementById('swal-estado').value,
                         notificacion: document.getElementById('swal-notif').value,
+                        id_servicio: document.getElementById('swal-servicio').value,
                         start: toIso(document.getElementById('swal-start').value),
                         end: toIso(document.getElementById('swal-end').value)
                     };
@@ -1345,7 +1384,8 @@
                         notificacion: formValues.notificacion,
                         fecha_hora_inicio: fmt(formValues.start),
                         fecha_hora_fin: fmt(formValues.end),
-                        id_profesional: proId
+                        id_profesional: proId,
+                        id_servicio: formValues.id_servicio || getDefaultServiceId()
                     })
                 });
                 await handleResponse(res, 'Cita actualizada correctamente!');
@@ -1363,7 +1403,8 @@
                         notificacion: formValues.notificacion,
                         fecha_hora_inicio: fmt(formValues.start),
                         fecha_hora_fin: fmt(formValues.end),
-                        id_profesional: proId
+                        id_profesional: proId,
+                        id_servicio: formValues.id_servicio || getDefaultServiceId()
                     })
                 });
                 await handleResponse(res, 'Cita creada');
@@ -1378,7 +1419,7 @@
                 html: `
         <div class="modal-detail"><span class="material-icons">schedule</span><span><b>Inicio:</b> ${c.start.toLocaleString()}</span></div>
         <div class="modal-detail"><span class="material-icons">event</span><span><b>Fin:</b> ${c.end.toLocaleString()}</span></div>
-        <div class="modal-detail"><span class="material-icons">person</span><span><b>Paciente:</b> ${c.extendedProps.persona || '—'}</span></div>
+        <div class="modal-detail"><span class="material-icons">medical_services</span><span><b>Servicio:</b> ${servicesMap[c.extendedProps.id_servicio] || '—'}</span></div>
         <div class="modal-detail"><span class="material-icons">description</span><span><b>Descripción:</b> ${c.extendedProps.descripcion || '—'}</span></div>
         <div class="modal-detail"><span class="material-icons">info</span><span><b>Estado:</b> ${c.extendedProps.estado || '—'}</span></div>
         <div class="modal-detail"><span class="material-icons">notifications</span><span><b>Notificación:</b> ${c.extendedProps.notificacion || '—'}</span></div>`,
@@ -1398,7 +1439,8 @@
                         estado: c.extendedProps.estado,
                         notificacion: c.extendedProps.notificacion,
                         start: c.startStr,
-                        end: c.endStr
+                        end: c.endStr,
+                        id_servicio: c.extendedProps.id_servicio
                     });
                 } else if (result.isDenied) {
                     const ok = await Swal.fire({

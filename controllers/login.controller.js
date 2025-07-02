@@ -1,5 +1,5 @@
 /* ───────── controllers/login.controller.js ───────── */
-const pool   = require('../database');
+const pool = require('../database');
 const bcrypt = require('bcrypt');          // o bcryptjs si prefieres
 
 exports.login = async (req, res) => {
@@ -12,7 +12,8 @@ exports.login = async (req, res) => {
     /* 1. Buscamos al profesional por email  */
     const [rows] = await pool.query(
       `SELECT id_profesional, nombre, mail, rol,
-              voz, preferencias, password          -- 🆕  incluimos voz y preferencias
+              especialidad,                     -- 🆕
+              voz, preferencias, password
        FROM profesionales
        WHERE mail = ? LIMIT 1`,
       [email]
@@ -33,15 +34,16 @@ exports.login = async (req, res) => {
     /* 3. Guardamos datos en la sesión (sin la pass)  */
     req.session.user = {
       id_profesional: profesional.id_profesional,
-      nombre        : profesional.nombre,
-      mail          : profesional.mail,
-      rol           : profesional.rol,
-      voz           : profesional.voz || null,        // 🆕
-      preferencias  : profesional.preferencias || null
+      nombre: profesional.nombre,
+      mail: profesional.mail,
+      rol: profesional.rol,
+      especialidad: profesional.especialidad || null, // 🆕
+      voz: profesional.voz || null,
+      preferencias: profesional.preferencias || null
     };
 
     res.json({
-      message : 'Login correcto',
+      message: 'Login correcto',
       redirect: '/inicio-consulta.html'
     });
   } catch (err) {
