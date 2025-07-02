@@ -266,7 +266,7 @@
 
             .fc .fc-timegrid-slot,
             .fc .fc-timegrid-slot-label-frame {
-                height: 45px;
+                height: 100px;
             }
 
             /* 1) Toolbar en columna, con hueco entre filas */
@@ -804,25 +804,6 @@
             display: none;
         }
 
-        @media (max-width: 768px) {
-            .modal-title-mobile {
-                display: block;
-            }
-
-            .modal-title-desktop {
-                display: none;
-            }
-
-            div:where(.swal2-container).swal2-center>.swal2-popup {
-                width: 100% !important;
-            }
-
-            .modal-fields-2col {
-                width: ;
-                : 100%;
-            }
-        }
-
         .swal-center-text {
             text-align: center !important;
             /* centra el contenido del contenedor html */
@@ -877,6 +858,29 @@
         /* 5) Enfocado por teclado → anillo de enfoque */
         .mute-input:focus+.mute-toggle {
             box-shadow: 0 0 0 3px rgba(174, 211, 193, .4);
+        }
+
+        @media (max-width: 768px) {
+            .modal-title-mobile {
+                display: block;
+            }
+
+            .modal-title-desktop {
+                display: none;
+            }
+
+            div:where(.swal2-container).swal2-center>.swal2-popup {
+                width: 100% !important;
+            }
+
+            .modal-fields-2col {
+                width: ;
+                : 100%;
+            }
+
+            .agenda-toolbar {
+                gap: 1px;
+            }
         }
     </style>
 </head>
@@ -1034,6 +1038,7 @@
                     location.href = '/pab-login.html';
                     return false;
                 }
+                proId = data.user.id_profesional;
                 proEspecialidad = data.user.especialidad || '';
                 document.getElementById('profName').textContent = data.user.nombre;
                 return true;
@@ -1419,6 +1424,7 @@
                 html: `
         <div class="modal-detail"><span class="material-icons">schedule</span><span><b>Inicio:</b> ${c.start.toLocaleString()}</span></div>
         <div class="modal-detail"><span class="material-icons">event</span><span><b>Fin:</b> ${c.end.toLocaleString()}</span></div>
+        <div class="modal-detail"><span class="material-icons">person</span><span><b>Paciente:</b> ${c.extendedProps.persona || '—'}</span></div>
         <div class="modal-detail"><span class="material-icons">medical_services</span><span><b>Servicio:</b> ${servicesMap[c.extendedProps.id_servicio] || '—'}</span></div>
         <div class="modal-detail"><span class="material-icons">description</span><span><b>Descripción:</b> ${c.extendedProps.descripcion || '—'}</span></div>
         <div class="modal-detail"><span class="material-icons">info</span><span><b>Estado:</b> ${c.extendedProps.estado || '—'}</span></div>

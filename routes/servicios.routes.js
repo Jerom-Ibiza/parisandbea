@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const serviciosController = require('../controllers/servicios.controller');
 const checkApiKey = require('../middleware/checkApiKey');
+const checkAuthOrApiKey = require('../middleware/checkAuthOrApiKey');
 
 // ---------------------- SERVICIOS ----------------------
 router.post('/create', checkApiKey, serviciosController.createService);
@@ -27,6 +28,7 @@ router.delete('/tipos-bonos/delete/:id', checkApiKey, serviciosController.delete
 router.get('/:id_servicio/bonos', serviciosController.getBonosByService);
 
 // ---------------------- SERVICIO POR ID ----------------------
+router.get('/profesional/:id_profesional', checkAuthOrApiKey, serviciosController.getServicesByProfessional);
 router.get('/:id', checkApiKey, serviciosController.getServiceById);
 router.put('/update/:id', checkApiKey, serviciosController.updateService);
 router.delete('/delete/:id', checkApiKey, serviciosController.deleteService);
@@ -35,6 +37,5 @@ router.delete('/delete/:id', checkApiKey, serviciosController.deleteService);
 router.post('/:id_servicio/professionals/assign', checkApiKey, serviciosController.assignProfessional);
 router.delete('/:id_servicio/professionals/:id_profesional', checkApiKey, serviciosController.removeProfessional);
 router.get('/:id_servicio/professionals', checkApiKey, serviciosController.getProfessionalsByService);
-router.get('/profesional/:id_profesional', checkApiKey, serviciosController.getServicesByProfessional);
 
 module.exports = router;
