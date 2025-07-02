@@ -893,6 +893,12 @@
                 /* ≈135 px × 7 días */
             }
 
+            /* Ajustes de ancho por vista */
+            /* Vista mensual: un poco más ancha */
+            #calendar .fc-dayGridMonth-view .fc-scrollgrid {
+                min-width: 1400px;
+            }
+
             /* 3) Ocultamos la barra de scroll vertical redundante que
         genera FullCalendar dentro de la cuadrícula.              */
             #calendar .fc-scroller-harness {
@@ -994,6 +1000,7 @@
         /* ================ utilidades & helpers ================= */
         let proId = null;
         let proEspecialidad = '';
+        let proName = '';
         let servicesMap = {};
 
         /* formatea a “YYYY-MM-DD HH:mm:ss” (hora local Madrid) */
@@ -1057,7 +1064,8 @@
                 }
                 proId = data.user.id_profesional;
                 proEspecialidad = data.user.especialidad || '';
-                document.getElementById('profName').textContent = data.user.nombre;
+                proName = data.user.nombre;
+                document.getElementById('profName').textContent = proName;
                 return true;
             } catch (e) {
                 console.error(e);
@@ -1391,6 +1399,29 @@
             });
 
             if (!formValues) return;  // cancelado
+
+            if (!prefill.id) {
+                const svcId = formValues.id_servicio || getDefaultServiceId();
+                const svcName = servicesMap[svcId] || '';
+                if (!formValues.title.trim()) {
+                    if (formValues.persona) {
+                        formValues.title = svcName
+                            ? `${formValues.persona} - ${svcName}`
+                            : formValues.persona;
+                    } else if (svcName) {
+                        formValues.title = svcName;
+                    }
+                }
+                if (!formValues.descripcion.trim()) {
+                    if (svcName && proName) {
+                        formValues.descripcion = `Cita de ${svcName} con ${proName}`;
+                    } else if (svcName) {
+                        formValues.descripcion = `Cita de ${svcName}`;
+                    } else if (proName) {
+                        formValues.descripcion = `Cita con ${proName}`;
+                    }
+                }
+            }
 
             if (prefill.id) {
                 /* ------------- UPDATE ------------- */
