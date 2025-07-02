@@ -166,7 +166,7 @@
         }
 
         .modal-title-icon {
-            display: none;
+            display: inline-block;
             vertical-align: middle;
             margin-right: 6px;
         }
@@ -268,7 +268,7 @@
                 flex-direction: column;
                 gap: 15px;
                 padding: 0 10px;
-                /* opcional: algo de almohadillado */
+                margin-left: 5px;
             }
 
             /* 2) Cada chunk ocupa 100%, botones centrados y envueltos */
@@ -294,7 +294,7 @@
             }
 
             .fc .fc-header-toolbar .fc-toolbar-chunk:nth-child(3) {
-                order: 2;
+                order: 3;
             }
 
             /* 4) Reducir padding de los botones para que entren mejor */
@@ -307,6 +307,10 @@
             /* El selector de profesionales ocupa todo el ancho */
             #proSelect {
                 margin-top: 20px;
+            }
+
+            div:where(.swal2-container) div:where(.swal2-html-container) {
+                overflow: hidden;
             }
         }
 
@@ -903,6 +907,108 @@
         genera FullCalendar dentro de la cuadrícula.              */
             #calendar .fc-scroller-harness {
                 overflow-y: hidden !important;
+            }
+        }
+
+        /* ────────────────────────────────────────────────
+   MÓVIL · Maquetación optimizada para el modal
+   “Nueva cita” (SweetAlert2)        0 – 768 px
+──────────────────────────────────────────────── */
+        @media (max-width: 768px) {
+
+            /* 1 ▸ Tarjeta SweetAlert2 más compacta */
+            div:where(.swal2-container).swal2-center>.swal2-popup {
+                width: 95vw !important;
+                /* casi todo el ancho */
+                max-width: 500px;
+                /* pero con tope */
+                padding: 20px 18px 26px !important;
+                border-radius: 18px;
+            }
+
+            /* 2 ▸ Una sola columna: apilamos los pares Icono + Campo */
+            .modal-fields-2col {
+                display: flex !important;
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            /* 3 ▸ Fila tipo (formato chip-icono + campo al 100 %)  */
+            .modal-field {
+                display: flex;
+                align-items: center;
+                gap: 1px;
+                margin-bottom: 1px;
+            }
+
+            .modal-field .material-icons {
+                flex: 0 0 22px;
+                /* ancho fijo para el icono */
+                font-size: 22px;
+                color: var(--accent-dark);
+            }
+
+            .modal-field input,
+            .modal-field textarea,
+            .modal-field select {
+                flex: 1 1 auto;
+                font-size: 15px;
+                padding: 12px 14px;
+                border: 1px solid #d5d5d5;
+                border-radius: 10px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, .05) inset;
+            }
+
+            textarea.swal2-textarea {
+                min-height: 90px;
+                min-width: 90%;
+                resize: vertical;
+            }
+
+            /* 5 ▸ Select minimalista con flecha SVG */
+            .swal2-select {
+                appearance: none;
+                -webkit-appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' stroke='%235B5B5B' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 12px center;
+                background-size: 18px;
+            }
+
+            /* 6 ▸ Título ligeramente menor y sin ocupar tanto */
+            .swal2-title {
+                font-size: 1.4rem !important;
+                margin-bottom: 10px !important;
+            }
+
+            /* 7 ▸ Botones confirm/cancel en dos columnas cómodas */
+            div:where(.swal2-actions) {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            div:where(.swal2-actions) button.swal2-confirm,
+            div:where(.swal2-actions) button.swal2-cancel {
+                font-size: 1rem;
+            }
+
+            /* 8 ▸ Dropdown de pacientes – bordes y scroll amables */
+            #swal-results {
+                max-height: 220px;
+                border-radius: 12px;
+            }
+
+            /* 9 ▸ Pequeños ajustes heredados que estorbaban */
+            .search-wrapper {
+                margin: 0;
+                /* quitamos margen que descuadra */
+                max-width: none;
+            }
+
+            .modal-field .search-wrapper {
+                margin-top: 0px;
+                margin-left: 0px;
+                max-width: 200px;
             }
         }
     </style>
@@ -1536,7 +1642,7 @@
 
         async function openGotoDate() {
             const { value: dateStr } = await Swal.fire({
-                title: 'Ir a fecha',
+                title: '<span class="modal-title-icon material-symbols-outlined" style="font-size:35px">event_upcoming</span> Ir a fecha',
                 html: '<input id="swal-goto-date" class="swal2-input">',
                 focusConfirm: false,
                 didOpen: () => {

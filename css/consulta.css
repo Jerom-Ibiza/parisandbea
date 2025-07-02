@@ -941,15 +941,12 @@
             font-size: 15px;
         }
 
-        #btnHome {
-            display: none;
-        }
-
         .info-panel dt,
         .info-panel dd:nth-of-type(odd),
         .info-panel dd {
             padding: 10px;
             font-size: 16px;
+            margin-bottom: 5px;
         }
 
     }
