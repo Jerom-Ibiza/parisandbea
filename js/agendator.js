@@ -94,7 +94,7 @@ $('btnOpenAg').onclick = () => {
     modalAg.style.display = 'flex';
     requestAnimationFrame(() => {
         inpAg.blur();
-        inpSearchAg.focus();
+        inpSearchAg.blur();
     });
     resSearchAg.style.display = 'none';
 };
