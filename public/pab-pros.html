@@ -880,6 +880,12 @@
             }
 
             /* 1) Habilitamos scroll lateral en el contenedor de la vista */
+            /* 1) Habilitamos scroll en el contenedor de la vista */
+            #calendar {
+                max-height: 100vh;
+                overflow: auto;
+            }
+
             #calendar .fc-view-harness {
                 overflow-x: auto;
                 /* scroll horizontal */
@@ -1112,6 +1118,11 @@
         /* formatea a “YYYY-MM-DD HH:mm:ss” (hora local Madrid) */
         function fmt(dtISO) {
             return dtISO ? dayjs(dtISO).tz().format('YYYY-MM-DD HH:mm:ss') : null;
+        }
+
+        /* formatea a “YYYY-MM-DDTHH:mm:ss” (hora local Madrid) */
+        function toLocalIso(date) {
+            return dayjs(date).tz().format('YYYY-MM-DDTHH:mm:ss');
         }
 
         function getDefaultServiceId() {
@@ -1372,12 +1383,14 @@
 
         /* ============== crear cita clic en hueco libre ============== */
         function onDateClick(info) {
+            const esFisio = /fisio/i.test(proEspecialidad);
+            const startDate = esFisio
+                ? new Date(info.date.getTime() + 15 * 60000)
+                : info.date;
+            const endDate = new Date(info.date.getTime() + 60 * 60000);
             openForm({
-                start: info.dateStr,
-                end: FullCalendar.formatDate(
-                    FullCalendar.add(info.date, { minutes: 30 }),
-                    { timeZone: 'local', format: 'iso' }
-                )
+                start: toLocalIso(startDate),
+                end: toLocalIso(endDate)
             });
         }
 
