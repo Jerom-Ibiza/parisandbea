@@ -169,16 +169,19 @@ exports.suggestPatients = async (req, res) => {
     const q = String(req.query.q || '').trim();
     if (!q) return res.json([]);
     const norm = normalize(q);
+    const tokens = norm.split(/\s+/).filter(Boolean);
     const like = `%${norm}%`;
+    const fullLike = `%${tokens.join('%')}%`;
     const digits = words2digits(q).replace(/\D/g, '');
 
     let sql = `SELECT id_paciente,nombre,apellidos,dni
                  FROM pacientes
-                WHERE LOWER(CONVERT(nombre USING utf8mb4)) LIKE ?
+                WHERE LOWER(CONCAT_WS(' ',nombre,apellidos)) LIKE ?
+                   OR LOWER(CONVERT(nombre USING utf8mb4)) LIKE ?
                    OR LOWER(CONVERT(apellidos USING utf8mb4)) LIKE ?
                    OR dni LIKE ?
                    OR email LIKE ?`;
-    const params = [like, like, `%${q}%`, `%${q}%`];
+    const params = [fullLike, like, like, `%${q}%`, `%${q}%`];
     if (digits) {
       sql += ' OR REPLACE(telefono," ","") LIKE ?';
       params.push(`%${digits}%`);
