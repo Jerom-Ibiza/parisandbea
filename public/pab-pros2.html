@@ -50,7 +50,7 @@
             background: #efefef;
             display: flex;
             flex-direction: column;
-            min-height: 110vh;
+            min-height: 100vh;
         }
 
         header {
@@ -251,7 +251,7 @@
 
             .fc .fc-timegrid-slot,
             .fc .fc-timegrid-slot-label-frame {
-                height: 100px;
+                height: 75px;
             }
 
         }
@@ -882,7 +882,7 @@
             /* 1) Habilitamos scroll lateral en el contenedor de la vista */
             /* 1) Habilitamos scroll en el contenedor de la vista */
             #calendar {
-                max-height: 110vh;
+                max-height: 105vh;
                 overflow: auto;
             }
 
@@ -899,7 +899,7 @@
             #calendar .fc-timegrid,
             #calendar .fc-timegrid-body,
             #calendar .fc-timegrid-table {
-                min-width: 100%;
+                min-width: 850px;
                 /* ≈135 px × 7 días */
             }
 
@@ -1044,7 +1044,7 @@
     <div id="calendar"></div>
 
     <div id="modalAg"
-        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;justify-content:center">
+        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center">
         <div class="panel"
             style="background:#fff;padding:20px;border-radius:14px;width:95%;display:flex;flex-direction:column;gap:14px;pointer-events:auto;position:relative;">
             <button id="btnAgClose" style="position:absolute;top:6px;right:6px;z-index:2; color: #5b5b5b">✖</button>
@@ -1054,8 +1054,7 @@
             </h2>
             <div id="agLog" class="chat-panel" style="max-height:500px;overflow:auto;flex:1;width:100%;">
                 <div id="agMsgs"></div>
-                <div
-                    style="display:flex;flex-wrap:wrap;border-radius:30px; box-shadow: 0 3px 8px rgba(0,0,0,.1);padding:10px;">
+                <div style="display:flex;flex-wrap:wrap;border-radius:30px; box-shadow: 0 3px 8px rgba(0,0,0,.1);">
                     <button id="btnAgCitasHoy" class="botonesChat" title="Citas de hoy">
                         <span class="material-symbols-outlined">event</span> Citas hoy
                     </button>
@@ -1109,10 +1108,6 @@
         let proName = '';
         let servicesMap = {};
 
-        // Variables para manejo de voz
-        let recognition = null;
-        let mediaStream = null;
-
         /* formatea a “YYYY-MM-DD HH:mm:ss” (hora local Madrid) */
         function fmt(dtISO) {
             return dtISO ? dayjs(dtISO).tz().format('YYYY-MM-DD HH:mm:ss') : null;
@@ -1146,7 +1141,7 @@
                 text: okMsg,
                 confirmButtonText: 'OK',
                 customClass: {
-                    htmlContainer: 'swal-center-text'
+                    htmlContainer: 'swal-center-text'   // ← usa tu clase
                 }
             });
 
@@ -1203,12 +1198,17 @@
         const muteChk = document.getElementById('chkAgTextOnly');
         const muteIcon = document.querySelector('.mute-icon');
 
+        // Cambia el glifo según el estado
         function updateMuteIcon() {
             muteIcon.textContent = muteChk.checked ? 'volume_off' : 'volume_up';
         }
 
+        // Al abrir el modal por primera vez
         updateMuteIcon();
+
+        // Cada vez que el usuario marque / desmarque
         muteChk.addEventListener('change', updateMuteIcon);
+
 
         /* ============== instanciar FullCalendar =============== */
         const calendarEl = document.getElementById('calendar');
@@ -1219,32 +1219,28 @@
             if (!ok) return;
             await loadProfesionales();
             await loadServices();
-
-            const isMobile = window.innerWidth <= 768;
-
             calendar = new FullCalendar.Calendar(calendarEl, {
                 locale: 'es',
-                initialView: isMobile ? 'listWeek' : 'timeGridWeek',
+                initialView: 'timeGridWeek',
                 slotDuration: '01:00:00',
                 slotMinTime: '08:00:00',
                 allDaySlot: false,
                 nowIndicator: true,
                 height: 'auto',
                 customButtons: {
-                    newEvent: { text: 'Nueva cita', click: () => openForm() },
-                    toggleHours: { text: 'Mostrar 0-7', click: toggleEarlyHours }
+                    newEvent: {
+                        text: 'Nueva cita',
+                        click: () => openForm()
+                    },
+                    toggleHours: {
+                        text: 'Mostrar 0-7',
+                        click: toggleEarlyHours
+                    }
                 },
                 headerToolbar: {
                     left: 'prev,next today newEvent',
                     center: 'title',
-                    right: isMobile
-                        ? 'listWeek,timeGridDay,dayGridMonth'
-                        : 'dayGridMonth,timeGridWeek,timeGridDay,toggleHours'
-                },
-                views: {
-                    listWeek: { buttonText: 'Semana (lista)' },
-                    timeGridDay: { buttonText: 'Día' },
-                    dayGridMonth: { buttonText: 'Mes' }
+                    right: 'toggleHours,dayGridMonth,timeGridWeek,timeGridDay'
                 },
                 events: fetchEvents,
                 dateClick: onDateClick,
@@ -1256,14 +1252,7 @@
                 eventResize: onEventChange,
                 datesSet: attachTitleListener
             });
-
             calendar.render();
-
-            const mql = window.matchMedia('(max-width: 768px)');
-            mql.addEventListener('change', e => {
-                calendar.changeView(e.matches ? 'listWeek' : 'timeGridWeek');
-            });
-
             document.getElementById('proSelect').addEventListener('change', async e => {
                 proId = e.target.value;
                 await loadServices();
@@ -1271,6 +1260,7 @@
             });
         });
 
+        /* ============== cargar citas (GET /search) ============== */
         async function fetchEvents(info, success, fail) {
             try {
                 const qs = new URLSearchParams({
@@ -1288,7 +1278,7 @@
                         end: c.fecha_hora_fin,
                         extendedProps: c
                     };
-                    if (!c.id_paciente) {
+                    if (!c.id_paciente) {           // citas sin paciente ⇒ fondo rojo
                         ev.backgroundColor = '#ffcccc';
                         ev.textColor = '#000';
                         ev.borderColor = '#ffcccc';
@@ -1313,13 +1303,13 @@
                 await Swal.fire({
                     title: 'Agendas de hoy',
                     html: `
-      <div style="display:flex;justify-content:center;margin-bottom:10px;">
-        <button class="btn" id="modalToggleHoursBtn" type="button">
-          <span class="material-icons" id="modalToggleHoursIcon">${earlyHoursShown ? 'expand_less' : 'expand_more'}</span>
-          <span id="modalToggleHoursText">${earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7'}</span>
-        </button>
-      </div>
-      <div id="allAgendaCalendar"></div>`,
+          <div style="display:flex;justify-content:center;margin-bottom:10px;">
+            <button class="btn" id="modalToggleHoursBtn" type="button">
+              <span class="material-icons" id="modalToggleHoursIcon">${earlyHoursShown ? 'expand_less' : 'expand_more'}</span>
+              <span id="modalToggleHoursText">${earlyHoursShown ? 'Ocultar 0-7' : 'Mostrar 0-7'}</span>
+            </button>
+          </div>
+          <div id="allAgendaCalendar"></div>`,
                     width: '90%',
                     didOpen: () => {
                         const modalEl = document.getElementById('allAgendaCalendar');
@@ -1384,6 +1374,7 @@
             } catch (err) { console.error(err); }
         }
 
+        /* ============== crear cita clic en hueco libre ============== */
         function onDateClick(info) {
             const esFisio = /fisio/i.test(proEspecialidad);
             const startDate = esFisio
@@ -1401,88 +1392,304 @@
             calendar.unselect();
         }
 
+        /* ===================== abrir formulario ===================== */
         async function openForm(prefill = {}) {
             const { value: formValues } = await Swal.fire({
                 title: prefill.id ? 'Editar cita'
                     : '<span class="modal-title-icon material-symbols-outlined" style="font-size:35px">calendar_add_on</span> Nueva cita',
                 html: `
-      <div class="modal-fields-2col">
-        <!-- resto del formulario… -->
-      </div>`,
+        <div class="modal-fields-2col">
+          <div class="modal-field"><span class="material-icons">title</span>
+            <input id="swal-title" class="swal2-input" placeholder="Título" value="${prefill.title || ''}">
+          </div>
+          <div class="modal-field"><span class="material-icons">description</span>
+            <textarea id="swal-desc" class="swal2-textarea" placeholder="Descripción">${prefill.descripcion || ''}</textarea>
+          </div>
+          <div class="modal-field"><span class="material-icons">person</span>
+            <div class="search-wrapper">
+              <input id="swal-persona" class="swal2-input" placeholder="Nombre" autocomplete="off" value="${prefill.persona || ''}">
+              <div id="swal-results" class="search-results" style="display:none"></div>
+            </div>
+          </div>
+          <div class="modal-field"><span class="material-icons">badge</span>
+            <input id="swal-idpac" class="swal2-input" placeholder="ID paciente (opcional)" value="${prefill.id_paciente || ''}">
+          </div>
+          <div class="modal-field"><span class="material-icons">schedule</span>
+            <input id="swal-start" class="swal2-input" placeholder="Inicio">
+          </div>
+          <div class="modal-field"><span class="material-icons">info</span>
+            <select id="swal-estado" class="swal2-select">
+              <option value="pendiente">Pendiente</option>
+              <option value="confirmada">Confirmada</option>
+              <option value="cancelada">Cancelada</option>
+            </select>
+          </div>
+          <div class="modal-field"><span class="material-icons">medical_services</span>
+            <select id="swal-servicio" class="swal2-select"></select>
+          </div>
+          <div class="modal-field"><span class="material-icons">event</span>
+            <input id="swal-end" class="swal2-input" placeholder="Fin">
+          </div>
+          <div class="modal-field"><span class="material-icons">notifications</span>
+            <select id="swal-notif" class="swal2-select">
+              <option value="ninguna">Ninguna</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="sms">SMS</option>
+              <option value="email">Email</option>
+              <option value="telefono">Teléfono</option>
+            </select>
+          </div>
+        </div>`,
                 focusConfirm: false,
                 didOpen: async () => {
-                    /* flatpickr, autocompletado, etc. (igual que antes) */
+                    flatpickr('#swal-start', {
+                        enableTime: true, time_24hr: true,
+                        defaultDate: prefill.start || null, locale: 'es'
+                    });
+                    flatpickr('#swal-end', {
+                        enableTime: true, time_24hr: true,
+                        defaultDate: prefill.end || null, locale: 'es'
+                    });
+                    document.getElementById('swal-estado').value =
+                        prefill.estado || 'pendiente';
+                    document.getElementById('swal-notif').value =
+                        prefill.notificacion || 'ninguna';
+
+                    try {
+                        const r = await fetch('/api/servicios/profesional/' + proId);
+                        const servicios = await r.json();
+                        const sel = document.getElementById('swal-servicio');
+                        sel.innerHTML = '<option value="">(sin especificar)</option>';
+                        servicesMap = {};
+                        servicios.forEach(s => {
+                            const opt = document.createElement('option');
+                            opt.value = s.id_servicio;
+                            opt.textContent = s.nombre;
+                            servicesMap[s.id_servicio] = s.nombre;
+                            sel.appendChild(opt);
+                        });
+                        sel.value = prefill.id_servicio || '';
+                        if (!prefill.id && !prefill.id_servicio && !sel.value) {
+                            const d = getDefaultServiceId();
+                            if (d) sel.value = String(d);
+                        }
+                    } catch (e) { console.error(e); }
+
+                    /* autocompletado pacientes ------------------------------ */
+                    const inp = document.getElementById('swal-persona');
+                    const inpId = document.getElementById('swal-idpac');
+                    const results = document.getElementById('swal-results');
+                    let timer;
+                    inp.addEventListener('input', () => {
+                        inpId.value = '';
+                        clearTimeout(timer);
+                        const q = inp.value.trim();
+                        if (!q) { results.style.display = 'none'; return; }
+                        timer = setTimeout(async () => {
+                            try {
+                                const r = await fetch('/api/voice/suggest?q=' + encodeURIComponent(q));
+                                const arr = (await r.json()).slice(0, 5);
+                                results.innerHTML = arr.map(p =>
+                                    `<div data-id="${p.id_paciente}" data-name="${p.nombre} ${p.apellidos}">
+                   ${p.nombre} ${p.apellidos} ${p.dni ? '(' + p.dni + ')' : ''}
+                 </div>`).join('');
+                                results.style.display = arr.length ? 'block' : 'none';
+                            } catch { /* ignore */ }
+                        }, 300);
+                    });
+                    results.addEventListener('click', e => {
+                        const div = e.target.closest('div[data-id]');
+                        if (!div) return;
+                        inp.value = div.dataset.name;
+                        inpId.value = div.dataset.id;
+                        results.style.display = 'none';
+                    });
                 },
                 preConfirm: () => {
-                    /* recogida de valores… */
+                    const toIso = v => v ? new Date(v).toISOString() : null;
+                    return {
+                        title: document.getElementById('swal-title').value,
+                        descripcion: document.getElementById('swal-desc').value,
+                        persona: document.getElementById('swal-persona').value,
+                        id_paciente: document.getElementById('swal-idpac').value,
+                        estado: document.getElementById('swal-estado').value,
+                        notificacion: document.getElementById('swal-notif').value,
+                        id_servicio: document.getElementById('swal-servicio').value,
+                        start: toIso(document.getElementById('swal-start').value),
+                        end: toIso(document.getElementById('swal-end').value)
+                    };
                 },
                 showCancelButton: true,
                 confirmButtonText: prefill.id ? 'Actualizar' : 'Crear'
             });
 
-            if (!formValues) return;
+            if (!formValues) return;  // cancelado
 
-            /* creación o actualización de cita (igual que antes) */
+            if (!prefill.id) {
+                const svcId = formValues.id_servicio || getDefaultServiceId();
+                const svcName = servicesMap[svcId] || '';
+                if (!formValues.title.trim()) {
+                    if (formValues.persona) {
+                        formValues.title = svcName
+                            ? `${formValues.persona} - ${svcName}`
+                            : formValues.persona;
+                    } else if (svcName) {
+                        formValues.title = svcName;
+                    }
+                }
+                if (!formValues.descripcion.trim()) {
+                    if (svcName && proName) {
+                        formValues.descripcion = `Cita de ${svcName} con ${proName}`;
+                    } else if (svcName) {
+                        formValues.descripcion = `Cita de ${svcName}`;
+                    } else if (proName) {
+                        formValues.descripcion = `Cita con ${proName}`;
+                    }
+                }
+            }
+
+            if (prefill.id) {
+                /* ------------- UPDATE ------------- */
+                const res = await fetch(`/api/citas/update/${prefill.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        titulo: formValues.title,
+                        descripcion: formValues.descripcion,
+                        persona: formValues.persona,
+                        id_paciente: formValues.id_paciente || null,
+                        estado: formValues.estado,
+                        notificacion: formValues.notificacion,
+                        fecha_hora_inicio: fmt(formValues.start),
+                        fecha_hora_fin: fmt(formValues.end),
+                        id_profesional: proId,
+                        id_servicio: formValues.id_servicio || getDefaultServiceId()
+                    })
+                });
+                await handleResponse(res, 'Cita actualizada correctamente!');
+            } else {
+                /* ------------- CREATE ------------- */
+                const res = await fetch('/api/citas/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        titulo: formValues.title,
+                        descripcion: formValues.descripcion,
+                        persona: formValues.persona,
+                        id_paciente: formValues.id_paciente || null,
+                        estado: formValues.estado,
+                        notificacion: formValues.notificacion,
+                        fecha_hora_inicio: fmt(formValues.start),
+                        fecha_hora_fin: fmt(formValues.end),
+                        id_profesional: proId,
+                        id_servicio: formValues.id_servicio || getDefaultServiceId()
+                    })
+                });
+                await handleResponse(res, 'Cita creada');
+            }
         }
 
+        /* ================= click sobre un evento ================== */
         function onEventClick(info) {
-            /* manejo de clic en evento (igual que antes) */
+            const c = info.event;
+            Swal.fire({
+                title: c.title,
+                html: `
+        <div class="modal-detail"><span class="material-icons">schedule</span><span><b>Inicio:</b> ${c.start.toLocaleString()}</span></div>
+        <div class="modal-detail"><span class="material-icons">event</span><span><b>Fin:</b> ${c.end.toLocaleString()}</span></div>
+        <div class="modal-detail"><span class="material-icons">person</span><span><b>Paciente:</b> ${c.extendedProps.persona || '—'}</span></div>
+        <div class="modal-detail"><span class="material-icons">medical_services</span><span><b>Servicio:</b> ${servicesMap[c.extendedProps.id_servicio] || '—'}</span></div>
+        <div class="modal-detail"><span class="material-icons">description</span><span><b>Descripción:</b> ${c.extendedProps.descripcion || '—'}</span></div>
+        <div class="modal-detail"><span class="material-icons">info</span><span><b>Estado:</b> ${c.extendedProps.estado || '—'}</span></div>
+        <div class="modal-detail"><span class="material-icons">notifications</span><span><b>Notificación:</b> ${c.extendedProps.notificacion || '—'}</span></div>`,
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Editar',
+                denyButtonText: 'Eliminar',
+                cancelButtonText: 'Cerrar'
+            }).then(async result => {
+                if (result.isConfirmed) {
+                    openForm({
+                        id: c.id,
+                        title: c.title,
+                        descripcion: c.extendedProps.descripcion,
+                        persona: c.extendedProps.persona,
+                        id_paciente: c.extendedProps.id_paciente,
+                        estado: c.extendedProps.estado,
+                        notificacion: c.extendedProps.notificacion,
+                        start: c.startStr,
+                        end: c.endStr,
+                        id_servicio: c.extendedProps.id_servicio
+                    });
+                } else if (result.isDenied) {
+                    const ok = await Swal.fire({
+                        icon: 'warning',
+                        title: '¿Eliminar definitivamente?',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    });
+                    if (ok.isConfirmed) {
+                        const res = await fetch('/api/citas/delete/' + c.id, { method: 'DELETE' });
+                        await handleResponse(res, 'Cita eliminada');
+                    }
+                }
+            });
         }
 
+        /* === drag-drop / resize: actualizar cita rápida ============ */
         async function onEventChange(info) {
-            /* manejo drag/drop/resize (igual que antes) */
+            const res = await fetch(`/api/citas/update/${info.event.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fecha_hora_inicio: fmt(info.event.startStr),
+                    fecha_hora_fin: fmt(info.event.endStr),
+                    id_profesional: proId
+                })
+            });
+            await handleResponse(res, 'Horario actualizado');
         }
 
+        /* ===== ir a fecha concreta clicando título del calendario ==== */
         function attachTitleListener() {
-            /* listener para ir a fecha concreta */
+            const titleEl = document.querySelector('.fc-toolbar-title');
+            if (!titleEl) return;
+            titleEl.style.cursor = 'pointer';
+            titleEl.onclick = openGotoDate;
         }
 
         async function openGotoDate() {
-            /* lógica Ir a fecha */
+            const { value: dateStr } = await Swal.fire({
+                title: '<span class="modal-title-icon material-symbols-outlined" style="font-size:35px">event_upcoming</span> Ir a fecha',
+                html: '<input id="swal-goto-date" class="swal2-input">',
+                focusConfirm: false,
+                didOpen: () => {
+                    flatpickr('#swal-goto-date', {
+                        defaultDate: calendar.getDate(),
+                        locale: 'es',
+                        dateFormat: 'Y-m-d'
+                    });
+                },
+                preConfirm: () => document.getElementById('swal-goto-date').value
+            });
+            if (dateStr) calendar.gotoDate(dateStr);
         }
 
-        /* ======== LÓGICA DE VOZ + LIMPIEZA DE MICRÓFONO ======== */
+        /* ===== mini-lógica botones Grabación / Refresh / Clear ===== */
         const talkBtn = document.getElementById('btnAgTalk');
         const stopBtn = document.getElementById('btnAgStop');
 
-        function stopAllAudio() {
-            if (recognition) {
-                recognition.abort();
-                recognition = null;
-            }
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(t => t.stop());
-                mediaStream = null;
-            }
-            talkBtn.classList.remove('talking');
-            stopBtn.classList.remove('active');
-        }
-
-        // Liberar micrófono al salir o cambiar de pestaña/app
-        window.addEventListener('beforeunload', stopAllAudio);
-        window.addEventListener('pagehide', stopAllAudio);
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden') stopAllAudio();
-        });
-
-        talkBtn.addEventListener('click', async () => {
-            try {
-                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-                recognition.lang = 'es-ES';
-                recognition.start();
-                recognition.onend = stopAllAudio;
-                recognition.onerror = stopAllAudio;
-                talkBtn.classList.add('talking');
-                stopBtn.classList.add('active');
-            } catch (err) {
-                console.error('Error al acceder al micrófono', err);
-            }
+        talkBtn.addEventListener('click', () => {
+            talkBtn.classList.add('listening');
+            stopBtn.classList.add('active');
+            // ... tu lógica de SpeechRecognition ...
         });
 
         stopBtn.addEventListener('click', () => {
-            stopAllAudio();
-            // Aquí envía o procesa el audio grabado…
+            talkBtn.classList.remove('listening');
+            stopBtn.classList.remove('active');
+            // ... envía el audio ...
         });
 
         document.getElementById('btnRefresh').addEventListener('click', () => {
