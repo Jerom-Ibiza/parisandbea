@@ -4,8 +4,18 @@ const path = require('path');
 const publicDir = path.join(__dirname, '..', 'public');
 const baseUrl = 'https://parisandbea.es';
 
+const excluded = [
+    'consulta.html',
+    'inicio-consulta.html',
+    'kiosk.html',
+    'pab-files.html',
+    'pab-login.html',
+    'pab-pac.html',
+    'pab-pros.html'
+];
+
 const files = fs.readdirSync(publicDir)
-    .filter(f => f.endsWith('.html'))
+    .filter(f => f.endsWith('.html') && !excluded.includes(f))
     .sort();
 
 if (files.includes('index.html')) {

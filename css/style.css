@@ -1473,3 +1473,88 @@ button.swal2-cancel {
 .mute-input:focus+.mute-toggle {
   box-shadow: 0 0 0 3px rgba(174, 211, 193, .4);
 }
+
+/* ====================== SOBRE NOSOTROS ====================== */
+.bio-section {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 0 20px;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--textos-color, #444);
+  /* ya la defines dinámicamente */
+}
+
+.bio-section h2 {
+  text-align: center;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  margin-bottom: 1.2rem;
+  color: var(--titulos-color, #5b5b5b);
+  position: relative;
+}
+
+.bio-section h2::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 60px;
+  height: 3px;
+  background: var(--titulos-color, #5b5b5b);
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+/* Intro siempre visible*/
+.bio-intro {
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+/* Botón */
+.bio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  background: #5b5b5b;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 22px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background .3s;
+}
+
+.bio-btn:hover {
+  background: #333;
+}
+
+@media(max-width:540px) {
+  .bio-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Pequeña animación al desplegar */
+.bio-collapse[hidden] {
+  display: none;
+}
+
+.bio-collapse {
+  animation: fadeIn .5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
