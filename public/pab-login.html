@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>ParisAndBea Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <!-- Tipografía de ejemplo, cambia o añade lo que necesites -->
   <link rel="stylesheet" href="css/style.css" />
   <style>
@@ -17,39 +19,46 @@
       background: #f0f0f0;
       margin: 0;
     }
+
     .login-container {
       background: #fff;
       padding: 2rem;
       border-radius: 16px;
       max-width: 400px;
       width: 90%;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+
     .logo {
       display: block;
       margin: 0 auto 1rem auto;
       width: 80%;
       max-width: 200px;
     }
+
     h1 {
       text-align: center;
       margin-bottom: 1.5rem;
       font-size: 1.2rem;
     }
+
     .input-field {
       display: flex;
       flex-direction: column;
       margin-bottom: 1rem;
     }
+
     .input-field label {
       margin-bottom: 0.5rem;
       font-weight: 600;
     }
+
     .input-field input {
       padding: 0.75rem;
       border: 1px solid #ccc;
       border-radius: 8px;
     }
+
     .btn-login {
       width: 100%;
       padding: 0.75rem;
@@ -60,20 +69,24 @@
       font-weight: 600;
       cursor: pointer;
     }
+
     .error-message,
     .success-message {
       text-align: center;
       margin-top: 1rem;
       font-weight: 600;
     }
+
     .error-message {
       color: red;
     }
+
     .success-message {
       color: green;
     }
   </style>
 </head>
+
 <body>
   <div class="login-container">
     <!-- Logo que viene de tu BD "home"? 
@@ -95,8 +108,8 @@
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async function(event) {
-      event.preventDefault(); 
+    document.getElementById('loginForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
 
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
@@ -127,4 +140,5 @@
     });
   </script>
 </body>
+
 </html>

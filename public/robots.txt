@@ -1,3 +1,16 @@
 User-agent: *
 Allow: /
+Disallow: /consulta.html
+Disallow: /inicio-consulta.html
+Disallow: /kiosk.html
+Disallow: /pab-files.html
+Disallow: /pab-login.html
+Disallow: /pab-pac.html
+Disallow: /pab-pros.html
+Disallow: /condiciones-servicio.html
+Disallow: /eliminacion-datos.html
+Disallow: /politica-cookies.html
+Disallow: /politica-privacidad.html
+Disallow: /terminos-centro-parisandbea.html
+Disallow: /terminos-condiciones.html
 Sitemap: https://parisandbea.es/sitemap.xml
